@@ -115,6 +115,12 @@ namespace InstallGUI
                     Console.WriteLine("Executing finally block.");
                 }
             }
+            else
+            {
+                line = "COM1";
+                comportsBox.Items.Add(line);
+                comportsBox.SelectedIndex = 0;
+            }
             // Festlegen der Checked-Eigenschaft des Optionsfelds
             currDecoder = decoderliste[(int)decoders.gleisbesetztmelder];
             rbgleisbesetztmelder.Checked = true;
