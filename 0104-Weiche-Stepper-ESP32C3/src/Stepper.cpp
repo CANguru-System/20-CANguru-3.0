@@ -1,0 +1,346 @@
+
+/* ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <CANguru-Buch@web.de> wrote this file. As long as you retain this
+ * notice you can do whatever you want with this stuff. If we meet some day,
+ * and you think this stuff is worth it, you can buy me a beer in return
+ * Gustav Wostrack
+ * ----------------------------------------------------------------------------
+ */
+
+#include <Stepper.h>
+
+// ****** doubleclick
+// das System befindet sich in der Anlaufphase (phase0), i.e. Neuinstallation oder Zurücksetzen des Decoders.
+// startet die Prozedur, mit der der Laufweg des Steppers eingestellt wird.
+// Nach dem doubleClick
+// phase1:
+// läuft der Stepper vom Motor weg. Ist der Stepper am Ende angekommen, wird
+// ein singleClick
+// phase2:
+// gedrückt. Daraufhin läuft der Stepperarm in Richtung Motor. Ist er an diesem
+// Ende angekommen, wird erneut
+// ein singleClick
+// phase3:
+// gedrückt und der Motor läuft in die Anfangsposition auf der motorabgewandten Seite.
+// dort angekommen beginnt erneut phase0 (Betriebsphase)
+
+// ****** longClick
+// das System befindet sich in der Anlaufphase (phase0), i.e. Neuinstallation oder Zurücksetzen des Decoders.
+// startet eine Prozedur, in der der Stepper in die Mitte des Laufweges verschoben werden kann.
+// Nach dem longClick (loslassen des Knopfes):
+// phase4:
+// A.: doubleCick:
+// phase5:
+// Stepper läuft in Richtung Motor, Nach einem
+// singleClick:
+// phase6: bleibt der Motor stehen, dann wieder phase0.
+// B.: singleClick:
+// phase6:
+// Stepper läuft vom Motor weg. Nach einem
+// singleClick:
+// phase6: bleibt der Motor stehen, dann wieder phase0.
+
+// Voreinstellungen, steppernummer wird physikalisch mit
+// einem stepper verbunden
+
+bool bcontinue;
+const uint8_t add_delay = 3;
+
+void setContinue(bool c)
+{
+  bcontinue = c;
+}
+
+bool getContinue()
+{
+  return bcontinue;
+}
+
+void StepperwButton::runReverse()
+{
+  // läuft in Richtung der zum Motor entgegengesetzten Ende
+  direction = reverse;
+  step = steps - 1;
+  // run to one end until button is pressed
+  // step one revolution in one direction:
+  // move only if the appropriate delay has passed:
+  last_step_time = 0;
+  while (getContinue())
+  {
+    now_micros = micros();
+    if ((now_micros - last_step_time) >= step_delay * add_delay)
+    {
+      // get the timeStamp of when you stepped:
+      last_step_time = now_micros;
+      oneStep();
+    }
+  }
+} // runReverse
+
+void StepperwButton::runForward()
+{
+  // läuft in Richtung des Motors
+  direction = forward;
+  step = 0;
+  // run to the opposite end until button is pressed
+  // step one revolution in one direction:
+  last_step_time = 0;
+  while (getContinue())
+  {
+    now_micros = micros();
+    if ((now_micros - last_step_time) >= step_delay * add_delay)
+    {
+      // get the timeStamp of when you stepped:
+      last_step_time = now_micros;
+      oneStep();
+    }
+  }
+} // runReverse
+
+// this function will be called when the button was pressed a single time.
+void StepperwButton::singleClick()
+{
+  log_i("singleClick");
+  switch (phase)
+  {
+  case phase3:
+    // der Stepper läuft erneut
+    setContinue(true);
+    switch (direction)
+    {
+    case forward:
+      log_i("Forward: stepper runs again");
+      runForward();
+      break;
+    case reverse:
+      log_i("Reverse: stepper runs again");
+      runReverse();
+      break;
+    }
+    phase = phase2;
+    break;
+  case phase2:
+    // der Stepper läuft und wird nun gestoppt
+    log_i("Forward/Reverse: stepper stops");
+    stopStepper();
+    switch (direction)
+    {
+    case forward:
+      log_i("Forward: turns to Reverse");
+      direction = reverse;
+      break;
+    case reverse:
+      log_i("Reverse: turns to forward");
+      direction = forward;
+      break;
+    }
+    phase = phase3;
+    break;
+  case phase1:
+    // in die festgelegte Richtung wird gesteppt
+    setContinue(true);
+    switch (direction)
+    {
+    case forward:
+      log_i("Forward: stepper starts to run");
+      runForward();
+      break;
+    case reverse:
+      log_i("Reverse: stepper starts to run");
+      runReverse();
+      break;
+    }
+    phase = phase2;
+    break;
+  case phase0:
+    // die Richtung wird festgelegt
+    log_i("Forward: set direction");
+    direction = forward;
+    phase = phase1;
+    break;
+  }
+} // singleClick
+
+// this function will be called when the button was pressed 2 times in a short timeframe.
+void StepperwButton::doubleClick()
+{
+  log_i("doubleClick");
+  if (phase == phase0)
+  {
+    // die Richtung wird festgelegt
+    log_i("Reverse: set direction");
+    direction = reverse;
+    phase = phase1;
+  }
+} // doubleClick
+
+void StepperwButton::longPressStop()
+{
+  leftpos = stepsToSwitch;
+  log_i("longPress %d", leftpos);
+  acc_pos_curr = left;
+  phase = phase0;
+  currpos = 0;
+  set_stepsToSwitch = true;
+  GoLeft();
+} // longPressStop
+
+void StepperwButton::multiClick()
+{
+  if (button.getNumberClicks() == 3)
+  {
+    log_i("multiClick");
+    phase = phase0;
+  }
+}
+
+void StepperBase::Attach()
+{
+  // setup the pins on the microcontroller:
+  pinMode(A_plus, OUTPUT);
+  pinMode(A_minus, OUTPUT);
+  pinMode(B_plus, OUTPUT);
+  pinMode(B_minus, OUTPUT);
+  stopStepper();
+  last_step_time = 0;
+  direction_delay = 250; // 20 * step_delay/1000;
+  phase = phase0;
+  readyToStep = stepsToSwitch != 0;
+  set_stepsToSwitch = false;
+  no_correction = true;
+  rightpos = 0;
+  leftpos = stepsToSwitch;
+  switch (acc_pos_curr)
+  {
+  case right:
+    currpos = rightpos;
+    break;
+  case left:
+    currpos = leftpos;
+    break;
+  }
+}
+
+void StepperBase::oneStep()
+{
+  switch (step)
+  {
+    // Bipolare Ansteuerung Vollschritt
+    // 1a 1b 2a 2b
+    // 1  0  0  1
+    // 0  1  0  1
+    // 0  1  1  0
+    // 1  0  1  0
+
+  case 0: // 1  0  0  1
+    digitalWrite(A_plus, HIGH);
+    digitalWrite(A_minus, LOW);
+    digitalWrite(B_plus, LOW);
+    digitalWrite(B_minus, HIGH);
+    break;
+  case 1: // 0  1  0  1
+    digitalWrite(A_plus, LOW);
+    digitalWrite(A_minus, HIGH);
+    digitalWrite(B_plus, LOW);
+    digitalWrite(B_minus, HIGH);
+    break;
+  case 2: // 0  1  1  0
+    digitalWrite(A_plus, LOW);
+    digitalWrite(A_minus, HIGH);
+    digitalWrite(B_plus, HIGH);
+    digitalWrite(B_minus, LOW);
+    break;
+  case 3: // 1  0  1  0
+    digitalWrite(A_plus, HIGH);
+    digitalWrite(A_minus, LOW);
+    digitalWrite(B_plus, HIGH);
+    digitalWrite(B_minus, LOW);
+    break;
+  }
+  switch (direction)
+  {
+  case forward:
+    step++;
+    if (step >= steps)
+      step = 0;
+    break;
+  case reverse:
+    step--;
+    if (step < 0)
+      step = steps - 1;
+    break;
+  }
+}
+
+void StepperBase::stopStepper()
+{
+  digitalWrite(A_plus, LOW);
+  digitalWrite(A_minus, LOW);
+  digitalWrite(B_plus, LOW);
+  digitalWrite(B_minus, LOW);
+}
+
+// Setzt die Zielposition
+void StepperBase::SetPosition()
+{
+  last_step_time = micros();
+  acc_pos_dest = acc_pos_curr;
+  switch (acc_pos_dest)
+  {
+  case left:
+  {
+    GoLeft();
+  }
+  break;
+  case right:
+  {
+    GoRight();
+  }
+  break;
+  }
+}
+
+// Zielposition ist links
+void StepperBase::GoLeft()
+{
+  log_i("going left");
+  destpos = leftpos;
+  // von currpos < 74 bis 74, des halb increment positiv
+  increment = 1;
+  step = 0;
+  direction = reverse;
+  /*  endpos = -maxendpos; // +1
+    way = longway;*/
+}
+
+// Zielposition ist rechts
+void StepperBase::GoRight()
+{
+  log_i("going right");
+  destpos = rightpos; // 1
+                      // von currpos > 1 bis 1, des halb increment negativ
+  increment = -1;
+  step = steps - 1;
+  direction = forward;
+  /*  endpos = maxendpos; // -1
+    way = longway;*/
+}
+
+// Überprüft periodisch, ob die Zielposition erreicht wird
+void StepperwButton::Update()
+{
+  handle();
+  if (readyToStep && (destpos != currpos))
+  {
+    if (micros() - last_step_time >= step_delay)
+    {
+      // get the timeStamp of when you stepped:
+      last_step_time = micros();
+      oneStep();
+      currpos += increment;
+      if (destpos == currpos)
+        stopStepper();
+    }
+  }
+}
