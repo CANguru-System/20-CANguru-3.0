@@ -1,7 +1,0 @@
-esptool.exe --chip esp32c3 --port COM33 --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 ScanPorts\ESP32C3\.pio\build\seeed_xiao_esp32c3/bootloader.bin 0x8000 ScanPorts\ESP32C3\.pio\build\seeed_xiao_esp32c3/partitions.bin 0xE000ScanPorts\ESP32C3\.pio\build\seeed_xiao_esp32c3/boot_app0.bin 0x10000 ScanPorts\ESP32C3\.pio\build\seeed_xiao_esp32c3/firmware.bin
-pause
-
-esptool.exe --chip esp32c3 --port COM33 --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 ScanPorts\ESP32C3\.pio\build\seeed_xiao_esp32c3\bootloader.bin 0x8000 ScanPorts\ESP32C3\.pio\build\seeed_xiao_esp32c3\partitions.bin 0xe000 C:\Users\gusta\.platformio\packages\framework-arduinoespressif32\tools\partitions\boot_app0.bin 0x10000 .pio\build\seeed_xiao_esp32c3\firmware.bin
-esptool.py v4.5.1
-
-./esptool.exe --chip esp32c3 --port COM20 --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 ScanPorts\\ESP32C3\\.pio\\build\\seeed_xiao_esp32c3/bootloader.bin 0x8000 ScanPorts\\ESP32C3\\.pio\\build\\seeed_xiao_esp32c3/partitions.bin 0xE000 boot_app0.bin 0x10000 ScanPorts\\ESP32C3\\.pio\\build\\seeed_xiao_esp32c3/firmware.bin
