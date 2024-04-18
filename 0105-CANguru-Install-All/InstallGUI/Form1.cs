@@ -420,9 +420,17 @@ namespace InstallGUI
             {
                 comportsBox.Items.Add(port);
             }
-            comportsBox.SelectedIndex = 0;
-            bports = true;
-            reportBox.Text = "COM-Ports geladen.";
+            if (comportsBox.Items.Count > 0)
+            {
+                comportsBox.SelectedIndex = 0;
+                bports = true;
+                reportBox.Text = "COM-Ports geladen.";
+            }
+            else
+            {
+                reportBox.Text = "KEINE COM-Ports gefunden.";
+                comportsBox.Items.Add("kein Port!");
+            }
         }
 
         private void comportsBox_SelectedIndexChanged(object sender, EventArgs e)
