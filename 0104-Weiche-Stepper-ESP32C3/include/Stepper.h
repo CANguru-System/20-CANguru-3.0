@@ -64,10 +64,10 @@ const uint8_t A_minus = GPIO_NUM_6;
 const uint8_t B_plus = GPIO_NUM_7;
 const uint8_t B_minus = GPIO_NUM_10;
 #else
-const uint8_t A_plus = GPIO_NUM_5;
-const uint8_t A_minus = GPIO_NUM_6;
-const uint8_t B_plus = GPIO_NUM_7;
-const uint8_t B_minus = GPIO_NUM_10;
+const uint8_t A_plus = GPIO_NUM_10;
+const uint8_t A_minus = GPIO_NUM_7;
+const uint8_t B_plus = GPIO_NUM_6;
+const uint8_t B_minus = GPIO_NUM_5;
 #endif
 
 const uint8_t btn_Step_pin = GPIO_NUM_21;

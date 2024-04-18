@@ -477,15 +477,20 @@ namespace InstallGUI
                 if (loaded != firmware.scanner)
                     loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner);
                 // prepare and send ssid via port
-                String ssid = ssidBox.SelectedItem.ToString();
-                if (ssidBox.SelectedItem.ToString().IndexOf('(') != -1)
+                if (ssidBox.Items.Count>0)
                 {
-                    string[] ssids = ssid.Split('(');
-                    command = "SSID" + ssids[0].Trim();
+                    String ssid = ssidBox.SelectedItem.ToString();
+                    if (ssidBox.SelectedItem.ToString().IndexOf('(') != -1)
+                    {
+                        string[] ssids = ssid.Split('(');
+                        command = "SSID" + ssids[0].Trim();
+                    }
+                    else
+                        command = "SSID" + ssid;
+                    bssid = write2Port(command);
                 }
                 else
-                    command = "SSID" + ssid;
-                bssid = write2Port(command);
+                    MessageBox.Show("FEHLER!");
             }
             else
                 loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
