@@ -8,12 +8,12 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/include",
-                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/src",
+                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/include",
+                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/src",
                 "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
-                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/0100-CANguru-Library",
+                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/0100-CANguru-Library",
                 "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src",
-                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/ElegantOTA/src",
+                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/ElegantOTA/src",
                 "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                 "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
@@ -240,12 +240,12 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/include",
-                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/src",
+                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/include",
+                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/src",
                     "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
-                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/0100-CANguru-Library",
+                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/0100-CANguru-Library",
                     "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src",
-                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/ElegantOTA/src",
+                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0103-Gleisbesetztmelder/.pio/libdeps/nodemcu-32s/ElegantOTA/src",
                     "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                     "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
@@ -471,7 +471,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60113",
+                "PLATFORMIO=60114",
                 "ARDUINO_NodeMCU_32S",
                 "ESP32_DECODER",
                 "TIME2POLL",
