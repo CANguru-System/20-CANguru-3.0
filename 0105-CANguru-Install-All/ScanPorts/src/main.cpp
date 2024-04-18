@@ -51,7 +51,7 @@ void setup()
 
   if (preferences.begin("CANguru", false))
   {
-    log_i("Preferences erfolgreich gestartet");
+    log_i("Preferences wurde erfolgreich gestartet");
   }
   LED_on();
 }
