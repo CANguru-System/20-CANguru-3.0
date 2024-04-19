@@ -181,7 +181,7 @@ namespace InstallGUI
 
         // ************************ HELPER LOAD FIRMWARE TO DECODER **************************************************************
 
-        void loadFirmware(string cpu, string source, string txt, firmware fw)
+        bool loadFirmware(string cpu, string source, string txt, firmware fw)
         {
             int errNo = -1;
             reportBox.Text = "Bitte warten ...";
@@ -222,6 +222,7 @@ namespace InstallGUI
                     reportBox.Text = txt + " nicht installiert! Fehler: " + errNo.ToString();
                 loaded = fw;
             }
+            return (errNo == 0);
         }
 
         // ************************ HELPER ERASE FLASH **************************************************************
@@ -402,8 +403,8 @@ namespace InstallGUI
         {
             // Clear the listbox
             ssidBox.Items.Clear();
-            loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner);
-            bssid = write2Port("SCAN");
+            if (loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner))
+                bssid = write2Port("SCAN");
             //
         }
 
@@ -479,13 +480,14 @@ namespace InstallGUI
         private void uploadBtn_Click(object sender, EventArgs e)
         {
             string command;
+            bool res = true;
             if (currDecoder.credentials == true)
             {
                 // load scanner firmware to decoder
                 if (loaded != firmware.scanner)
-                    loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner);
+                    res = loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner);
                 // prepare and send ssid via port
-                if (ssidBox.Items.Count>0)
+                if (res && (ssidBox.Items.Count>0))
                 {
                     String ssid = ssidBox.SelectedItem.ToString();
                     if (ssidBox.SelectedItem.ToString().IndexOf('(') != -1)
