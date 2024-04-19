@@ -44,7 +44,7 @@
             this.processBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbBridge = new System.Windows.Forms.RadioButton();
-            this.rbnext = new System.Windows.Forms.RadioButton();
+            this.rbBooster = new System.Windows.Forms.RadioButton();
             this.rbstepper = new System.Windows.Forms.RadioButton();
             this.rbgleisbesetztmelder = new System.Windows.Forms.RadioButton();
             this.helpbtn = new System.Windows.Forms.Button();
@@ -53,6 +53,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.reportBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -178,7 +179,8 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.rbBridge);
-            this.groupBox1.Controls.Add(this.rbnext);
+            this.groupBox1.Controls.Add(this.radioButton1);
+            this.groupBox1.Controls.Add(this.rbBooster);
             this.groupBox1.Controls.Add(this.rbstepper);
             this.groupBox1.Controls.Add(this.rbgleisbesetztmelder);
             this.groupBox1.Location = new System.Drawing.Point(20, 362);
@@ -200,16 +202,17 @@
             this.rbBridge.UseVisualStyleBackColor = true;
             this.rbBridge.CheckedChanged += new System.EventHandler(this.rbBridge_CheckedChanged);
             // 
-            // rbnext
+            // rbBooster
             // 
-            this.rbnext.AutoSize = true;
-            this.rbnext.Location = new System.Drawing.Point(18, 101);
-            this.rbnext.Name = "rbnext";
-            this.rbnext.Size = new System.Drawing.Size(112, 17);
-            this.rbnext.TabIndex = 2;
-            this.rbnext.TabStop = true;
-            this.rbnext.Text = "Nächster Decoder";
-            this.rbnext.UseVisualStyleBackColor = true;
+            this.rbBooster.AutoSize = true;
+            this.rbBooster.Location = new System.Drawing.Point(18, 101);
+            this.rbBooster.Name = "rbBooster";
+            this.rbBooster.Size = new System.Drawing.Size(107, 17);
+            this.rbBooster.TabIndex = 2;
+            this.rbBooster.TabStop = true;
+            this.rbBooster.Text = "CANguru-Booster";
+            this.rbBooster.UseVisualStyleBackColor = true;
+            this.rbBooster.CheckedChanged += new System.EventHandler(this.rbBooster_CheckedChanged);
             // 
             // rbstepper
             // 
@@ -287,6 +290,17 @@
             this.label6.TabIndex = 19;
             this.label6.Text = "Meldungen";
             // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(220, 23);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(112, 17);
+            this.radioButton1.TabIndex = 2;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Nächster Decoder";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -341,7 +355,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton rbgleisbesetztmelder;
         private System.Windows.Forms.RadioButton rbstepper;
-        private System.Windows.Forms.RadioButton rbnext;
+        private System.Windows.Forms.RadioButton rbBooster;
         private System.Windows.Forms.Button helpbtn;
         private System.Windows.Forms.Button erasebtn;
         private System.Windows.Forms.RadioButton rbBridge;
@@ -349,6 +363,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox reportBox;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }
 

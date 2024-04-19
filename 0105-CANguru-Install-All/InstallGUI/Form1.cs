@@ -40,6 +40,7 @@ namespace InstallGUI
             gleisbesetztmelder = 0,
             stepper,
             bridge,
+            booster,
             next
         }
         struct decoderStruct
@@ -83,6 +84,8 @@ namespace InstallGUI
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0104-Weiche-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             // bridge 
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0101-CANguru-Bridge-Olimex-Version-3.5\\.pio\\build\\esp32-evb\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = false });
+            // booster
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0106-CANguru-Booster\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -475,6 +478,13 @@ namespace InstallGUI
             loaded = firmware.none;
         }
 
+        private void rbBooster_CheckedChanged(object sender, EventArgs e)
+        {
+            currDecoder = decoderliste[(int)decoders.booster];
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            loaded = firmware.none;
+        }
+
         // ************************ UPLOAD DECODER-FIRMWARE **************************************************************
 
         private void uploadBtn_Click(object sender, EventArgs e)
@@ -516,6 +526,5 @@ namespace InstallGUI
             // use the `Show()` method to access the new non-modal form
             helpForm.ShowDialog();
         }
-
     }
 }
