@@ -29,10 +29,10 @@ bool drawCircle;
 // timer
 const uint8_t wait_for_ping = 12;
 uint16_t secs = 0;
-const uint8_t maxDevices = 20;
+const uint8_t maxDevices = 50;
 
 Ticker tckr;
-#define tckrTime 1.0 / maxDevices
+#define tckrTime 25000 / maxDevices
 
 // CAN_FRAME_SIZE
 uint8_t cntTCPFramesUsed = 0;
@@ -183,7 +183,7 @@ void timer1s()
 // Start des Timers
 void stillAliveBlinkSetup()
 {
-  tckr.attach(tckrTime, timer1s); // each sec
+  tckr.attach_ms(tckrTime, timer1s); // each sec
   // lastStatus kann 3 Zustände haben und entscheidet, ob die Statausanzeige blinkt (an oder aus) oder ganz aus  (undef) ist
   lastStatus = undef;
 }

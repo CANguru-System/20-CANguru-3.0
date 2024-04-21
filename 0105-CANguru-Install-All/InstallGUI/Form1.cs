@@ -526,5 +526,6 @@ namespace InstallGUI
             // use the `Show()` method to access the new non-modal form
             helpForm.ShowDialog();
         }
+
     }
 }

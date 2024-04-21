@@ -4,6 +4,7 @@ namespace CANguruX
 {
     class Cnames
     {
+        public const byte maxDecoders = 50;
         public const byte cntCS2Files = 10;
         public const byte shortnameLng = 7;
         public const byte shortnameLng2transfer = shortnameLng - 2;

@@ -181,4 +181,6 @@
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/EEPROM/src/EEPROM.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
- .pio/libdeps/seeed_xiao_esp32c3/0100-CANguru-Library/OWN_LED.h
+ .pio/libdeps/seeed_xiao_esp32c3/0100-CANguru-Library/OWN_LED.h \
+ C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/nvs_flash/include/nvs_flash.h \
+ C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/nvs_flash/include/nvs.h

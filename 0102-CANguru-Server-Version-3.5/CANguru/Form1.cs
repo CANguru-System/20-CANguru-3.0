@@ -1007,7 +1007,7 @@ namespace CANguruX
                                     }
                                     break;
                                 case 0x31: // Ping_R:
-                                    if (receivePINGInfos == true && CANguruArrFilled < 20)
+                                    if (receivePINGInfos == true && CANguruArrFilled < Cnames.maxDecoders)
                                     {
                                         // CANguru ?
                                         if (content[12] == GFP)

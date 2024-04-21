@@ -44,6 +44,7 @@
             this.processBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbBridge = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.rbBooster = new System.Windows.Forms.RadioButton();
             this.rbstepper = new System.Windows.Forms.RadioButton();
             this.rbgleisbesetztmelder = new System.Windows.Forms.RadioButton();
@@ -53,7 +54,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.reportBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -202,6 +202,17 @@
             this.rbBridge.UseVisualStyleBackColor = true;
             this.rbBridge.CheckedChanged += new System.EventHandler(this.rbBridge_CheckedChanged);
             // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(220, 23);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(112, 17);
+            this.radioButton1.TabIndex = 2;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Nächster Decoder";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
             // rbBooster
             // 
             this.rbBooster.AutoSize = true;
@@ -289,17 +300,6 @@
             this.label6.Size = new System.Drawing.Size(60, 13);
             this.label6.TabIndex = 19;
             this.label6.Text = "Meldungen";
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(220, 23);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(112, 17);
-            this.radioButton1.TabIndex = 2;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Nächster Decoder";
-            this.radioButton1.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

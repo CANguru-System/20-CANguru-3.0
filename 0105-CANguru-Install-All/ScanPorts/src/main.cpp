@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 #include <Preferences.h>
 #include "OWN_LED.h"
+#include <nvs_flash.h>
 
 const uint8_t maxstring = 96;
 String command;

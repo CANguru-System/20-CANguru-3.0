@@ -142,10 +142,10 @@
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
  .pio/libdeps/esp32-evb/Adafruit\ GFX\ Library/Adafruit_GFX.h \
  .pio/libdeps/esp32-evb/Adafruit\ GFX\ Library/gfxfont.h \
- .pio/libdeps/esp32-evb/Adafruit\ BusIO@src-1c59a2908cd7e8f991f92381d560d371/Adafruit_I2CDevice.h \
+ .pio/libdeps/esp32-evb/Adafruit\ BusIO/Adafruit_I2CDevice.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
- .pio/libdeps/esp32-evb/Adafruit\ BusIO@src-1c59a2908cd7e8f991f92381d560d371/Adafruit_SPIDevice.h \
+ .pio/libdeps/esp32-evb/Adafruit\ BusIO/Adafruit_SPIDevice.h \
  lib/src/espnow.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_wifi/include/esp_now.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_wifi/include/esp_wifi_types.h \
