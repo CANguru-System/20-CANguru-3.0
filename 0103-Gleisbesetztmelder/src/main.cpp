@@ -276,12 +276,11 @@ void setup()
     log_d("IP-ADDRESS OK");
   if (preferences.isKey("IP0"))
   {
-    log_d("IP-ADDRESS 0");
     if (preferences.getBytes("IP0", ip, 4) == 4)
       for (uint8_t i = 0; i < 4; i++)
       {
         IP[i] = ip[i];
-    log_d("IP-ADDRESS 1");
+    log_d("IP-ADDRESS %d", IP[i]);
       }
   }
   else
@@ -326,7 +325,7 @@ void receiveKanalData()
     char key[20];
     sprintf(key, "%s%d", c_i, opFrame[data5] - 1); 
     preferences.putUChar(key, channel_index[opFrame[data5] - 1]);
-    log_d("setup: %d ", channel_index[opFrame[data5] - 1]);
+    log_d("receiveKanalData: %d ", channel_index[opFrame[data5] - 1]);
   }
   else
   {

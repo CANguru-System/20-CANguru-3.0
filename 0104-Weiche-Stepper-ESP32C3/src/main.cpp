@@ -63,8 +63,8 @@ uint8_t decoderadr;
 uint8_t stepperDelay;
 uint16_t stepsToEnd;
 position rightORleft;
+stepDirections stepDirection;
 
-const uint16_t stepsToEnd_start = 0x00;
 const uint16_t stepsToEnd_min = 1100;
 const uint16_t stepsToEnd_std = 1140;
 const uint16_t stepsToEnd_max = 1200;
@@ -95,9 +95,9 @@ void setup()
   log_i("\n on %s", ARDUINO_BOARD);
   log_i("CPU Frequency = %d Mhz", F_CPU / 1000000);
   //  log_e("ERROR!");
-  //  log_i("VERBOSE");
+  //  log_d("VERBOSE");
   //  log_w("WARNING");
-  //  log_i("INFO");
+  //  log_d("INFO");
   // der Decoder strahlt mit seiner Kennung
   // damit kennt die CANguru-Bridge (der Master) seine Decoder findet
   DEVTYPE = DEVTYPE_STEPPER;
@@ -114,7 +114,7 @@ void setup()
 
   if (preferences.begin("CANguru", false))
   {
-    log_i("Preferences erfolgreich gestartet");
+    log_d("Preferences erfolgreich gestartet");
   }
 
   uint8_t setup_todo = preferences.getUChar("setup_done", 0xFF);
@@ -131,7 +131,7 @@ void setup()
     preferences.putUChar("decoderadr", decoderadr);
     // Anfangswerte
     // Gesamtumdrehungen des Steppers
-    stepsToEnd = stepsToEnd_start;
+    stepsToEnd = stepsToEnd_std;
     preferences.putUShort("stepsToEnd", stepsToEnd);
     //
     // Verzögerung
@@ -141,7 +141,11 @@ void setup()
     // Status der Magnetartikel zu Beginn auf rechts setzen
     rightORleft = right;
     preferences.putUChar("acc_state", rightORleft);
-    //
+
+    // Ausrichtung des Stepper Motors
+    stepDirection = A_dir;
+    preferences.putUChar("s_d", stepDirection);
+
     // ota auf "FALSE" setzen
     preferences.putUChar("ota", startWithoutOTA);
     //
@@ -163,6 +167,8 @@ void setup()
       stepsToEnd = readValfromPreferences16(preferences, "stepsToEnd", stepsToEnd_std, stepsToEnd_min, stepsToEnd_max);
       // Status der Magnetartikel versenden an die steppers
       rightORleft = (position)readValfromPreferences(preferences, "acc_state", right, right, left);
+    // Ausrichtung des Stepper Motors
+      stepDirection = (stepDirections)readValfromPreferences(preferences, "s_d", A_dir, A_dir, B_dir);
     }
     else
     {
@@ -189,7 +195,7 @@ void setup()
   initialData2send = false;
   bBlinkAlive = true;
   bDecoderIsAlive = true;
-  // Variablen werden gemäß der eingelsenen Werte gesetzt
+  // Variablen werden gemäß der eingelesenen Werte gesetzt
   // evtl. werden auch die steppers verändert
   // steppers mit den PINs verbinden, initialisieren & Artikel setzen wie gespeichert
 
@@ -199,7 +205,7 @@ void setup()
   button.SetDelay(stepperDelay);
   button.Set_stepsToSwitch(stepsToEnd);
   button.SetPosCurr(rightORleft);
-  button.Attach();
+  button.Attach(stepDirection);
   button.SetPosition();
   // Vorbereiten der Blink-LED
   stillAliveBlinkSetup(GPIO_NUM_8);

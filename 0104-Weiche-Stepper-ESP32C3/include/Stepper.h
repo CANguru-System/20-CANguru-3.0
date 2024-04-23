@@ -12,8 +12,7 @@
 
 #include "Arduino.h"
 #include "OneButton.h"
-
-#undef left2right
+#include "Preferences.h"
 
 // mögliche Positionen des steppers
 enum position
@@ -22,25 +21,16 @@ enum position
   left
 };
 
-/* Märklin Dokumentation:
-Bit 0,1: Stellung:
-00: Aus, Rund, Rot, Rechts, HP0
-01: Ein, Grün, Gerade, HP1
-10: Gelb, Links, HP2
-11: Weiss, SH0
-*/
-//
-enum enumway
-{
-  longway,  // von rechts nach links oder umgekehrt
-  shortway, // der kleine Überschwinger beim Signal
-  noway     // stepper steht
-};
-
 enum directions
 {
   forward,
   reverse
+};
+
+enum stepDirections
+{
+  A_dir,
+  B_dir
 };
 
 enum setupPhases
@@ -54,24 +44,8 @@ enum setupPhases
 
 const int steps = 4; // how many pins are in use.
 
-// MX1508 Motor Driver Pins
-/*
-// mit diesen Werten fährt der Stepper in die umgekehrte Richtung*/
-
-#ifdef left2right
-const uint8_t A_plus = GPIO_NUM_5;
-const uint8_t A_minus = GPIO_NUM_6;
-const uint8_t B_plus = GPIO_NUM_7;
-const uint8_t B_minus = GPIO_NUM_10;
-#else
-const uint8_t A_plus = GPIO_NUM_10;
-const uint8_t A_minus = GPIO_NUM_7;
-const uint8_t B_plus = GPIO_NUM_6;
-const uint8_t B_minus = GPIO_NUM_5;
-#endif
-
 const uint8_t btn_Step_pin = GPIO_NUM_21;
-//const uint8_t btn_Step_pin = GPIO_NUM_9;
+// const uint8_t btn_Step_pin = GPIO_NUM_9;
 
 // Verzögerungen
 const uint8_t maxstepperdelay = 10;
@@ -87,7 +61,7 @@ class StepperBase
 public:
   // Voreinstellungen, steppernummer wird physikalisch mit
   // einem stepper verbunden;
-  void Attach();
+  void Attach(stepDirections dir);
   // Setzt die Zielposition
   void SetPosition();
   // Zielposition ist links
@@ -96,6 +70,30 @@ public:
   void GoRight();
   // Überprüft periodisch, ob die Zielposition erreicht wird
   void Update();
+  void SetDirection(stepDirections dir)
+  {
+    stepDir = dir;
+    switch (stepDir)
+    {
+    case A_dir:
+      log_d("Forward direction");
+      A_plus = GPIO_NUM_10;
+      A_minus = GPIO_NUM_7;
+      B_plus = GPIO_NUM_6;
+      B_minus = GPIO_NUM_5;
+      break;
+      // mit diesen Werten fährt der Stepper in die umgekehrte Richtung
+    case B_dir:
+      log_d("Reverse direction");
+      A_plus = GPIO_NUM_5;
+      A_minus = GPIO_NUM_6;
+      B_plus = GPIO_NUM_7;
+      B_minus = GPIO_NUM_10;
+      break;
+    }
+    pref.putUChar("s_d", stepDir);
+  }
+
   // Setzt die Zielposition
   void SetPosDest(position p)
   {
@@ -130,13 +128,13 @@ public:
   // Setzt die Adresse eines steppers
   void Set_to_address(uint8_t _to_address)
   {
-    log_i("Set_to_address: %d", _to_address);
+    log_d("Set_to_address: %d", _to_address);
     acc__to_address = _to_address;
   }
   // Liefert die Adresse eines steppers
   uint8_t Get_to_address()
   {
-    log_i("Get_to_address: %d", acc__to_address);
+    log_d("Get_to_address: %d", acc__to_address);
     return acc__to_address;
   }
   // Setzt die Gesamtumdrehungen eines steppers
@@ -168,15 +166,22 @@ public:
   setupPhases phase;
   int8_t step;
   directions direction;
+  Preferences pref;
+  // MX1508 Motor Driver Pins
+  uint8_t A_plus;
+  uint8_t A_minus;
+  uint8_t B_plus;
+  uint8_t B_minus;
+  stepDirections stepDir;
   unsigned long now_micros;
   unsigned long last_step_time;  // timestamp in us of when the last step was taken
   unsigned long step_delay;      // delay between steps, in us, based on speed
   unsigned long direction_delay; // delay between steps, in us, based on speed
   int16_t stepsToSwitch;
-  int leftpos;   // 74 je groesser desto weiter nach links
-  int rightpos;  // 5 je kleiner desto weiter nach rechts
+  int leftpos;  // 74 je groesser desto weiter nach links
+  int rightpos; // 5 je kleiner desto weiter nach rechts
   position acc_pos_curr;
-  int currpos;   // current stepper position
+  int currpos; // current stepper position
   bool set_stepsToSwitch;
   int destpos;   // stepper position, where to go
   int increment; // increment to move for each interval
@@ -186,7 +191,6 @@ private:
   uint8_t acc__to_address;
   position acc_pos_dest;
   int maxendpos; // * grdinmillis;
-  enumway way;
   bool no_correction;
 };
 
@@ -194,24 +198,34 @@ class StepperwButton : public StepperBase
 {
 private:
   OneButton button;
+
 public:
-  explicit StepperwButton(uint8_t pin):button(pin) {
-  // setup interrupt routine
-  // when not registering to the interrupt the sketch also works when the tick is called frequently.
-    button.attachClick([](void *scope) { ((StepperwButton *) scope)->singleClick();}, this);
-    button.attachDoubleClick([](void *scope) { ((StepperwButton *) scope)->doubleClick();}, this);
-    button.attachLongPressStop([](void *scope) { ((StepperwButton *) scope)->longPressStop();}, this);
-    button.attachMultiClick([](void *scope) { ((StepperwButton *) scope)->multiClick();}, this);
+  explicit StepperwButton(uint8_t pin) : button(pin)
+  {
+    // setup interrupt routine
+    // when not registering to the interrupt the sketch also works when the tick is called frequently.
+    button.attachClick([](void *scope)
+                       { ((StepperwButton *)scope)->singleClick(); },
+                       this);
+    button.attachDoubleClick([](void *scope)
+                             { ((StepperwButton *)scope)->doubleClick(); },
+                             this);
+    button.attachLongPressStop([](void *scope)
+                               { ((StepperwButton *)scope)->longPressStop(); },
+                               this);
+    button.attachMultiClick([](void *scope)
+                            { ((StepperwButton *)scope)->multiClick(); },
+                            this);
     button.setLongPressIntervalMs(1000);
   }
 
-void runForward();
-void runReverse();
-void singleClick();
-void doubleClick();
-void longPressStop();
-void multiClick();
-void Update();
+  void runForward();
+  void runReverse();
+  void singleClick();
+  void doubleClick();
+  void longPressStop();
+  void multiClick();
+  void Update();
 
   void handle()
   {

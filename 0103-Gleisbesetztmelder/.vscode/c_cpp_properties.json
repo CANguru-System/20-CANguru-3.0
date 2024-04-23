@@ -475,7 +475,7 @@
                 "ARDUINO_NodeMCU_32S",
                 "ESP32_DECODER",
                 "TIME2POLL",
-                "CORE_DEBUG_LEVEL=3",
+                "CORE_DEBUG_LEVEL=4",
                 "HAVE_CONFIG_H",
                 "MBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\"",
                 "UNITY_INCLUDE_CONFIG_H",

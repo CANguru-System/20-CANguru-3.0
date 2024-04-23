@@ -9,6 +9,7 @@
  */
 
 #include <Stepper.h>
+#include "Preferences.h"
 
 // ****** doubleclick
 // das System befindet sich in der Anlaufphase (phase0), i.e. Neuinstallation oder Zurücksetzen des Decoders.
@@ -101,7 +102,7 @@ void StepperwButton::runForward()
 // this function will be called when the button was pressed a single time.
 void StepperwButton::singleClick()
 {
-  log_i("singleClick");
+  log_d("singleClick");
   switch (phase)
   {
   case phase3:
@@ -110,11 +111,11 @@ void StepperwButton::singleClick()
     switch (direction)
     {
     case forward:
-      log_i("Forward: stepper runs again");
+      log_d("Forward: stepper runs again");
       runForward();
       break;
     case reverse:
-      log_i("Reverse: stepper runs again");
+      log_d("Reverse: stepper runs again");
       runReverse();
       break;
     }
@@ -122,16 +123,16 @@ void StepperwButton::singleClick()
     break;
   case phase2:
     // der Stepper läuft und wird nun gestoppt
-    log_i("Forward/Reverse: stepper stops");
+    log_d("Forward/Reverse: stepper stops");
     stopStepper();
     switch (direction)
     {
     case forward:
-      log_i("Forward: turns to Reverse");
+      log_d("Forward: turns to Reverse");
       direction = reverse;
       break;
     case reverse:
-      log_i("Reverse: turns to forward");
+      log_d("Reverse: turns to forward");
       direction = forward;
       break;
     }
@@ -143,11 +144,11 @@ void StepperwButton::singleClick()
     switch (direction)
     {
     case forward:
-      log_i("Forward: stepper starts to run");
+      log_d("Forward: stepper starts to run");
       runForward();
       break;
     case reverse:
-      log_i("Reverse: stepper starts to run");
+      log_d("Reverse: stepper starts to run");
       runReverse();
       break;
     }
@@ -155,7 +156,7 @@ void StepperwButton::singleClick()
     break;
   case phase0:
     // die Richtung wird festgelegt
-    log_i("Forward: set direction");
+    log_d("Forward: set direction");
     direction = forward;
     phase = phase1;
     break;
@@ -165,11 +166,11 @@ void StepperwButton::singleClick()
 // this function will be called when the button was pressed 2 times in a short timeframe.
 void StepperwButton::doubleClick()
 {
-  log_i("doubleClick");
+  log_d("doubleClick");
   if (phase == phase0)
   {
     // die Richtung wird festgelegt
-    log_i("Reverse: set direction");
+    log_d("Reverse: set direction");
     direction = reverse;
     phase = phase1;
   }
@@ -178,11 +179,11 @@ void StepperwButton::doubleClick()
 void StepperwButton::longPressStop()
 {
   leftpos = stepsToSwitch;
-  log_i("longPress %d", leftpos);
   acc_pos_curr = left;
   phase = phase0;
   currpos = 0;
   set_stepsToSwitch = true;
+  readyToStep = stepsToSwitch != 0;
   GoLeft();
 } // longPressStop
 
@@ -190,14 +191,32 @@ void StepperwButton::multiClick()
 {
   if (button.getNumberClicks() == 3)
   {
-    log_i("multiClick");
+    log_d("multiClick 3");
     phase = phase0;
+  }
+  if (button.getNumberClicks() == 4)
+  {
+    log_d("multiClick 4");
+    switch (stepDir)
+    {
+    case A_dir:
+      SetDirection(B_dir);
+      break;
+    case B_dir:
+      SetDirection(A_dir);
+      break;
+    }
   }
 }
 
-void StepperBase::Attach()
+void StepperBase::Attach(stepDirections dir)
 {
   // setup the pins on the microcontroller:
+  if (pref.begin("CANguru", false))
+  {
+    log_d("Preferences erfolgreich gestartet");
+  }
+  SetDirection(dir);
   pinMode(A_plus, OUTPUT);
   pinMode(A_minus, OUTPUT);
   pinMode(B_plus, OUTPUT);
@@ -304,27 +323,23 @@ void StepperBase::SetPosition()
 // Zielposition ist links
 void StepperBase::GoLeft()
 {
-  log_i("going left");
+  log_d("going left C: %d - d: %d", currpos, leftpos);
   destpos = leftpos;
   // von currpos < 74 bis 74, des halb increment positiv
   increment = 1;
   step = 0;
   direction = reverse;
-  /*  endpos = -maxendpos; // +1
-    way = longway;*/
 }
 
 // Zielposition ist rechts
 void StepperBase::GoRight()
 {
-  log_i("going right");
+  log_d("going right C: %d - d: %d", currpos, leftpos);
   destpos = rightpos; // 1
                       // von currpos > 1 bis 1, des halb increment negativ
   increment = -1;
   step = steps - 1;
   direction = forward;
-  /*  endpos = maxendpos; // -1
-    way = longway;*/
 }
 
 // Überprüft periodisch, ob die Zielposition erreicht wird

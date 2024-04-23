@@ -1,0 +1,30 @@
+CAM-Ausgabe für aktuelles Projekt 190904 Melder.T3001
+Ausgabe am 08. Sep 2019, 11:46h
+Aktuelles Projekt erzeugt mit TARGET 20.4.0.87 discover
+Ausgabe erzeugt mit TARGET 3001! V20.4.0.87
+Aktuelles Projekt von TARGET NC-Edition: Kommerzielle Nutzung ist strafbar!
+LIEFERANSCHRIFT:
+  
+  
+  
+  D- 
+  Tel: 
+  FAX: 
+  eMail: 
+Größe der Platine: 100,33 mm x 35,245 mm
+
+Folgend die Beschreibung der erzeugten Dateien:
+
+190904 Melder.Top = 16 = Kupfer oben L1   ( *.Top )
+190904 Melder.Bot = 2 = Kupfer unten L2   ( *.Bot )
+190904 Melder.Tool = Bohrerliste
+190904 Melder.Drill = Durchkontaktierte Bohrungen
+190904 Melder.Outline = 23 = Platinen-Umriss   ( *.Outline )
+190904 Melder.StopTop = 18 = Lötstoppmaske oben   ( *.StopTop )
+190904 Melder.StopBot = 4 = Lötstoppmaske unten   ( *.StopBot )
+190904 Melder.PosiTop = 21 = Bestückungsdruck oben   ( *.PosiTop )
+190904 Melder.Special1 = 1 = Lösch unten   ( *.Special# )
+190904 Melder.Special2 = 15 = Lösch oben   ( *.Special# )
+190904 Melder.Apr = TARGET 3001! Blendenliste
+190904 Melder.Whl = Eagle kompatible Blendenliste
+
