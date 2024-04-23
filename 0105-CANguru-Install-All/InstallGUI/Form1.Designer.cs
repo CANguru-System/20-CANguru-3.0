@@ -92,7 +92,7 @@
             // 
             // saveBtn
             // 
-            this.saveBtn.Location = new System.Drawing.Point(380, 303);
+            this.saveBtn.Location = new System.Drawing.Point(380, 301);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(75, 23);
             this.saveBtn.TabIndex = 4;
@@ -102,7 +102,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(380, 497);
+            this.button2.Location = new System.Drawing.Point(380, 466);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -122,7 +122,7 @@
             // 
             // uploadBtn
             // 
-            this.uploadBtn.Location = new System.Drawing.Point(253, 497);
+            this.uploadBtn.Location = new System.Drawing.Point(380, 375);
             this.uploadBtn.Name = "uploadBtn";
             this.uploadBtn.Size = new System.Drawing.Size(75, 23);
             this.uploadBtn.TabIndex = 7;
@@ -188,7 +188,7 @@
             this.groupBox1.Size = new System.Drawing.Size(354, 129);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "processorBox";
+            this.groupBox1.Text = "Decoder";
             // 
             // rbBridge
             // 
@@ -251,7 +251,7 @@
             // 
             // helpbtn
             // 
-            this.helpbtn.Location = new System.Drawing.Point(380, 438);
+            this.helpbtn.Location = new System.Drawing.Point(380, 433);
             this.helpbtn.Name = "helpbtn";
             this.helpbtn.Size = new System.Drawing.Size(75, 23);
             this.helpbtn.TabIndex = 14;
@@ -261,7 +261,7 @@
             // 
             // erasebtn
             // 
-            this.erasebtn.Location = new System.Drawing.Point(380, 342);
+            this.erasebtn.Location = new System.Drawing.Point(380, 338);
             this.erasebtn.Name = "erasebtn";
             this.erasebtn.Size = new System.Drawing.Size(75, 23);
             this.erasebtn.TabIndex = 15;
@@ -305,7 +305,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(483, 524);
+            this.ClientSize = new System.Drawing.Size(479, 503);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.reportBox);
             this.Controls.Add(this.label5);
