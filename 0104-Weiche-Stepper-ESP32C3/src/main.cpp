@@ -65,7 +65,7 @@ uint16_t stepsToEnd;
 position rightORleft;
 stepDirections stepDirection;
 
-const uint16_t stepsToEnd_min = 1100;
+const uint16_t stepsToEnd_min = 900;
 const uint16_t stepsToEnd_std = 1140;
 const uint16_t stepsToEnd_max = 1200;
 
