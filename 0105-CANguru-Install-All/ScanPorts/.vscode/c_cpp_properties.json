@@ -469,10 +469,11 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60114",
+                "PLATFORMIO=60115",
                 "ARDUINO_NodeMCU_32S",
                 "ESP32_SCANNER",
                 "ESP32",
+                "CORE_DEBUG_LEVEL=4",
                 "HAVE_CONFIG_H",
                 "MBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\"",
                 "UNITY_INCLUDE_CONFIG_H",

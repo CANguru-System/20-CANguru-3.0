@@ -20,6 +20,8 @@ using System.Xml;
 using System.Timers;
 using System.Net;
 using static System.Net.Mime.MediaTypeNames;
+using QRCoder;
+using System.Windows.Controls;
 
 namespace InstallGUI
 {
@@ -67,8 +69,25 @@ namespace InstallGUI
         public Form1()
         {
             InitializeComponent();
+
+            //Subscribe to Event
+            eyeicon.MouseDown += new MouseEventHandler(eyeicon_MouseDown);
+            eyeicon.MouseUp += new MouseEventHandler(eyeicon_MouseUp);            // 
+
+            password.UseSystemPasswordChar = true;
         }
 
+        private void eyeicon_MouseDown(object sender, MouseEventArgs e)
+        {
+            password.UseSystemPasswordChar = false;
+
+        }
+
+        private void eyeicon_MouseUp(object sender, MouseEventArgs e)
+        {
+            password.UseSystemPasswordChar = true;
+
+        }
         // ************************ FORM LOAD **************************************************************
 
         private void Form1_Load(object sender, EventArgs e)
@@ -363,6 +382,8 @@ namespace InstallGUI
                         break;
                     case 'D':
                         ipbox.Text = data;
+                        if (data == "0.0.0.0")
+                            MessageBox.Show("WLAN-Fehler; Keine IP-Adresse: " + data, "Error!");
                         break;
                     default:
                         break;
@@ -392,7 +413,8 @@ namespace InstallGUI
                             // IP-Address
                             reportBox.Text = "IP-Adresse gespeichert.";
                             // load decoder firmware to decoder
-                            loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
+                            if (data != "0.0.0.0")
+                                loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
                             break;
                         default:
                             break;
@@ -527,5 +549,28 @@ namespace InstallGUI
             helpForm.ShowDialog();
         }
 
+        private void qrcode_Click(object sender, EventArgs e)
+        {
+            String url = url4qrcode.Text;
+            // https://github.com/CANguru-System/20-CANguru-3.0
+            if (url == "")
+                MessageBox.Show("Bitte Textfeld füllen!");
+            else
+            {
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+                QRCode qrCode = new QRCode(qrCodeData);
+                Bitmap qrCodeImage = qrCode.GetGraphic(20);
+                //
+                Form imageForm = new Form();
+                imageForm.Text = "CANguru-QR-Code-Generator";
+                imageForm.Size = new Size(qrCodeImage.Width, qrCodeImage.Height);
+                PictureBox pictureBox = new PictureBox();
+                pictureBox.Image = qrCodeImage;
+                pictureBox.Dock = DockStyle.Fill; // Fill the entire form
+                imageForm.Controls.Add(pictureBox);
+                imageForm.ShowDialog();
+            }
+        }
     }
 }

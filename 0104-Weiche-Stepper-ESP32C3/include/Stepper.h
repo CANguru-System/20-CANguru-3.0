@@ -51,7 +51,7 @@ const uint8_t btn_Step_pin = GPIO_NUM_21;
 const uint8_t maxstepperdelay = 10;
 const uint8_t minstepperdelay = maxstepperdelay / 5;
 const uint8_t stdstepperdelay = maxstepperdelay / 2;
-const unsigned long step_delay_max = 1200;
+const unsigned long step_delay_max = 600;
 
 void setContinue(bool c);
 bool getContinue();

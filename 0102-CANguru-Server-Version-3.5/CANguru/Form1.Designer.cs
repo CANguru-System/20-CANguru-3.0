@@ -94,6 +94,8 @@
             this.btnGetData = new System.Windows.Forms.Button();
             this.btnSetData = new System.Windows.Forms.Button();
             this.btnVerbose = new System.Windows.Forms.Button();
+            this.cntDecoders = new System.Windows.Forms.NumericUpDown();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.tabControl1.SuspendLayout();
             this.Telnet.SuspendLayout();
             this.groupCommand.SuspendLayout();
@@ -113,6 +115,7 @@
             this.Configuration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDecNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDelay)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cntDecoders)).BeginInit();
             this.SuspendLayout();
             // 
             // beenden
@@ -182,10 +185,12 @@
             // 
             // groupInput
             // 
+            this.groupInput.Controls.Add(this.cntDecoders);
             this.groupInput.Controls.Add(this.groupBox5);
             this.groupInput.Controls.Add(this.tbConnectAdr);
             this.groupInput.Controls.Add(this.groupAction);
             this.groupInput.Controls.Add(this.groupBox4);
+            this.groupInput.Controls.Add(this.groupBox8);
             this.groupInput.Location = new System.Drawing.Point(8, 8);
             this.groupInput.Margin = new System.Windows.Forms.Padding(2);
             this.groupInput.Name = "groupInput";
@@ -202,7 +207,7 @@
             this.groupBox5.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox5.Size = new System.Drawing.Size(115, 57);
+            this.groupBox5.Size = new System.Drawing.Size(90, 57);
             this.groupBox5.TabIndex = 7;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Time";
@@ -212,7 +217,7 @@
             this.timeBox.Location = new System.Drawing.Point(8, 18);
             this.timeBox.Multiline = true;
             this.timeBox.Name = "timeBox";
-            this.timeBox.Size = new System.Drawing.Size(100, 34);
+            this.timeBox.Size = new System.Drawing.Size(77, 34);
             this.timeBox.TabIndex = 0;
             this.timeBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -228,21 +233,21 @@
             // groupAction
             // 
             this.groupAction.Controls.Add(this.buttonConnect);
-            this.groupAction.Location = new System.Drawing.Point(273, 20);
+            this.groupAction.Location = new System.Drawing.Point(354, 20);
             this.groupAction.Margin = new System.Windows.Forms.Padding(2);
             this.groupAction.Name = "groupAction";
             this.groupAction.Padding = new System.Windows.Forms.Padding(2);
-            this.groupAction.Size = new System.Drawing.Size(186, 57);
+            this.groupAction.Size = new System.Drawing.Size(105, 57);
             this.groupAction.TabIndex = 3;
             this.groupAction.TabStop = false;
             this.groupAction.Text = "Action";
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(15, 23);
+            this.buttonConnect.Location = new System.Drawing.Point(8, 23);
             this.buttonConnect.Margin = new System.Windows.Forms.Padding(2);
             this.buttonConnect.Name = "buttonConnect";
-            this.buttonConnect.Size = new System.Drawing.Size(161, 25);
+            this.buttonConnect.Size = new System.Drawing.Size(91, 25);
             this.buttonConnect.TabIndex = 0;
             this.buttonConnect.Text = "Connect!";
             this.buttonConnect.UseVisualStyleBackColor = true;
@@ -787,6 +792,22 @@
             this.btnVerbose.UseVisualStyleBackColor = true;
             this.btnVerbose.Click += new System.EventHandler(this.btnVerbose_Click);
             // 
+            // cntDecoders
+            // 
+            this.cntDecoders.Location = new System.Drawing.Point(252, 47);
+            this.cntDecoders.Name = "cntDecoders";
+            this.cntDecoders.Size = new System.Drawing.Size(91, 20);
+            this.cntDecoders.TabIndex = 8;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Location = new System.Drawing.Point(246, 20);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(100, 57);
+            this.groupBox8.TabIndex = 9;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Anzahl Dekoder";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -827,6 +848,7 @@
             this.Configuration.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDecNumber)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDelay)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.cntDecoders)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -897,6 +919,8 @@
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Button writeName;
         private System.Windows.Forms.Button fileSaveButton;
+        private System.Windows.Forms.NumericUpDown cntDecoders;
+        private System.Windows.Forms.GroupBox groupBox8;
     }
 }
 

@@ -29,7 +29,7 @@
 */
 
 const uint8_t WIFI_CHANNEL = 0;
-const uint8_t maxSlaves = 20;
+const uint8_t maxSlaves = 50;
 const uint8_t macLen = 6;
 
 // zur Verarbeitung der MAC-Adressen
@@ -161,6 +161,8 @@ void setallSlavesAreReadyToZero();
 uint8_t getallSlavesAreReady();
 // erhöht SlavesAreReady um 1
 void incSlavesAreReadyToZero();
+// gibt die installierte Anzahl an Decodern vor
+void setCntDecoders(uint8_t cnt);
 // Scannt nach Slaves
 void Scan4Slaves();
 // setzt die vorgegebene MAC-Adresse des Masters

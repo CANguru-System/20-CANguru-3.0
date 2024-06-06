@@ -11,6 +11,9 @@ String subCommand;
 String ssid;
 String password;
 Preferences preferences;
+const uint8_t wifItrialsMax = 10;
+uint8_t wifItrials;
+IPAddress IP;
 
 void netzwerkScan()
 {
@@ -35,6 +38,24 @@ void netzwerkScan()
   }
 }
 
+#ifdef ESP32C3
+void stopStepper()
+{
+  uint8_t A_plus = GPIO_NUM_10;
+  uint8_t A_minus = GPIO_NUM_7;
+  uint8_t B_plus = GPIO_NUM_6;
+  uint8_t B_minus = GPIO_NUM_5;
+  pinMode(A_plus, OUTPUT);
+  pinMode(A_minus, OUTPUT);
+  pinMode(B_plus, OUTPUT);
+  pinMode(B_minus, OUTPUT);
+  digitalWrite(A_plus, LOW);
+  digitalWrite(A_minus, LOW);
+  digitalWrite(B_plus, LOW);
+  digitalWrite(B_minus, LOW);
+}
+#endif
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -55,6 +76,44 @@ void setup()
     log_i("Preferences wurde erfolgreich gestartet");
   }
   LED_on();
+#ifdef ESP32C3
+  stopStepper();
+#endif
+}
+
+void connectionStatusMessage(wl_status_t st)
+{
+  switch (st)
+  {
+  case WL_NO_SHIELD:
+    log_e("Status: %d - WL_NO_SHIELD", st);
+    break;
+  case WL_IDLE_STATUS:
+    log_e("Status: %d - WL_IDLE_STATUS", st);
+    break;
+  case WL_NO_SSID_AVAIL:
+    log_e("Status: %d - WL_NO_SSID_AVAIL", st);
+    break;
+  case WL_SCAN_COMPLETED:
+    log_e("Status: %d - WL_SCAN_COMPLETED", st);
+    break;
+  case WL_CONNECTED:
+    log_e("Status: %d - WL_CONNECTED", st);
+    break;
+  case WL_CONNECT_FAILED:
+    log_e("Status: %d - WL_CONNECT_FAILED", st);
+    break;
+  case WL_CONNECTION_LOST:
+    log_e("Status: %d - WL_CONNECTION_LOST", st);
+    break;
+  case WL_DISCONNECTED:
+    log_e("Status: %d - WL_DISCONNECTED", st);
+    break;
+
+  default:
+    log_e("Status: %d - WL_OK", st);
+    break;
+  }
 }
 
 void loop()
@@ -90,13 +149,27 @@ void loop()
     }
     if (command == "IPAD")
     {
-
-      WiFi.begin(ssid, password);
-      while (WiFi.status() != WL_CONNECTED)
+      wifItrials = wifItrialsMax;
+      WiFi.mode(WIFI_STA);
+      wl_status_t status = WiFi.begin(ssid, password);
+      while ((status != WL_CONNECTED && wifItrials > 0))
       {
-        delay(500);
+        status = (wl_status_t)WiFi.waitForConnectResult(2000);
+
+      //  connectionStatusMessage(status);
+        wifItrials--;
       }
-      IPAddress IP = WiFi.localIP();
+      if (wifItrials == 0)
+      {
+        IP[0] = 0;
+        IP[1] = 0;
+        IP[2] = 0;
+        IP[3] = 0;
+      }
+      else
+      {
+        IP = WiFi.localIP();
+      }
       char ip[4]; // prepare a buffer for the data
       printf("&1D\r\n");
       for (uint8_t i = 0; i < 4; i++)

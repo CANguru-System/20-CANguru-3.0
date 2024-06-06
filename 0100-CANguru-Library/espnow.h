@@ -118,22 +118,20 @@ void generateHash(uint8_t offset)
 // startet WLAN im AP-Mode, damit meldet sich der Decoder beim Master
 void startAPMode()
 {
-  log_i("");
-  log_i("WIFI Connect AP Mode");
-  log_i("--------------------");
   WiFi.persistent(false); // Turn off persistent to fix flash crashing issue.
   WiFi.mode(WIFI_OFF);    // https://github.com/esp8266/Arduino/issues/3100
   WiFi.mode(WIFI_AP);
-
   // Connect to Wi-Fi
   String ssid1 = WiFi.softAPmacAddress();
   ssid0 = ssid0 + ssid1;
   char ssid[30];
   ssid0.toCharArray(ssid, 30);
-  if (!WiFi.softAP(ssid)) // Name des Access Points
-    log_i("WIFI %s failed", ssid);
-  else
+  if (WiFi.softAP(ssid)) // Name des Access Points
     log_i("WIFI %s OK", ssid);
+  else
+    log_i("WIFI %s failed", ssid);
+  // WLAN -Verbindungen können wieder ausgeschaltet werden
+  WiFi.disconnect();
 }
 
 // Fehlermeldungen, die hoffentlich nicht gebraucht werden
@@ -264,6 +262,13 @@ Byte 7	D-Byte 7	8 Bit Daten
 // sendPING ist die Antwort der Decoder auf eine PING-Anfrage
 void sendPING()
 {
+  //  delay(ms_nativeDelay);
+  unsigned long last_step_time = micros(); // timestamp in us of when the last step was taken
+  if ((millis() - last_step_time) >= ms_nativeDelay)
+  {
+    yield();
+    last_step_time = millis();
+  }
   statusPING = false;
   opFrame[CANcmd] = PING;
   opFrame[Framelng] = data3;
@@ -276,10 +281,10 @@ void sendPING()
   opFrame[data6] = DEVTYPE >> 8;
   opFrame[data7] = DEVTYPE;
   sendCanFrame();
-  #ifdef TIME2POLL
+#ifdef TIME2POLL
   if (time2Poll == 0)
     time2Poll = millis();
-  #endif
+#endif
 }
 
 void sendDecoderIsAlive()

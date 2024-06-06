@@ -110,34 +110,27 @@ void iNetEvtCB(arduino_event_id_t event, arduino_event_info_t info)
   {
   case ARDUINO_EVENT_WIFI_SCAN_DONE:
     displayLCD("Scanning finished");
-    log_i("Scanning finished");
     scanningFinished = true;
     break;
   case ARDUINO_EVENT_ETH_START: // SYSTEM_EVENT_ETH_START:
     displayLCD("ETHERNET Started");
-    log_i("ETHERNET Started");
     break;
   case ARDUINO_EVENT_ETH_CONNECTED: // SYSTEM_EVENT_ETH_CONNECTED:
     displayLCD("ETHERNET Connected");
     // set eth hostname here
-    log_i("ETHERNET Connected");
     ETH.setHostname("CANguru-Bridge");
     break;
   case ARDUINO_EVENT_ETH_GOT_IP: // SYSTEM_EVENT_ETH_GOT_IP:
     displayIP(ETH.localIP());
     displayLCD("");
     displayLCD("Connect!");
-    log_i("Connect");
-    Serial.println(F("Connect!")); // %%
     break;
   case ARDUINO_EVENT_ETH_DISCONNECTED: // SYSTEM_EVENT_ETH_DISCONNECTED:
     displayLCD("ETHERNET Disconnected");
-    log_i("ETHERNET Disconnected");
     setServerStatus(false);
     break;
   case ARDUINO_EVENT_ETH_STOP: // SYSTEM_EVENT_ETH_STOP:
     displayLCD("ETHERNET Stopped");
-    log_i("ETHERNET Stopped");
     setServerStatus(false);
     break;
   default:
@@ -218,6 +211,7 @@ void stillAliveBlinking()
         // FEHLER: Slave hat sich nicht gemeldet!
         setAlive(slv, ErrorMsgSent);
         M_ERROR[0x05] = slv;
+        log_i("Decoder lost #%d", slv);
         sendToServer(M_ERROR, MSGfromBridge);
       }
     }

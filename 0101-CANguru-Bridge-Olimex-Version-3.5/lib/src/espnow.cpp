@@ -16,17 +16,17 @@
 #include "MOD-LCD.h"
 #include <telnet.h>
 #include "CANguru.h"
+#include <List.hpp>
 
 uint8_t slaveCnt;
 uint8_t slaveCurr;
 uint8_t nbrSlavesAreReady;
+uint8_t wantedscanResults;
 
 // willkürlich festgelegte MAC-Adresse
 const uint8_t masterCustomMac[] = {0x30, 0xAE, 0xA4, 0x89, 0x92, 0x71};
 
 slaveInfoStruct slaveInfo[maxSlaves];
-slaveInfoStruct tmpSlaveInfo;
-esp_now_peer_info_t cand;
 String ssidSLV = "CNgrSLV";
 
 bool SYSseen;
@@ -47,14 +47,6 @@ uint8_t matchUID(uint8_t *buffer)
       return s;
   }
   return 0xFF;
-}
-
-// kopiert die Struktur slaveInfoStruct von source nach dest
-void cpySlaveInfo(slaveInfoStruct dest, slaveInfoStruct source)
-{
-  dest.slave = source.slave;
-  dest.peer = source.peer;
-  dest.no = source.no;
 }
 
 // ESPNow wird initialisiert
@@ -121,57 +113,82 @@ bool macIsEqual(const uint8_t m0[macLen], const uint8_t m1[macLen])
   return true;
 }
 
+void setCntDecoders(uint8_t cnt)
+{
+  wantedscanResults = cnt;
+}
+
 // Wir suchen nach Slaves
 // Scannt nach Slaves
 void Scan4Slaves()
 {
+  struct macType
+  {
+    uint8_t m[macLen];
+  };
+  macType mac;
+  const uint8_t scanTrial = 10;
+  uint8_t scanResults;
   displayLCD("Suche Slaves ...");
   msgStartScanning();
-  int8_t scanResults = WiFi.scanNetworks();
+  uint8_t tmpscanResults;
+  // Create an immutable list
+  List<macType> scanList;
+  // für widerspenstige Dekoder machen wir mehrere Durchläufe
+  for (uint8_t t = 0; t < scanTrial; t++)
+  {
+    // lies alle Strahler ein
+    scanResults = WiFi.scanNetworks(false, false, false, 5000);
+    tmpscanResults = 0;
+    // interessant sind die, die mit den richtigen Zeichen beginnen
+    // Prüfen ob der Netzname mit `Slave` beginnt
+    for (uint8_t i = 0; i < scanResults; i++)
+    {
+      if (WiFi.SSID(i).indexOf(ssidSLV) == 0)
+      {
+        // Ja, dann haben wir einen Slave gefunden
+        // MAC-Adresse aus der BSSID ses Slaves ermitteln und in der Slave info struktur speichern
+        if (macLen == sscanf(WiFi.BSSIDstr(i).c_str(), "%X:%X:%X:%X:%X:%X", &mac.m[0], &mac.m[1], &mac.m[2], &mac.m[3], &mac.m[4], &mac.m[5]))
+          scanList.add(mac);
+        tmpscanResults++;
+      }
+    }
+    char chs[50];
+    sprintf(chs, "Scan# %d - %d slave(s) found of %d!", t, tmpscanResults, wantedscanResults);
+    displayLCD(chs);
+    if ((tmpscanResults >= wantedscanResults) || (tmpscanResults == 0))
+    {
+      scanResults = tmpscanResults;
+      break;
+    }
+  }
   if (scanResults == 0)
   {
     displayLCD("Noch kein WiFi Gerät im AP Modus gefunden");
   }
   else
   {
-    for (int i = 0; i < scanResults; ++i)
+    for (int8_t i = 0; i < scanResults; ++i)
     {
-      // Print SSID and RSSI for each device found
-      String SSID = WiFi.SSID(i);
-      String BSSIDstr = WiFi.BSSIDstr(i);
-
-      // Prüfen ob der Netzname mit `Slave` beginnt
-      if (SSID.indexOf(ssidSLV) == 0)
+      mac = scanList.get(i);
+      bool notAlreadyFound = true;
+      for (uint8_t s = 0; s < slaveCnt; s++)
       {
-        // Ja, dann haben wir einen Slave gefunden
-        // MAC-Adresse aus der BSSID ses Slaves ermitteln und in der Slave info struktur speichern
-        int mac[macLen];
-        if (macLen == sscanf(BSSIDstr.c_str(), "%x:%x:%x:%x:%x:%x", &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]))
+        if (macIsEqual(slaveInfo[s].slave.peer_addr, mac.m) == true)
         {
-          for (int ii = 0; ii < macLen; ++ii)
-          {
-            cand.peer_addr[ii] = (uint8_t)mac[ii];
-          }
+          notAlreadyFound = false;
+          break;
         }
-        bool notAlreadyFound = true;
-        for (uint8_t s = 0; s < slaveCnt; s++)
-        {
-          if (macIsEqual(slaveInfo[s].slave.peer_addr, cand.peer_addr) == true)
-          {
-            notAlreadyFound = false;
-            break;
-          }
-        }
-        if (notAlreadyFound == true)
-        {
-          memcpy(&slaveInfo[slaveCnt].slave.peer_addr, &cand.peer_addr, macLen);
-          slaveInfo[slaveCnt].slave.channel = WIFI_CHANNEL;
-          slaveInfo[slaveCnt].slave.encrypt = 0;
-          slaveInfo[slaveCnt].peer = &slaveInfo[slaveCnt].slave;
-          slaveInfo[slaveCnt].no = slaveCnt;
-          slaveInfo[slaveCnt].decoderIsAlive = isAlive;
-          slaveCnt++;
-        }
+      }
+      if (notAlreadyFound == true)
+      {
+        memcpy(&slaveInfo[slaveCnt].slave.peer_addr, &mac.m, macLen);
+        slaveInfo[slaveCnt].slave.channel = WIFI_CHANNEL;
+        slaveInfo[slaveCnt].slave.encrypt = 0;
+        slaveInfo[slaveCnt].peer = &slaveInfo[slaveCnt].slave;
+        slaveInfo[slaveCnt].no = slaveCnt;
+        slaveInfo[slaveCnt].decoderIsAlive = isAlive;
+        slaveCnt++;
       }
     }
   }
@@ -195,52 +212,6 @@ void initVariant()
 void addSlaves()
 {
   uint8_t Clntbuffer[CAN_FRAME_SIZE]; // buffer to hold incoming packet,
-  macAddressesstruct macAddresses[maxSlaves];
-  for (uint8_t s = 0; s < slaveCnt; s++)
-  {
-    if (esp_now_add_peer(slaveInfo[s].peer) == ESP_OK)
-    {
-      for (uint8_t i = 0; i < macLen; i++)
-      {
-        macAddresses[s].peer_addr[i] = slaveInfo[s].slave.peer_addr[i];
-      }
-      macAddresses[s].mac = 0;
-      for (uint8_t m = 0; m < macLen - 1; m++)
-      {
-        macAddresses[s].mac += macAddresses[s].peer_addr[m];
-        macAddresses[s].mac = macAddresses[s].mac << 8;
-      }
-      macAddresses[s].mac += macAddresses[s].peer_addr[macLen - 1];
-      // und wieder loesen
-      // wird spaeter beim Senden wieder verbunden
-      // espnow_add_peer(src_addr, NULL);
-      // espnow_send();
-      esp_now_del_peer(slaveInfo[s].slave.peer_addr);
-    }
-  }
-  // bubblesort
-  uint8_t peer_addr[macLen];
-  for (uint8_t s = 0; s < (slaveCnt - 1); s++)
-  {
-    for (int o = 0; o < (slaveCnt - (s + 1)); o++)
-    {
-      if (macAddresses[o].mac > macAddresses[o + 1].mac)
-      {
-        //
-        uint64_t t = macAddresses[o].mac;
-        memcpy(peer_addr, macAddresses[o].peer_addr, macLen);
-        cpySlaveInfo(tmpSlaveInfo, slaveInfo[o]);
-        //
-        macAddresses[o].mac = macAddresses[o + 1].mac;
-        memcpy(macAddresses[o].peer_addr, macAddresses[o + 1].peer_addr, macLen);
-        cpySlaveInfo(slaveInfo[o], slaveInfo[o + 1]);
-        //
-        macAddresses[o + 1].mac = t;
-        memcpy(macAddresses[o + 1].peer_addr, peer_addr, macLen);
-        cpySlaveInfo(slaveInfo[o], tmpSlaveInfo);
-      }
-    }
-  }
   for (uint8_t s = 0; s < slaveCnt; s++)
   {
     memcpy(&Clntbuffer, slaveInfo[s].slave.peer_addr, macLen);
@@ -326,13 +297,33 @@ aliveStatus getAlive(uint8_t cnt)
 // der slave wird mit der nummer angesprochen, die sich durch die Reihenfolge beim Erkennen (scannen) ergibt
 void sendTheData(uint8_t slave, const uint8_t *data, size_t len)
 {
+  delay(5);
   if (esp_now_add_peer(slaveInfo[slave].peer) == ESP_OK)
   {
     esp_err_t sendResult = esp_now_send(slaveInfo[slave].slave.peer_addr, data, len);
     if (sendResult != ESP_OK)
+    {
       printESPNowError(sendResult);
+      log_i("--------------------------------->");
+    }
+
     esp_now_del_peer(slaveInfo[slave].slave.peer_addr);
   }
+  else
+    log_i("esp_now_add_peer faild Slave: %d", slave);
+  //  delay(10);
+  /*
+    char macStr[30] = {0};
+    sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", slaveInfo[slave].slave.peer_addr[0], slaveInfo[slave].slave.peer_addr[1], slaveInfo[slave].slave.peer_addr[2], slaveInfo[slave].slave.peer_addr[3], slaveInfo[slave].slave.peer_addr[4], slaveInfo[slave].slave.peer_addr[5]);
+    log_i("sendTheData0: %d-%s", slave, macStr);
+    Serial.print("sendTheData1: " + String(slave) + "-(" + String(len) + ")-");
+    for (uint8_t i = 0; i < len; i++)
+    {
+      char s[7];
+      sprintf(s, "%02X:", data[i]);
+      Serial.print(s);
+    }
+    Serial.println();*/
 }
 
 void setallSlavesAreReadyToZero()
@@ -367,27 +358,17 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     nbrSlavesAreReady++;
     return;
   }
+  if (data_len == macLen + 1)
+  {
+    // Rückmeldung der slaves, nachdem sie ihre UID festgelegt haben
+    // mit nbrSlavesAreReady wird die Anzahl der Rückmeldungen gezählt
+    nbrSlavesAreReady++;
+    return;
+  }
   switch (data[0x01])
   {
   case PING_R:
     sendToServer(Clntbuffer, fromClnt);
-    for (uint8_t s = 0; s < slaveCnt; s++)
-    {
-      uint8_t m[macLen];
-      for (uint8_t cnt = 0; cnt < macLen; cnt++)
-      {
-        m[cnt] = mac_addr[cnt];
-      }
-      /*      if (macIsEqual(slaveInfo[s].slave.peer_addr, m))
-            {
-              if (data[12] == DEVTYPE_GATE)
-              {
-                gate.isType = true;
-                gate.decoder_no = s;
-                break;
-              }
-            }*/
-    }
     break;
   case CONFIG_Status_R:
     sendToServer(Clntbuffer, fromClnt);
@@ -417,7 +398,7 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     }
     break;
   case BlinkAlive_R:
-    setAlive(data[0x06] , isAlive);
+    setAlive(data[0x06], isAlive);
     break;
   default:
     // send received data via Ethernet to GW and evtl to SYS

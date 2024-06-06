@@ -192,6 +192,7 @@ void StepperwButton::multiClick()
   if (button.getNumberClicks() == 3)
   {
     log_d("multiClick 3");
+    log_d("Reset direction");
     phase = phase0;
   }
   if (button.getNumberClicks() == 4)
@@ -206,6 +207,12 @@ void StepperwButton::multiClick()
       SetDirection(A_dir);
       break;
     }
+  }
+  if (button.getNumberClicks() == 5)
+  {
+    log_d("multiClick 5");
+    log_d("Restart ESP32");
+    ESP.restart();
   }
 }
 

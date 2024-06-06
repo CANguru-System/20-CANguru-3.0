@@ -228,6 +228,7 @@ void fillTheCircle()
 
 void displayLCD(const char *txt)
 {
+  log_i("LCD: %s", txt);
   int y = display9341.getCursorY();
   if (y > _height)
   {

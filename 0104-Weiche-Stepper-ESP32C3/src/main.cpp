@@ -39,6 +39,7 @@ enum Kanals
 Kanals CONFIGURATION_Status_Index = Kanal00;
 
 uint8_t uid_device[uid_num];
+uint16_t ms_nativeDelay;
 
 // Zeigen an, ob eine entsprechende Anforderung eingegangen ist
 bool CONFIG_Status_Request = false;
@@ -65,7 +66,7 @@ uint16_t stepsToEnd;
 position rightORleft;
 stepDirections stepDirection;
 
-const uint16_t stepsToEnd_min = 900;
+const uint16_t stepsToEnd_min = 1000;
 const uint16_t stepsToEnd_std = 1140;
 const uint16_t stepsToEnd_max = 1200;
 
@@ -90,7 +91,12 @@ void setup()
 {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
   Serial.begin(bdrMonitor);
-  delay(500);
+  uint8_t nativeMACAddress[macLen];
+  WiFi.macAddress(nativeMACAddress);
+  ms_nativeDelay = nativeMACAddress[macLen-1];
+  // a unique delay is necessary to avoid a jam on the way to the router
+  delay(350+ms_nativeDelay);
+  log_d("delay: %d", ms_nativeDelay);
   log_i("\r\n\r\nCANguru - Stepper - Weiche");
   log_i("\n on %s", ARDUINO_BOARD);
   log_i("CPU Frequency = %d Mhz", F_CPU / 1000000);
@@ -107,8 +113,6 @@ void setup()
   startAPMode();
   // der Master (CANguru-Bridge) wird registriert
   addMaster();
-  // WLAN -Verbindungen können wieder ausgeschaltet werden
-  WiFi.disconnect();
 
   // die preferences-Library wird gestartet
 

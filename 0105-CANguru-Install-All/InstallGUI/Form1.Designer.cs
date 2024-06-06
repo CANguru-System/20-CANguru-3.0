@@ -1,4 +1,6 @@
-﻿namespace InstallGUI
+﻿using System.Windows.Forms;
+
+namespace InstallGUI
 {
     partial class Form1
     {
@@ -54,7 +56,11 @@
             this.label5 = new System.Windows.Forms.Label();
             this.reportBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.qrcode = new System.Windows.Forms.Button();
+            this.url4qrcode = new System.Windows.Forms.TextBox();
+            this.eyeicon = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -92,7 +98,7 @@
             // 
             // saveBtn
             // 
-            this.saveBtn.Location = new System.Drawing.Point(380, 301);
+            this.saveBtn.Location = new System.Drawing.Point(380, 299);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(75, 23);
             this.saveBtn.TabIndex = 4;
@@ -102,7 +108,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(380, 466);
+            this.button2.Location = new System.Drawing.Point(380, 507);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -122,7 +128,7 @@
             // 
             // uploadBtn
             // 
-            this.uploadBtn.Location = new System.Drawing.Point(380, 375);
+            this.uploadBtn.Location = new System.Drawing.Point(380, 369);
             this.uploadBtn.Name = "uploadBtn";
             this.uploadBtn.Size = new System.Drawing.Size(75, 23);
             this.uploadBtn.TabIndex = 7;
@@ -251,7 +257,7 @@
             // 
             // helpbtn
             // 
-            this.helpbtn.Location = new System.Drawing.Point(380, 433);
+            this.helpbtn.Location = new System.Drawing.Point(380, 470);
             this.helpbtn.Name = "helpbtn";
             this.helpbtn.Size = new System.Drawing.Size(75, 23);
             this.helpbtn.TabIndex = 14;
@@ -261,7 +267,7 @@
             // 
             // erasebtn
             // 
-            this.erasebtn.Location = new System.Drawing.Point(380, 338);
+            this.erasebtn.Location = new System.Drawing.Point(380, 334);
             this.erasebtn.Name = "erasebtn";
             this.erasebtn.Size = new System.Drawing.Size(75, 23);
             this.erasebtn.TabIndex = 15;
@@ -271,7 +277,7 @@
             // 
             // ipbox
             // 
-            this.ipbox.Location = new System.Drawing.Point(201, 322);
+            this.ipbox.Location = new System.Drawing.Point(240, 322);
             this.ipbox.Name = "ipbox";
             this.ipbox.Size = new System.Drawing.Size(127, 20);
             this.ipbox.TabIndex = 16;
@@ -279,7 +285,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(201, 302);
+            this.label5.Location = new System.Drawing.Point(240, 302);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(57, 13);
             this.label5.TabIndex = 17;
@@ -301,11 +307,41 @@
             this.label6.TabIndex = 19;
             this.label6.Text = "Meldungen";
             // 
+            // qrcode
+            // 
+            this.qrcode.Location = new System.Drawing.Point(299, 507);
+            this.qrcode.Name = "qrcode";
+            this.qrcode.Size = new System.Drawing.Size(75, 23);
+            this.qrcode.TabIndex = 20;
+            this.qrcode.Text = "QR-Code";
+            this.qrcode.UseVisualStyleBackColor = true;
+            this.qrcode.Click += new System.EventHandler(this.qrcode_Click);
+            // 
+            // url4qrcode
+            // 
+            this.url4qrcode.Location = new System.Drawing.Point(23, 507);
+            this.url4qrcode.Name = "url4qrcode";
+            this.url4qrcode.Size = new System.Drawing.Size(256, 20);
+            this.url4qrcode.TabIndex = 21;
+            // 
+            // eyeicon
+            // 
+            this.eyeicon.Image = ((System.Drawing.Image)(resources.GetObject("eyeicon.Image")));
+            this.eyeicon.InitialImage = ((System.Drawing.Image)(resources.GetObject("eyeicon.InitialImage")));
+            this.eyeicon.Location = new System.Drawing.Point(152, 324);
+            this.eyeicon.Name = "eyeicon";
+            this.eyeicon.Size = new System.Drawing.Size(25, 16);
+            this.eyeicon.TabIndex = 22;
+            this.eyeicon.TabStop = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(479, 503);
+            this.ClientSize = new System.Drawing.Size(479, 538);
+            this.Controls.Add(this.eyeicon);
+            this.Controls.Add(this.url4qrcode);
+            this.Controls.Add(this.qrcode);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.reportBox);
             this.Controls.Add(this.label5);
@@ -332,6 +368,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -364,6 +401,9 @@
         private System.Windows.Forms.TextBox reportBox;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.Button qrcode;
+        private System.Windows.Forms.TextBox url4qrcode;
+        private System.Windows.Forms.PictureBox eyeicon;
     }
 }
 

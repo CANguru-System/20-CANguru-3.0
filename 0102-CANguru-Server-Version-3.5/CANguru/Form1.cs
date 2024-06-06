@@ -1,9 +1,11 @@
 ﻿
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -70,7 +72,7 @@ namespace CANguruX
         private static System.Timers.Timer gettingConnectionTimer;
         Int16 elapsedmillis4Connection;
         //
-        private static System.Timers.Timer trying2Connct2BridgeTimer;
+//        private static System.Timers.Timer trying2Connct2BridgeTimer;
         //
         //
         private static System.Timers.Timer showResetValuesTimer;
@@ -84,9 +86,10 @@ namespace CANguruX
         bool receivePINGInfos;
         byte[,] CANguruArr;
         byte[,] CANguruPINGArr;
-        //String[] decoders;
+        String CANElementeArray;
         List<string> decoders;
-    struct configStruct
+        List<string> allDecoders;
+        struct configStruct
         {
             public Label indicatorLabel;
             public NumericUpDown indicatorNumericUpDown;
@@ -204,6 +207,7 @@ namespace CANguruX
                 // CANClient sendet nach UDP (WDP)
                 CANClient = new UdpClient();
                 ConfigStream = new CConfigStream(names);
+                allDecoders = new List<string>();
                 // Determine whether the directory exists.
                 string iniStr = string.Concat(Cnames.path, Cnames.ininame);
                 bool fexists = File.Exists(iniStr);
@@ -251,6 +255,9 @@ namespace CANguruX
                             decoders.Add(ini.GetKeyValue("Decoder", String.Concat("Decoder", String.Format("{0:D03}", d))));
                         }
                     }
+                    int cntDec;
+                    int.TryParse(ini.GetKeyValue("Decoder", "expectedDecoders"), out cntDec);
+                    cntDecoders.Value = cntDec;
                 }
                 else
                 {
@@ -276,12 +283,12 @@ namespace CANguruX
                 startTime = DateTime.Now;
                 // Create a timer with a ten second interval.
                 // the timer tries to connct to the CANguruBridge
-                trying2Connct2BridgeTimer = new System.Timers.Timer(5000);
+/*                trying2Connct2BridgeTimer = new System.Timers.Timer(5000);
                 // Hook up the Elapsed event for the timer. 
                 trying2Connct2BridgeTimer.Elapsed += trying2Connct2Bridge;
                 trying2Connct2BridgeTimer.AutoReset = true;
                 // and start the timer
-                trying2Connct2BridgeTimer.Start();
+                trying2Connct2BridgeTimer.Start();*/
                 this.Load += Form1_Load;
             }
             catch (Exception e)
@@ -360,6 +367,10 @@ namespace CANguruX
             numUpDnDelay.Maximum = 15;
             numUpDnDelay.Minimum = 1;
             numUpDnDelay.Value = 10;
+            //
+            cntDecoders.Maximum = 255;
+            cntDecoders.Minimum = 1;
+            cntDecoders.Value = 1;
             //
             // CAN
             threadCAN = new Thread(new ThreadStart(fromCAN2UDP));
@@ -642,7 +653,7 @@ namespace CANguruX
             /*01*/    "CAN magic 60113 start",
             /*02*/    "CAN enabled all loco protos",
             /*03*/    "Start Train-Application",
-            /*04*/    "Alle Decoder gelesen",
+            /*04*/    " Decoder gefunden",
             /*05*/    " -- No Slaves!",
             /*06*/    "replied CAN ping (fake member)",
             /*07*/    "Start scanning for slaves ... ",
@@ -662,6 +673,15 @@ namespace CANguruX
             if (src == CMD.MSGfromBridge)
             {
                 str = MSGFromTheBridge(currCMD);
+                // zeigt verlorene Dekoder an
+                if (currCMD == 0x04)
+                {
+                    str = CANElemente.Items.Count.ToString() + str;
+                }
+                if (currCMD == 0x08)
+                {
+                    str += allDecoders.ElementAt(content[5]);
+                }
                 return str;
             }
             if (!verbose)
@@ -1115,6 +1135,7 @@ namespace CANguruX
                                                 {
                                                     decoders.Remove(descrbtn);
                                                 }
+                                                allDecoders.Add(descrbtn);
                                             }
                                             //read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
                                             if (CANguruDescriptionNbr > 0)
@@ -1336,7 +1357,7 @@ namespace CANguruX
                                     break;
                                 case 0x89:
                                     gettingConnectionTimer.Stop();
-                                    trying2Connct2BridgeTimer.Stop();
+//                                    trying2Connct2BridgeTimer.Stop();
                                     this.buttonConnect.Invoke(new MethodInvoker(() => this.buttonConnect.Text = "Connected!"));
                                     Cnames.IP_CAN = remoteIPEndPoint.Address.ToString();
                                     this.tbConnectAdr.Invoke(new MethodInvoker(() => this.tbConnectAdr.Text = Cnames.IP_CAN));
@@ -1514,7 +1535,7 @@ namespace CANguruX
             if (result == DialogResult.Yes)
             {
                 // Aufräumen
-                trying2Connct2BridgeTimer.Stop();
+//                trying2Connct2BridgeTimer.Stop();
                 timeTimer.Stop();
                 ini.RemoveAllSections();
                 ini.AddSection("IP-address").AddKey("IPCAN").Value = Cnames.IP_CAN;
@@ -1532,6 +1553,7 @@ namespace CANguruX
                 tabControl1.SelectTab(2);
                 int decs = CANElemente.Items.Count;
                 ini.AddSection("Decoder").AddKey("DecoderCnt").Value = decs.ToString();
+                ini.AddSection("Decoder").AddKey("expectedDecoders").Value = cntDecoders.Value.ToString();
                 for (byte d = 0; d < decs; d++)
                 {
                     CANElemente.SetSelected(d, true);
@@ -1654,7 +1676,7 @@ namespace CANguruX
                     CANguruArrLine = 0;
                     CANguruDescriptionNbr = 0;
                     break;
-                case 500:
+                case 1000:
                     a1milliTimer.Enabled = false;
                     receivePINGInfos = false;
                     getConfigData(CANguruDecoderNbr, CANguruDescriptionNbr);
@@ -1703,7 +1725,7 @@ namespace CANguruX
 
         private void gettingConnection(Object source, ElapsedEventArgs e)
         {
-            byte[] M_SEND_IP = { 0x00, 0x88, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] M_SEND_IP = { 0x00, 0x88, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             Cnames.IP_CAN = "255.255.255.255";
             if (gettingConnectionTimer.Enabled == false)
                 return;
@@ -1715,6 +1737,8 @@ namespace CANguruX
             {
                 MessageBox.Show("Scan-Exception: " + exception.Message);
             }
+            // setzt die Anzahl von Decodern und überträgt sie anschließend zur Bridge
+            M_SEND_IP[5] = Decimal.ToByte(cntDecoders.Value);
             CANClient.Send(M_SEND_IP, Cnames.lngFrame);
             elapsedmillis4Connection++;
             if (elapsedmillis4Connection > 250)
@@ -1741,6 +1765,7 @@ namespace CANguruX
         // diese Antwort wird in fromCAN2UDP() unter 0x89 empfangen und ausgewertet
         public void onConnectClick(object sender, EventArgs e)
         {
+            this.buttonConnect.Invoke(new MethodInvoker(() => this.buttonConnect.Text = "Connecting ..."));
             cntGleisbild = ConfigStream.read_track_file();
             if (!checkFiles())
                 return;

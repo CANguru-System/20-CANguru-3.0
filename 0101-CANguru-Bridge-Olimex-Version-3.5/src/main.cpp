@@ -684,7 +684,7 @@ void proc_fromCAN2WDPandServer()
       sendToServer(UDPbuffer, fromCAN);
       sendToWDPfromCAN(UDPbuffer);
       //      sendOutTCPfromCAN(UDPbuffer);
-      delay(100);
+      delay(10);
       if (UDPbuffer[12] == DEVTYPE_GB && get_slaveCnt() == 0)
       {
         printMSG(NoSlaves);
@@ -1087,6 +1087,7 @@ bool proc_wait4Server()
     switch (UDPbuffer[0x1])
     {
     case CALL4CONNECT:
+      setCntDecoders(UDPbuffer[5]);
       setServerStatus(true);
       ipGateway = telnetClient.setipBroadcast(UDPFromServer.remoteIP());
       UDPbuffer[0x1]++;
@@ -1183,14 +1184,16 @@ void loop()
       produceFrame(M_CAN_PING);
       proc2CAN(M_PATTERN, toCAN);
       proc2Clnts(M_PATTERN, toClnt);
+      delay(500);
       canguruStatus = wait4slaves;
     }
     break;
   case wait4slaves:
     proc_fromCAN2WDPandServer();
-    if (getallSlavesAreReady() == (get_slaveCnt() + 1))
+    if (getallSlavesAreReady() >= (get_slaveCnt()))
     {
       canguruStatus = systemIsRunning;
+  log_i("systemIsRunning");
     }
     break;
   case systemIsRunning:
