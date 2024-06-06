@@ -86,7 +86,6 @@ namespace CANguruX
         bool receivePINGInfos;
         byte[,] CANguruArr;
         byte[,] CANguruPINGArr;
-        String CANElementeArray;
         List<string> decoders;
         List<string> allDecoders;
         struct configStruct
@@ -370,7 +369,6 @@ namespace CANguruX
             //
             cntDecoders.Maximum = 255;
             cntDecoders.Minimum = 1;
-            cntDecoders.Value = 1;
             //
             // CAN
             threadCAN = new Thread(new ThreadStart(fromCAN2UDP));
@@ -1027,7 +1025,7 @@ namespace CANguruX
                                     }
                                     break;
                                 case 0x31: // Ping_R:
-                                    if (receivePINGInfos == true && CANguruArrFilled < Cnames.maxDecoders)
+                                    if (receivePINGInfos == true && CANguruArrFilled < Cnames.maxCANgurus)
                                     {
                                         // CANguru ?
                                         if (content[12] == GFP)

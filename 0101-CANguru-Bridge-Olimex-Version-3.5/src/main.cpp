@@ -1101,6 +1101,7 @@ bool proc_wait4Server()
 
 void proc_start_lokBuffer()
 {
+  log_i("proc_start_lokBuffer");
   produceFrame(M_CNTLOKBUFFER);
   sendToServer(M_PATTERN, toServer);
 }
