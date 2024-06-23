@@ -68,7 +68,7 @@ stepDirections stepDirection;
 
 const uint16_t stepsToEnd_min = 1000;
 const uint16_t stepsToEnd_std = 1140;
-const uint16_t stepsToEnd_max = 1200;
+const uint16_t stepsToEnd_max = 1300;
 
 IPAddress IP;
 

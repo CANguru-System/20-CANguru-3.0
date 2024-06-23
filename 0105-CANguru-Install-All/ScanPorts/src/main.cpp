@@ -31,6 +31,15 @@ void netzwerkScan()
     printf("&%dA\r\n", n);
     for (int i = 0; i < n; ++i)
     {
+  /*
+  RSSI Value Range	WiFi Signal Strength
+  RSSI > -30 dBm	 Amazing
+  RSSI < – 55 dBm	 Very good signal
+  RSSI < – 67 dBm	 Fairly Good
+  RSSI < – 70 dBm	 Okay
+  RSSI < – 80 dBm	 Not good
+  RSSI < – 90 dBm	 Extremely weak signal (unusable)
+  */
       // Drucke SSID and RSSI für jedes gefundene Netzwerk
       printf("%s (%d)\r\n", WiFi.SSID(i).c_str(), WiFi.RSSI(i));
       delay(10);
@@ -156,7 +165,7 @@ void loop()
       {
         status = (wl_status_t)WiFi.waitForConnectResult(2000);
 
-      //  connectionStatusMessage(status);
+        connectionStatusMessage(status);
         wifItrials--;
       }
       if (wifItrials == 0)

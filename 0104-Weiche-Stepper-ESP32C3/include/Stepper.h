@@ -141,6 +141,7 @@ public:
   void Set_stepsToSwitch(uint16_t steps)
   {
     stepsToSwitch = steps;
+    leftpos = stepsToSwitch;
   }
   // Liefert die Gesamtumdrehungen eines steppers
   uint16_t Get_stepsToSwitch()
