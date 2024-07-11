@@ -95,32 +95,32 @@ void connectionStatusMessage(wl_status_t st)
   switch (st)
   {
   case WL_NO_SHIELD:
-    log_e("Status: %d - WL_NO_SHIELD", st);
+    log_d("Status: %d - WL_NO_SHIELD", st);
     break;
   case WL_IDLE_STATUS:
-    log_e("Status: %d - WL_IDLE_STATUS", st);
+    log_d("Status: %d - WL_IDLE_STATUS", st);
     break;
   case WL_NO_SSID_AVAIL:
-    log_e("Status: %d - WL_NO_SSID_AVAIL", st);
+    log_d("Status: %d - WL_NO_SSID_AVAIL", st);
     break;
   case WL_SCAN_COMPLETED:
-    log_e("Status: %d - WL_SCAN_COMPLETED", st);
+    log_d("Status: %d - WL_SCAN_COMPLETED", st);
     break;
   case WL_CONNECTED:
-    log_e("Status: %d - WL_CONNECTED", st);
+    log_d("Status: %d - WL_CONNECTED", st);
     break;
   case WL_CONNECT_FAILED:
-    log_e("Status: %d - WL_CONNECT_FAILED", st);
+    log_d("Status: %d - WL_CONNECT_FAILED", st);
     break;
   case WL_CONNECTION_LOST:
-    log_e("Status: %d - WL_CONNECTION_LOST", st);
+    log_d("Status: %d - WL_CONNECTION_LOST", st);
     break;
   case WL_DISCONNECTED:
-    log_e("Status: %d - WL_DISCONNECTED", st);
+    log_d("Status: %d - WL_DISCONNECTED", st);
     break;
 
   default:
-    log_e("Status: %d - WL_OK", st);
+    log_d("Status: %d - WL_OK", st);
     break;
   }
 }

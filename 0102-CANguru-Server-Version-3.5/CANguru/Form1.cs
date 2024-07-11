@@ -72,7 +72,7 @@ namespace CANguruX
         private static System.Timers.Timer gettingConnectionTimer;
         Int16 elapsedmillis4Connection;
         //
-//        private static System.Timers.Timer trying2Connct2BridgeTimer;
+        //        private static System.Timers.Timer trying2Connct2BridgeTimer;
         //
         //
         private static System.Timers.Timer showResetValuesTimer;
@@ -282,12 +282,12 @@ namespace CANguruX
                 startTime = DateTime.Now;
                 // Create a timer with a ten second interval.
                 // the timer tries to connct to the CANguruBridge
-/*                trying2Connct2BridgeTimer = new System.Timers.Timer(5000);
-                // Hook up the Elapsed event for the timer. 
-                trying2Connct2BridgeTimer.Elapsed += trying2Connct2Bridge;
-                trying2Connct2BridgeTimer.AutoReset = true;
-                // and start the timer
-                trying2Connct2BridgeTimer.Start();*/
+                /*                trying2Connct2BridgeTimer = new System.Timers.Timer(5000);
+                                // Hook up the Elapsed event for the timer. 
+                                trying2Connct2BridgeTimer.Elapsed += trying2Connct2Bridge;
+                                trying2Connct2BridgeTimer.AutoReset = true;
+                                // and start the timer
+                                trying2Connct2BridgeTimer.Start();*/
                 this.Load += Form1_Load;
             }
             catch (Exception e)
@@ -671,11 +671,12 @@ namespace CANguruX
             if (src == CMD.MSGfromBridge)
             {
                 str = MSGFromTheBridge(currCMD);
-                // zeigt verlorene Dekoder an
+                // zeigt entdeckte Dekoder an
                 if (currCMD == 0x04)
                 {
                     str = CANElemente.Items.Count.ToString() + str;
                 }
+                // zeigt verlorene Dekoder an
                 if (currCMD == 0x08)
                 {
                     str += allDecoders.ElementAt(content[5]);
@@ -871,6 +872,7 @@ namespace CANguruX
             byte[] MFX_LOCID = { 0x00, 0x50, 0x03, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] LOK_BUFFER = { 0x00, 0x93, 0x03, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] RECEIVED_MSG = { 0x00, 0xFF, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] contenttmp = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             while (true)
             {
                 IPEndPoint remoteIPEndPoint = new IPEndPoint(IPAddress.Any, Cnames.portinCAN);
@@ -886,8 +888,8 @@ namespace CANguruX
                         if ((cmd == CMD.MSGfromBridge) && content[1] == 4)
                         {
                             if (decoders.Count > 0)
-                            foreach (string decoder in decoders)
-                            {
+                                foreach (string decoder in decoders)
+                                {
                                     string message = String.Concat("Decoder nicht gefunden:", decoder, "!");
                                     ChangeMyText(this.TelnetComm, message);
                                 }
@@ -898,7 +900,19 @@ namespace CANguruX
                             if (content[4] > 8)
                                 // content[4] war dafür um 0x0F erhöht, also wieder reduzieren
                                 content[4] -= 0x0F;
-                            ChangeMyText(this.TelnetComm, doMsg4TctWindow(cmd, content));
+                            //                            ChangeMyText(this.TelnetComm, doMsg4TctWindow(cmd, content));
+                            if (cmd == CMD.MSGfromBridge && content[1] == 8) // lost decoder
+                            {
+                                string message = doMsg4TctWindow(cmd, content);
+                                string caption = "Beenden";
+                                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                                DialogResult result = MessageBox.Show(this, message, caption, buttons);
+
+                                if (result == DialogResult.Yes)
+                                {
+                                    proc_beenden();
+                                }
+                            }
                         }
                         else
                         {
@@ -907,13 +921,14 @@ namespace CANguruX
                             if (cmd == CMD.toGW)
                             {
                                 RECEIVED_MSG[5] = content[1];
-                                Task t = Task.Run(() => {
+                                Task t = Task.Run(() =>
+                                {
                                     CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
                                     CANClient.Send(RECEIVED_MSG, Cnames.lngFrame);
                                 });
                                 t.Wait();
 
-                             //   Task.Delay(50).Wait();
+                                //   Task.Delay(50).Wait();
                             }
                             // Das Programm reagiert auf die Erkennung 
                             switch (content[1])
@@ -1123,16 +1138,27 @@ namespace CANguruX
                                         // 0 ist die Gerätebeschreibung (Paket 0)
                                         // dieses Paket ist vollständig, wenn die
                                         // Länge der Zeile =6 beträgt
+                                        if (content[0x04] == 8)
+                                        {
+                                            if (content[0x03] == 1)
+                                            {
+                                                contenttmp = content;
+                                            }
+                                        }
                                         if (content[0x04] == 6)
                                         {
                                             if (CANguruDescriptionNbr == 0)
                                             {
                                                 string descrbtn = read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
+                                                descrbtn += " Adr: " + contenttmp[0x0C].ToString();
                                                 ChangeMyText(this.TelnetComm, "Decoder angemeldet: " + descrbtn);
                                                 if (decoders.Contains(descrbtn) == true)
                                                 {
                                                     decoders.Remove(descrbtn);
                                                 }
+                                                // Vorbereitung für Fehlermeldungen
+                                                // Sammeln der Infos
+                                                // Name + UID
                                                 allDecoders.Add(descrbtn);
                                             }
                                             //read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
@@ -1355,7 +1381,7 @@ namespace CANguruX
                                     break;
                                 case 0x89:
                                     gettingConnectionTimer.Stop();
-//                                    trying2Connct2BridgeTimer.Stop();
+                                    //                                    trying2Connct2BridgeTimer.Stop();
                                     this.buttonConnect.Invoke(new MethodInvoker(() => this.buttonConnect.Text = "Connected!"));
                                     Cnames.IP_CAN = remoteIPEndPoint.Address.ToString();
                                     this.tbConnectAdr.Invoke(new MethodInvoker(() => this.tbConnectAdr.Text = Cnames.IP_CAN));
@@ -1523,6 +1549,41 @@ namespace CANguruX
             ConfigStream.setnextLocid((byte)(numLocID.Value));
         }
 
+        private void proc_beenden()
+        {
+            // Aufräumen
+            //                trying2Connct2BridgeTimer.Stop();
+            timeTimer.Stop();
+            ini.RemoveAllSections();
+            ini.AddSection("IP-address").AddKey("IPCAN").Value = Cnames.IP_CAN;
+            ConfigStream.setCounter((byte)(numCounter.Value));
+            byte c = ConfigStream.getCounter();
+            ini.AddSection("Neuanmeldezaehler").AddKey("Counter").Value = c.ToString();
+            ConfigStream.setnextLocid((byte)(numLocID.Value));
+            byte n = ConfigStream.getnextLocid();
+            ini.AddSection("Lok-Adresse").AddKey("LocID").Value = n.ToString();
+            string v = "0";
+            if (verbose)
+                v = "1";
+            ini.AddSection("Verbose").AddKey("verbose").Value = v;
+            //
+            tabControl1.SelectTab(2);
+            int decs = CANElemente.Items.Count;
+            ini.AddSection("Decoder").AddKey("DecoderCnt").Value = decs.ToString();
+            ini.AddSection("Decoder").AddKey("expectedDecoders").Value = cntDecoders.Value.ToString();
+            for (byte d = 0; d < decs; d++)
+            {
+                CANElemente.SetSelected(d, true);
+                ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = CANElemente.Text;
+            }
+            //CANguruLFDecoderNbr CANguruDecoderNbr
+            //Save the INI
+            ini.Save(string.Concat(Cnames.path, Cnames.ininame));
+            voltStop(btnVolt);
+            restartTheBridge();
+            this.Close();
+        }
+
         private void beenden_Click(object sender, EventArgs e)
         {
             string message = "Wollen Sie wirklich beenden?";
@@ -1532,37 +1593,7 @@ namespace CANguruX
 
             if (result == DialogResult.Yes)
             {
-                // Aufräumen
-//                trying2Connct2BridgeTimer.Stop();
-                timeTimer.Stop();
-                ini.RemoveAllSections();
-                ini.AddSection("IP-address").AddKey("IPCAN").Value = Cnames.IP_CAN;
-                ConfigStream.setCounter((byte)(numCounter.Value));
-                byte c = ConfigStream.getCounter();
-                ini.AddSection("Neuanmeldezaehler").AddKey("Counter").Value = c.ToString();
-                ConfigStream.setnextLocid((byte)(numLocID.Value));
-                byte n = ConfigStream.getnextLocid();
-                ini.AddSection("Lok-Adresse").AddKey("LocID").Value = n.ToString();
-                string v = "0";
-                if (verbose)
-                    v = "1";
-                ini.AddSection("Verbose").AddKey("verbose").Value = v;
-                //
-                tabControl1.SelectTab(2);
-                int decs = CANElemente.Items.Count;
-                ini.AddSection("Decoder").AddKey("DecoderCnt").Value = decs.ToString();
-                ini.AddSection("Decoder").AddKey("expectedDecoders").Value = cntDecoders.Value.ToString();
-                for (byte d = 0; d < decs; d++)
-                {
-                    CANElemente.SetSelected(d, true);
-                    ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = CANElemente.Text;
-                }
-                //CANguruLFDecoderNbr CANguruDecoderNbr
-                //Save the INI
-                ini.Save(string.Concat(Cnames.path, Cnames.ininame));
-                voltStop(btnVolt);
-                restartTheBridge();
-                this.Close();
+                proc_beenden();
             }
         }
 
@@ -2069,9 +2100,9 @@ namespace CANguruX
             if (elapsedmillis4showResetValues > 25)
             {
                 showResetValuesTimer.Enabled = false;
-//                CANguruArrLine = 0;
-//                CANguruDescriptionNbr = 1;
-//                getConfigData(lastSelectedItem, CANguruDescriptionNbr);
+                //                CANguruArrLine = 0;
+                //                CANguruDescriptionNbr = 1;
+                //                getConfigData(lastSelectedItem, CANguruDescriptionNbr);
                 this.CANElemente.Invoke(new MethodInvoker(() => showConfigData((byte)lastSelectedItem)));
             }
         }

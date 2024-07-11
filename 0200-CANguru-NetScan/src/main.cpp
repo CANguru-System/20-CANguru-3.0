@@ -11,11 +11,11 @@
 #define MAXIMUM_AP 20
 String ssidSLV = "CNgrSLV";
 
-  wifi_scan_config_t scan_config = {
-      .ssid = 0,
-      .bssid = 0,
-      .channel = 0,
-      .show_hidden = true};
+wifi_scan_config_t scan_config = {
+    .ssid = 0,
+    .bssid = 0,
+    .channel = 0,
+    .show_hidden = true};
 
 void setup()
 {
@@ -31,22 +31,27 @@ void setup()
 
 void loop()
 {
+  static int k = 1;
+  printf("%d. Durchlauf\r\n", k);
   ESP_ERROR_CHECK(esp_wifi_scan_start(&scan_config, true));
 
   wifi_ap_record_t wifi_records[MAXIMUM_AP];
 
   uint16_t max_records = MAXIMUM_AP;
   ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&max_records, wifi_records));
-  int j = 1;
-  for (int i = 0; i < max_records; i++)
-  {
-    String SSID((char *)wifi_records[i].ssid);
-    if (SSID.indexOf(ssidSLV) == 0)
+  int j = 0;
+    for (int i = 0; i < max_records; i++)
     {
-      printf("%.2d - %s\r\n", j, wifi_records[i].ssid);
-      j++;
+      String SSID((char *)wifi_records[i].ssid);
+      if (SSID.indexOf(ssidSLV) == 0)
+      {
+        j++;
+        printf("%.2d - %s\r\n", j, wifi_records[i].ssid);
+      }
     }
-  }
+  if (j == 0)
+    printf("kein Strahler\r\n");
   printf("\r\n\r\n");
-  delay(5000);
+  k++;
+  delay(2000);
 }
