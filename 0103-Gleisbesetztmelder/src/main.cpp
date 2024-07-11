@@ -25,7 +25,6 @@
 #include "soc/rtc_cntl_reg.h"
 
 Preferences preferences;
-const char *prefName = "CANguru";
 const char *c_i = "c_i";
 
 const uint8_t maxCntChannels = 16;

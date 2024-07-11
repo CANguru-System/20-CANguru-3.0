@@ -61,6 +61,9 @@
 
 const char *prefName = "CANguru";
 
+// Protokollkonstante
+#define PROT MM_ACC
+
 #define UID_BASE  0x45009195ULL // CAN-UID
 #define maxdevice 99
 

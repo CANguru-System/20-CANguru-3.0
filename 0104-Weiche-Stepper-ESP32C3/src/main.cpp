@@ -116,7 +116,7 @@ void setup()
 
   // die preferences-Library wird gestartet
 
-  if (preferences.begin("CANguru", false))
+  if (preferences.begin(prefName, false))
   {
     log_d("Preferences erfolgreich gestartet");
   }
