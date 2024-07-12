@@ -139,17 +139,16 @@ void setup()
   addMaster();
   // WLAN -Verbindungen können wieder ausgeschaltet werden
   WiFi.disconnect();
-  // die EEPROM-Library wird gestartet
-  if (!EEPROM.begin(EEPROM_SIZE))
+  // die preferences-Library wird gestartet
+  if (preferences.begin(prefName, false))
   {
-    Serial.println("Failed to initialise EEPROM");
+    log_d("Preferences %s erfolgreich gestartet\r\n", prefName);
   }
   uint8_t setup_todo;
-  uint8_t reset_todo = EEPROM.read(adr_reset);
-  if (reset_todo == startWithRESET)
-    setup_todo = 0xFF;
+  if (preferences.isKey("setup_done"))
+    setup_todo = preferences.getUChar("setup_done", 0xFF);
   else
-    setup_todo = EEPROM.read(adr_setup_done);
+    log_d("setup_done nicht gefunden! Bitte zunächst Installationsroutine aufrufen!");
   if (setup_todo != setup_done)
   {
     // wurde das Setup bereits einmal durchgeführt?
@@ -158,44 +157,33 @@ void setup()
 
     // setzt die Boardnum anfangs auf 1
     decoderadr = 1;
-    EEPROM.write(adr_decoderadr, decoderadr);
-    EEPROM.commit();
+    preferences.putUChar("decoderadr", decoderadr);
     // Verzögerung LED-Umschaltung
-    EEPROM.write(adr_SrvDelLED, stdLEDsignaldelay);
-    EEPROM.commit();
+    preferences.putUChar("stdLEDsignaldelay", stdLEDsignaldelay);
     // Verzögerung Form-Signal-Umschaltung
-    EEPROM.write(adr_SrvDelForm, stdFormsignaldelay);
-    EEPROM.commit();
+    preferences.putUChar("stdFormsignaldelay", stdFormsignaldelay);
     // Startwinkel Formsignal
-    EEPROM.write(adr_StartAngle, stdStartAngle);
-    EEPROM.commit();
+    preferences.putUChar("stdStartAngle", stdStartAngle);
     // Startwinkel Formsignal
-    EEPROM.write(adr_StopAngle, stdStopAngle);
-    EEPROM.commit();
+    preferences.putUChar("stdStopAngle", stdStopAngle);
     // Überschwingwinkel Formsignal
-    EEPROM.write(adr_EndAngle, stdendAngle);
-    EEPROM.commit();
+    preferences.putUChar("stdendAngle", stdendAngle);
     // Status der Formsignale zu Beginn auf rechts setzen
     for (uint8_t form = 0; form < num_FormSignals; form++)
     {
-      EEPROM.write(acc_statusForm + form, red);
-      EEPROM.commit();
+      preferences.putUChar("statusForm"+("0"+form), red);
     }
     // Status der LEDignale zu Beginn auf rechts setzen
     for (uint8_t signal = 0; signal < num_LEDSignals; signal++)
     {
-      EEPROM.write(acc_statusLED + signal, red);
-      EEPROM.commit();
+      preferences.putUChar("statusLED"+("0"+signal), red);
     }
     // ota auf "FALSE" setzen
-    EEPROM.write(adr_reset, startWithoutRESET);
-    EEPROM.commit();
-    // ota auf "FALSE" setzen
-    EEPROM.write(adr_ota, startWithoutOTA);
-    EEPROM.commit();
+    preferences.putUChar("ota", startWithoutOTA);
+    //
     // setup_done auf "TRUE" setzen
-    EEPROM.write(adr_setup_done, setup_done);
-    EEPROM.commit();
+    preferences.putUChar("setup_done", setup_done);
+    //
   }
   else
   {
