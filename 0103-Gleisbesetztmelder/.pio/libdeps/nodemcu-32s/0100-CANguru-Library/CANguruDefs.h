@@ -166,6 +166,8 @@ const int16_t minadr = 0x01;
 const int16_t maxadr = 0xFF;
 const uint8_t uid_num = 4;
 const uint8_t num_accessory = 4;
+// Protokollkonstante
+#define PROT MM_ACC
 
 // Funktion stellt sicher, dass keine unerlaubten 8-Bit-Werte geladen werden können
 uint8_t readValfromEEPROM(uint16_t adr, uint8_t val, uint8_t min, uint8_t max);

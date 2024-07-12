@@ -83,19 +83,6 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     }
   }
   break;
-  case S88_EVENT:
-  {
-    if (opFrame[Framelng] == 4)
-    {
-      for (uint8_t ch = 0; ch < maxCntChannels; ch++)
-        if (channel_index[ch] == opFrame[data3])
-        {
-          process_sensor_event(ch);
-          break;
-        }
-    }
-  }
-  break;
   case restartBridge:
     ESP.restart();
     break;

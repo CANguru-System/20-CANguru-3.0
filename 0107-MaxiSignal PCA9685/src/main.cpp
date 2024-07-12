@@ -7,7 +7,6 @@
  * Gustav Wostrack
  * ----------------------------------------------------------------------------
  */
-
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
@@ -21,6 +20,7 @@
 #include <ArduinoOTA.h>
 #include <OTA_include.h>
 #include "PWM.h"
+#include <SPI.h>
 
 // EEPROM-Adressen
 
@@ -59,6 +59,7 @@ bool SEND_IP_Request = false;
 
 // Timer
 boolean statusPING;
+boolean bDecoderIsAlive;
 boolean initialData2send;
 
 #define VERS_HIGH 0x00 // Versionsnummer vor dem Punkt
@@ -226,7 +227,7 @@ void setup()
       for (uint8_t i = 0; i < 4; i++)
       {
         IP[i] = ip[i];
-    log_d("IP-ADDRESS %d", IP[i]);
+        log_d("IP-ADDRESS %d", IP[i]);
       }
   }
   else
@@ -303,27 +304,6 @@ void sendTheInitialData()
 }
 
 /*
-Response
-Bestimmt, ob CAN Meldung eine Anforderung oder Antwort oder einer
-vorhergehende Anforderung ist. Grundsätzlich wird eine Anforderung
-ohne ein gesetztes Response Bit angestoßen. Sobald ein Kommando
-ausgeführt wurde, wird es mit gesetztem Response Bit, sowie dem
-ursprünglichen Meldungsinhalt oder den angefragten Werten, bestätigt.
-Jeder Teilnehmer am Bus, welche die Meldung ausgeführt hat, bestätigt ein
-Kommando.
-*/
-void sendCanFrame()
-{
-  // to Server
-  for (uint8_t i = CAN_FRAME_SIZE - 1; i < 8 - opFrame[Framelng]; i--)
-    opFrame[i] = 0x00;
-  opFrame[CANcmd]++;
-  opFrame[hash0] = hasharr[0];
-  opFrame[hash1] = hasharr[1];
-  sendTheData();
-}
-
-/*
 CAN Grundformat
 Das CAN Protokoll schreibt vor, dass Meldungen mit einer 29 Bit Meldungskennung,
 4 Bit Meldungslänge sowie bis zu 8 Datenbyte bestehen.
@@ -384,17 +364,6 @@ void calc_to_address()
 void receiveKanalData()
 {
   SYS_CMD_Request = false;
-  // Wenn Reset im CANguru-Server gedrückt wurde, dürfen nicht
-  // die alten Werte, die noch angezeigt werden, wieder gespeichert werden
-  if (EEPROM.read(adr_reset) == startWithRESET)
-  {
-    if (opFrame[data5] == (endofKanals - 1))
-    {
-      EEPROM.write(adr_reset, startWithoutRESET);
-      EEPROM.commit();
-    }
-    return;
-  }
   uint8_t oldval;
   switch (opFrame[data5])
   {
@@ -406,8 +375,7 @@ void receiveKanalData()
     if (testMinMax(oldval, decoderadr, minadr, maxadr))
     {
       // speichert die neue Adresse
-      EEPROM.write(adr_decoderadr, decoderadr);
-      EEPROM.commit();
+      preferences.putUChar("decoderadr", decoderadr);
       // neue Adressen
       calc_to_address();
     }
@@ -424,8 +392,7 @@ void receiveKanalData()
     LEDsignalDelay = (opFrame[data6] << 8) + opFrame[data7];
     if (testMinMax(oldval, LEDsignalDelay, minLEDsignaldelay, maxLEDsignaldelay))
     {
-      EEPROM.write(adr_SrvDelLED, LEDsignalDelay);
-      EEPROM.commit();
+      preferences.putUChar("LEDsignalDelay", LEDsignalDelay);
       for (int signal = 0; signal < num_LEDSignals; signal++)
       {
         // neue Verzögerung
@@ -445,8 +412,7 @@ void receiveKanalData()
     FormsignalDelay = (opFrame[data6] << 8) + opFrame[data7];
     if (testMinMax(oldval, FormsignalDelay, minFormsignaldelay, maxFormsignaldelay))
     {
-      EEPROM.write(adr_SrvDelForm, FormsignalDelay);
-      EEPROM.commit();
+      preferences.putUChar("FormsignalDelay", FormsignalDelay);
       for (int form = 0; form < num_FormSignals; form++)
       {
         // neue Verzögerung
@@ -466,8 +432,7 @@ void receiveKanalData()
     StartAngle = (opFrame[data6] << 8) + opFrame[data7];
     if (testMinMax(oldval, StartAngle, stdStartAngle, stdStopAngle))
     {
-      EEPROM.write(adr_StartAngle, StartAngle);
-      EEPROM.commit();
+      preferences.putUChar("StartAngle", StartAngle);
       for (int form = 0; form < num_FormSignals; form++)
       {
         // neue Verzögerung
@@ -487,8 +452,7 @@ void receiveKanalData()
     StopAngle = (opFrame[data6] << 8) + opFrame[data7];
     if (testMinMax(oldval, StopAngle, stdStartAngle, stdStopAngle))
     {
-      EEPROM.write(adr_StopAngle, StopAngle);
-      EEPROM.commit();
+      preferences.putUChar("StopAngle", StopAngle);
       for (int form = 0; form < num_FormSignals; form++)
       {
         // neue Verzögerung
@@ -508,8 +472,7 @@ void receiveKanalData()
     EndAngle = (opFrame[data6] << 8) + opFrame[data7];
     if (testMinMax(oldval, EndAngle, minendAngle, maxendAngle))
     {
-      EEPROM.write(adr_EndAngle, EndAngle);
-      EEPROM.commit();
+      preferences.putUChar("EndAngle", EndAngle);
       for (int form = 0; form < num_FormSignals; form++)
       {
         // neuer Überschwingwinkel
@@ -526,35 +489,6 @@ void receiveKanalData()
   //
   opFrame[11] = 0x01;
   opFrame[4] = 0x07;
-  sendCanFrame();
-}
-
-// sendPING ist die Antwort der Decoder auf eine PING-Anfrage
-void sendPING()
-{
-  statusPING = false;
-  opFrame[1] = PING;
-  opFrame[4] = 0x08;
-  for (uint8_t i = 0; i < uid_num; i++)
-  {
-    opFrame[i + 5] = uid_device[i];
-  }
-  opFrame[9] = VERS_HIGH;
-  opFrame[10] = VERS_LOW;
-  opFrame[11] = DEVTYPE_LEDSIGNAL >> 8;
-  opFrame[12] = DEVTYPE_LEDSIGNAL;
-  sendCanFrame();
-}
-
-// sendIP ist die Antwort der Decoder auf eine Abfrage der IP-Adresse
-void sendIP()
-{
-  SEND_IP_Request = false;
-  opFrame[1] = SEND_IP;
-  opFrame[4] = 0x08;
-  // IP-Adresse eintragen
-  for (uint8_t ip = 0; ip < 4; ip++)
-    opFrame[5 + ip] = IP[ip];
   sendCanFrame();
 }
 
@@ -597,8 +531,8 @@ void switchForm(uint16_t acc_num)
   colorLED set_light = FormSignals[acc_num].GetLightDest();
   FormSignals[acc_num].SetcolorLED();
   Form_report(acc_num);
-  EEPROM.write(acc_statusForm + acc_num, (uint8_t)set_light);
-  EEPROM.commit();
+  sprintf(key, "statusForm%d", acc_num);
+  preferences.putUChar(key, (uint8_t)set_light);
 }
 
 // Diese Routine leitet den Positionswechsel einer Weiche/Signal ein.
@@ -608,8 +542,8 @@ void switchLED(uint16_t acc_num)
   LEDSignals[acc_num].SetLightCurr(set_light);
   LEDSignals[acc_num].SetcolorLED();
   LED_report(acc_num);
-  EEPROM.write(acc_statusLED + acc_num, (uint8_t)set_light);
-  EEPROM.commit();
+  sprintf(key, "statusLED%d", acc_num);
+  preferences.putUChar(key, (uint8_t)set_light);
 }
 
 // auf Anforderung des CANguru-Servers sendet der Decoder
@@ -662,7 +596,7 @@ void sendConfig()
       /*4*/ (stdStopAngle - (uint8_t)(stdStopAngle / 10) * 10) + '0', 0, 'g', 'r', 'a', 'd', 0, 0};
   const uint8_t NumLinesKanal06 = 5 * Kanalwidth;
   uint8_t arrKanal06[NumLinesKanal06] = {
-      /*1*/ Kanal06, 2, 0, minendAngle, 0, maxendAngle, 0, readValfromEEPROM(adr_EndAngle, stdendAngle, minendAngle, maxendAngle),
+      /*1*/ Kanal06, 2, 0, minendAngle, 0, maxendAngle, 0, readValfromPreferences(preferences, "EndAngle", stdendAngle, minendAngle, maxendAngle),
       /*2*/ 0xDC, 'b', 'e', 'r', 's', 'c', 'h', 'w',
       /*3*/ 'i', 'n', 'g', 'w', 'i', 'n', 'k', 'e',
       /*4*/ 'l', 0, minendAngle + '0', 0, maxendAngle / 10 + '0', (maxendAngle - (uint8_t)(maxendAngle / 10) * 10) + '0', 0, 'g',
@@ -775,27 +709,14 @@ void loop()
     {
       sendPING();
     }
+    if (bDecoderIsAlive)
+    {
+      sendDecoderIsAlive();
+    }
     // Parameterwerte vom CANguru-Server erhalten
     if (SYS_CMD_Request)
     {
       receiveKanalData();
-    }
-    // Modul wird neu gestartet und setzt alle Werte auf Anfang
-    if (RESET_MEM_Request)
-    {
-      //
-      // adr_reset auf "FALSE" setzen
-      EEPROM.write(adr_reset, startWithRESET);
-      EEPROM.commit();
-      ESP.restart();
-    }
-    // Modul wird neu gestartet und wartet anschließend auf neue Software (OTA)
-    if (START_OTA_Request)
-    {
-      //
-      EEPROM.write(adr_ota, startWithOTA);
-      EEPROM.commit();
-      ESP.restart();
     }
     // die eigene IP-Adresse wird über die Bridge an den Server zurück geliefert
     if (SEND_IP_Request)
