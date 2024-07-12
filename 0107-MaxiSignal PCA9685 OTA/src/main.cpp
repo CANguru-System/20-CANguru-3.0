@@ -28,7 +28,6 @@
 #include "soc/rtc_cntl_reg.h"
 
 Preferences preferences;
-const char *prefName = "CANguru";
 
 // config-Daten
 // Parameter-Kanäle
@@ -107,9 +106,6 @@ uint8_t StartAngle;
 uint8_t StopAngle;
 uint8_t EndAngle;
 
-// Protokollkonstante
-#define PROT MM_ACC
-
 IPAddress IP;
 
 // Forward declaration
@@ -125,10 +121,19 @@ void generateHash(uint8_t offset);
 
 void setup()
 {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
   Serial.begin(bdrMonitor);
-  Serial.println("\r\n\r\nF o r m - / L E D - S i g n a l");
+  delay(500);
+  log_i("\r\n\r\nF o r m - / L E D - S i g n a l");
+  log_i("\n on %s", ARDUINO_BOARD);
+  log_i("CPU Frequency = %d Mhz", F_CPU / 1000000);
+  //  log_e("ERROR!");
+  //  log_d("VERBOSE");
+  //  log_w("WARNING");
+  //  log_d("INFO");
   // der Decoder strahlt mit seiner Kennung
   // damit kennt die CANguru-Bridge (der Master) seine Decoder findet
+  DEVTYPE = DEVTYPE_MAXISIGNAL;
   startAPMode();
   // der Master (CANguru-Bridge) wird registriert
   addMaster();
