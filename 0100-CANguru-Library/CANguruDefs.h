@@ -59,8 +59,6 @@
   Rest Frei								1111
 */
 
-const char *prefName = "CANguru";
-
 #define UID_BASE  0x45009195ULL // CAN-UID
 #define maxdevice 99
 
@@ -79,7 +77,7 @@ const char *prefName = "CANguru";
 #define DEVTYPE_SIGNAL 0x0056
 #define DEVTYPE_LEDSIGNAL 0x0057
 #define DEVTYPE_CANBOOSTER 0x0058
-#define DEVTYPE_GATE 0x0059
+#define DEVTYPE_MAXISIGNAL 0x0059
 #define DEVTYPE_STEPPER 0x005A
 #define DEVTYPE_CAR_CAR 0x005C
 #define DEVTYPE_CAR_RM 0x005D
