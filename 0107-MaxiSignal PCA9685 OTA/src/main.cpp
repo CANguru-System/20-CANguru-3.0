@@ -28,6 +28,7 @@
 #include "soc/rtc_cntl_reg.h"
 
 Preferences preferences;
+char key[20];
 
 // config-Daten
 // Parameter-Kanäle
@@ -47,6 +48,7 @@ Kanals CONFIGURATION_Status_Index = Kanal00;
 
 uint8_t decoderadr;
 uint8_t uid_device[uid_num];
+uint16_t ms_nativeDelay;
 
 // Zeigen an, ob eine entsprechende Anforderung eingegangen ist
 bool CONFIG_Status_Request = false;
@@ -154,29 +156,34 @@ void setup()
     // wurde das Setup bereits einmal durchgeführt?
     // dann wird dieser Anteil übersprungen
     // 47, weil das EEPROM (hoffentlich) nie ursprünglich diesen Inhalt hatte
+    // zunächst alle Vorgänger löschen
+    size_t whatsLeft = preferences.freeEntries(); // this method works regardless of the mode in which the namespace is opened.
+    log_d("There are: %u entries available in the namespace table.\n", whatsLeft);
 
     // setzt die Boardnum anfangs auf 1
     decoderadr = 1;
     preferences.putUChar("decoderadr", decoderadr);
     // Verzögerung LED-Umschaltung
-    preferences.putUChar("stdLEDsignaldelay", stdLEDsignaldelay);
+    preferences.putUChar("LEDsignaldelay", stdLEDsignaldelay);
     // Verzögerung Form-Signal-Umschaltung
-    preferences.putUChar("stdFormsignaldelay", stdFormsignaldelay);
+    preferences.putUChar("Formsignaldelay", stdFormsignaldelay);
     // Startwinkel Formsignal
-    preferences.putUChar("stdStartAngle", stdStartAngle);
+    preferences.putUChar("StartAngle", stdStartAngle);
     // Startwinkel Formsignal
-    preferences.putUChar("stdStopAngle", stdStopAngle);
+    preferences.putUChar("StopAngle", stdStopAngle);
     // Überschwingwinkel Formsignal
-    preferences.putUChar("stdendAngle", stdendAngle);
+    preferences.putUChar("endAngle", stdendAngle);
     // Status der Formsignale zu Beginn auf rechts setzen
     for (uint8_t form = 0; form < num_FormSignals; form++)
     {
-      preferences.putUChar("statusForm"+("0"+form), red);
+      sprintf(key, "statusForm%d", form); // Känale vorbesetzen
+      preferences.putUChar(key, red);
     }
     // Status der LEDignale zu Beginn auf rechts setzen
     for (uint8_t signal = 0; signal < num_LEDSignals; signal++)
     {
-      preferences.putUChar("statusLED"+("0"+signal), red);
+      sprintf(key, "statusLED%d", signal); // Känale vorbesetzen
+      preferences.putUChar(key, red);
     }
     // ota auf "FALSE" setzen
     preferences.putUChar("ota", startWithoutOTA);
@@ -189,25 +196,46 @@ void setup()
   {
     // Basisadresse des Decoders
     // darüber sind die Ampaln / Andreaskreuze erreichbar
-    uint8_t ota = EEPROM.readByte(adr_ota);
+    uint8_t ota = preferences.getUChar("ota", false);
     if (ota == startWithoutOTA)
     {
       // nach dem ersten Mal Einlesen der gespeicherten Werte
       // Adresse
-      decoderadr = readValfromEEPROM(adr_decoderadr, minadr, minadr, maxadr);
+      decoderadr = readValfromPreferences(preferences, "decoderadr", minadr, minadr, maxadr);
     }
     else
     {
       // ota auf "FALSE" setzen
-      EEPROM.write(adr_ota, startWithoutOTA);
-      EEPROM.commit();
-      Connect2WiFiandOTA();
+      // ota auf "FALSE" setzen
+      preferences.putUChar("ota", startWithoutOTA);
+      Connect2WiFiandOTA(preferences);
     }
   }
+  // ab hier werden die Anweisungen bei jedem Start durchlaufen
   // IP-Adresse
-  for (uint8_t ip = 0; ip < 4; ip++)
+  char ip[4]; // prepare a buffer for the data
+  if (preferences.isKey("ssid"))
+    log_d("SSID OK");
+  if (preferences.isKey("password"))
+    log_d("PASSWORD OK");
+  if (preferences.isKey("IP0"))
+    log_d("IP-ADDRESS OK");
+  if (preferences.isKey("IP0"))
   {
-    IP[ip] = EEPROM.read(adr_IP0 + ip);
+    if (preferences.getBytes("IP0", ip, 4) == 4)
+      for (uint8_t i = 0; i < 4; i++)
+      {
+        IP[i] = ip[i];
+    log_d("IP-ADDRESS %d", IP[i]);
+      }
+  }
+  else
+  {
+    log_d("IP0 nicht gefunden! Bitte zunaechst Installationsroutine aufrufen!");
+    while (true)
+    {
+      // Hier bleibt das Programm stehen
+    }
   }
   // ab hier werden die Anweisungen bei jedem Start durchlaufen
   // Flags
@@ -219,10 +247,10 @@ void setup()
   SEND_IP_Request = false;
   /////////////
   initPWM_Form();
-  FormsignalDelay = readValfromEEPROM(adr_SrvDelForm, stdFormsignaldelay, minFormsignaldelay, maxFormsignaldelay);
-  StartAngle = readValfromEEPROM(adr_StartAngle, stdStartAngle, stdStartAngle, stdStopAngle);
-  StopAngle = readValfromEEPROM(adr_StopAngle, stdStopAngle, stdStartAngle, stdStopAngle);
-  EndAngle = readValfromEEPROM(adr_EndAngle, stdendAngle, minendAngle, maxendAngle);
+  FormsignalDelay = readValfromPreferences(preferences, "FormsignalDelay", minFormsignaldelay, minFormsignaldelay, maxFormsignaldelay);
+  StartAngle = readValfromPreferences(preferences, "StartAngle", stdStartAngle, stdStartAngle, stdStopAngle);
+  StopAngle = readValfromPreferences(preferences, "StopAngle", stdStopAngle, stdStartAngle, stdStopAngle);
+  EndAngle = readValfromPreferences(preferences, "EndAngle", stdendAngle, minendAngle, maxendAngle);
   for (uint8_t form = 0; form < num_FormSignals; form++)
   {
     // Status der Magnetartikel versenden an die Servos
@@ -230,7 +258,8 @@ void setup()
     FormSignals[form].SetStartAngle(StartAngle);
     FormSignals[form].SetStopAngle(StopAngle);
     FormSignals[form].SetEndAngle(EndAngle);
-    colorLED status = (colorLED)EEPROM.read(acc_statusForm + form);
+    sprintf(key, "statusForm%d", form); // Känale vorbesetzen
+    colorLED status = (colorLED)preferences.getUChar(key);
     FormSignals[form].SetLightDest(status);
     // Signals mit den PINs verbinden, initialisieren & Artikel setzen wie gespeichert
     FormSignals[form].SetDelay(FormsignalDelay);
@@ -238,13 +267,15 @@ void setup()
   }
   /////////////
   initPWM_LED();
-  LEDsignalDelay = readValfromEEPROM(adr_SrvDelLED, stdLEDsignaldelay, minLEDsignaldelay, maxLEDsignaldelay);
+  LEDsignalDelay = readValfromPreferences(preferences, "LEDsignalDelay", stdLEDsignaldelay, minLEDsignaldelay, maxLEDsignaldelay);
   for (uint8_t signal = 0; signal < num_LEDSignals; signal++)
   {
     // Status der Magnetartikel versenden an die Servos
     LEDSignals[signal].Attach(signal);
     // Status der Magnetartikel einlesen in lokale arrays
-    LEDSignals[signal].SetLightDest((colorLED)EEPROM.read(acc_statusLED + signal));
+    sprintf(key, "statusLED%d", signal); // Känale vorbesetzen
+    colorLED status = (colorLED)preferences.getUChar(key);
+    LEDSignals[signal].SetLightDest(status);
     // Signals mit den PINs verbinden, initialisieren & Artikel setzen wie gespeichert
     LEDSignals[signal].SetDelay(LEDsignalDelay);
     LEDSignals[signal].SetcolorLED();
@@ -252,7 +283,7 @@ void setup()
   // berechnet die _to_address aus der Adresse und der Protokollkonstante
   calc_to_address();
   // Vorbereiten der Blink-LED
-  stillAliveBlinkSetup();
+  stillAliveBlinkSetup(LED_BUILTIN);
 }
 
 // Zu Beginn des Programmablaufs werden die aktuellen Statusmeldungen an WDP geschickt
