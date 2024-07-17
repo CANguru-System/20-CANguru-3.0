@@ -160,6 +160,5 @@
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32c3/include/esp_hw_support/include/soc/esp32/spiram.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/io_pin_remap.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
- C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/EEPROM/src/EEPROM.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
  .pio/libdeps/seeed_xiao_esp32c3/0100-CANguru-Library/CANguruDefs.h

@@ -22,7 +22,7 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
   {
     // nur beim handshaking; es werden die macaddress
     // und die devicenummer übermittelt und die macaddress zurückgeschickt
-    esp_err_t sendResult = esp_now_send(master.peer_addr, opFrame, data_len);
+    esp_err_t sendResult = esp_now_send(master.peer_addr, opFrame, macLen);
     if (sendResult != ESP_OK)
     {
       printESPNowError(sendResult);
