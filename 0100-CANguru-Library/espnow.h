@@ -99,7 +99,7 @@ werden die Bits entsprechend zur CS1 Unterscheidung gesetzt.
 // generiert den Hash
 void generateHash(uint8_t offset)
 {
-  uint32_t uid = UID_BASE + offset;
+  uint32_t uid = UID_BASE + (DEVTYPE - DEVTYPE_BASE) * maxdevice + offset;
   uid_device[0] = (uint8_t)(uid >> 24);
   uid_device[1] = (uint8_t)(uid >> 16);
   uid_device[2] = (uint8_t)(uid >> 8);
