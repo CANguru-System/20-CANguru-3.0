@@ -59,6 +59,8 @@
   Rest Frei								1111
 */
 
+#define prefName "CANguru"
+
 #define UID_BASE  0x45009195ULL // CAN-UID
 #define maxdevice 99
 
@@ -77,7 +79,7 @@
 #define DEVTYPE_SIGNAL 0x0056
 #define DEVTYPE_LEDSIGNAL 0x0057
 #define DEVTYPE_CANBOOSTER 0x0058
-#define DEVTYPE_GATE 0x0059
+#define DEVTYPE_MAXISIGNAL 0x0059
 #define DEVTYPE_STEPPER 0x005A
 #define DEVTYPE_CAR_CAR 0x005C
 #define DEVTYPE_CAR_RM 0x005D
@@ -164,6 +166,8 @@ const int16_t minadr = 0x01;
 const int16_t maxadr = 0xFF;
 const uint8_t uid_num = 4;
 const uint8_t num_accessory = 4;
+// Protokollkonstante
+#define PROT MM_ACC
 
 // Funktion stellt sicher, dass keine unerlaubten 8-Bit-Werte geladen werden können
 uint8_t readValfromEEPROM(uint16_t adr, uint8_t val, uint8_t min, uint8_t max);

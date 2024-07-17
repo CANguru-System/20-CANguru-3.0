@@ -59,6 +59,7 @@ namespace InstallGUI
             this.qrcode = new System.Windows.Forms.Button();
             this.url4qrcode = new System.Windows.Forms.TextBox();
             this.eyeicon = new System.Windows.Forms.PictureBox();
+            this.rbMaxi = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
@@ -184,6 +185,7 @@ namespace InstallGUI
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.rbMaxi);
             this.groupBox1.Controls.Add(this.rbBridge);
             this.groupBox1.Controls.Add(this.radioButton1);
             this.groupBox1.Controls.Add(this.rbBooster);
@@ -211,7 +213,7 @@ namespace InstallGUI
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(220, 23);
+            this.radioButton1.Location = new System.Drawing.Point(220, 49);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(112, 17);
             this.radioButton1.TabIndex = 2;
@@ -334,6 +336,18 @@ namespace InstallGUI
             this.eyeicon.TabIndex = 22;
             this.eyeicon.TabStop = false;
             // 
+            // rbMaxi
+            // 
+            this.rbMaxi.AutoSize = true;
+            this.rbMaxi.Location = new System.Drawing.Point(220, 23);
+            this.rbMaxi.Name = "rbMaxi";
+            this.rbMaxi.Size = new System.Drawing.Size(128, 17);
+            this.rbMaxi.TabIndex = 4;
+            this.rbMaxi.TabStop = true;
+            this.rbMaxi.Text = "Maxisignal auf ESP32";
+            this.rbMaxi.UseVisualStyleBackColor = true;
+            this.rbMaxi.CheckedChanged += new System.EventHandler(this.rbMaxi_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -404,6 +418,7 @@ namespace InstallGUI
         private System.Windows.Forms.Button qrcode;
         private System.Windows.Forms.TextBox url4qrcode;
         private System.Windows.Forms.PictureBox eyeicon;
+        private RadioButton rbMaxi;
     }
 }
 

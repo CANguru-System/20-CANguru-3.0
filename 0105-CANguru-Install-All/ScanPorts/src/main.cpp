@@ -165,7 +165,7 @@ void loop()
       {
         status = (wl_status_t)WiFi.waitForConnectResult(2000);
 
-        connectionStatusMessage(status);
+//        connectionStatusMessage(status);
         wifItrials--;
       }
       if (wifItrials == 0)

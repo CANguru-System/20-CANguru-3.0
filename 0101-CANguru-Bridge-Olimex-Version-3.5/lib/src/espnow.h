@@ -118,7 +118,7 @@ struct slaveInfoStruct
   esp_now_peer_info_t slave;
   esp_now_peer_info_t *peer;
   aliveStatus decoderIsAlive;
-  uint8_t no;
+  uint64_t intValue;
 };
 
 // speichert die Stromstaerke in das array amperes

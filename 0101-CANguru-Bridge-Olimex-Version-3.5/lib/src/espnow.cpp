@@ -23,6 +23,11 @@ uint8_t slaveCurr;
 uint8_t nbrSlavesAreReady;
 uint8_t wantedscanResults;
 
+struct macType
+{
+  uint8_t m[macLen];
+};
+
 // willkürlich festgelegte MAC-Adresse
 const uint8_t masterCustomMac[] = {0x30, 0xAE, 0xA4, 0x89, 0x92, 0x71};
 
@@ -122,18 +127,15 @@ void setCntDecoders(uint8_t cnt)
 // Scannt nach Slaves
 void Scan4Slaves()
 {
-  struct macType
-  {
-    uint8_t m[macLen];
-  };
   macType mac;
+  const uint8_t shift = 8;
+  // Create an immutable list
+  List<macType> scanList;
   const uint8_t scanTrial = 10;
   uint8_t scanResults;
   displayLCD("Suche Slaves ...");
   msgStartScanning();
   uint8_t tmpscanResults;
-  // Create an immutable list
-  List<macType> scanList;
   // für widerspenstige Dekoder machen wir mehrere Durchläufe
   for (uint8_t t = 0; t < scanTrial; t++)
   {
@@ -186,7 +188,10 @@ void Scan4Slaves()
         slaveInfo[slaveCnt].slave.channel = WIFI_CHANNEL;
         slaveInfo[slaveCnt].slave.encrypt = 0;
         slaveInfo[slaveCnt].peer = &slaveInfo[slaveCnt].slave;
-        slaveInfo[slaveCnt].no = slaveCnt;
+        // integer äquivalent zu mac adresse ausrechnen; damit werden die mac-adressen sortiert
+        slaveInfo[slaveCnt].intValue = 0;
+        for (uint8_t j = 0; j < macLen; j++)
+          slaveInfo[slaveCnt].intValue = (slaveInfo[slaveCnt].intValue << shift) + mac.m[j];
         slaveInfo[slaveCnt].decoderIsAlive = isAlive;
         slaveCnt++;
       }
@@ -208,10 +213,45 @@ void initVariant()
   WiFi.disconnect();
 }
 
+/**************************************************************************/
+/*!
+    @brief  Sorts a list of elements.
+    @param  list        Array of elements to be sorted
+    @param  n           Length of the array
+*/
+/**************************************************************************/
+void InsertionSort()
+{
+  int32_t j = 0;
+  slaveInfoStruct slaveInfoKey;
+
+  for (int32_t i = 1; i < slaveCnt; i++)
+  {
+    memcpy(&slaveInfoKey, &slaveInfo[i], sizeof(slaveInfoStruct));
+    j = i - 1;
+
+    // Move elements of list[0..i-1], that are
+    // greater than key, to one position ahead
+    // of their current position
+    while (j >= 0 && slaveInfo[j].intValue > slaveInfoKey.intValue)
+    {
+      //      list[j + 1] = list[j];
+      memcpy(&slaveInfo[j + 1], &slaveInfo[j], sizeof(slaveInfoStruct));
+      j = j - 1;
+    }
+    // list[j + 1] = key;
+    memcpy(&slaveInfo[j + 1], &slaveInfoKey, sizeof(slaveInfoStruct));
+  }
+};
+
 // addiert und registriert gefundene Slaves
 void addSlaves()
 {
   uint8_t Clntbuffer[CAN_FRAME_SIZE]; // buffer to hold incoming packet,
+  // die mac-adressen werden sortiert; dadurch
+  // werden die angeschlossenen Decoder stets in der gleichen Reihenfolge aufgerufen und
+  // weisen sich immer die gleiche UID zu.
+  InsertionSort();
   for (uint8_t s = 0; s < slaveCnt; s++)
   {
     memcpy(&Clntbuffer, slaveInfo[s].slave.peer_addr, macLen);

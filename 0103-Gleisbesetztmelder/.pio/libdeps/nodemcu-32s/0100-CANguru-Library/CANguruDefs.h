@@ -59,7 +59,7 @@
   Rest Frei								1111
 */
 
-const char *prefName = "CANguru";
+#define prefName "CANguru"
 
 #define UID_BASE  0x45009195ULL // CAN-UID
 #define maxdevice 99

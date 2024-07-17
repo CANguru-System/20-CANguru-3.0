@@ -118,14 +118,15 @@ void generateHash(uint8_t offset)
 // startet WLAN im AP-Mode, damit meldet sich der Decoder beim Master
 void startAPMode()
 {
-  WiFi.persistent(false); // Turn off persistent to fix flash crashing issue.
-  WiFi.mode(WIFI_OFF);    // https://github.com/esp8266/Arduino/issues/3100
+//  WiFi.persistent(false); // Turn off persistent to fix flash crashing issue.
+//  WiFi.mode(WIFI_OFF);    // https://github.com/esp8266/Arduino/issues/3100
   WiFi.mode(WIFI_AP);
   // Connect to Wi-Fi
-  String ssid1 = WiFi.softAPmacAddress();
-  ssid0 = ssid0 + ssid1;
+//  String ssid1 = WiFi.softAPmacAddress();
+  ssid0 = ssid0 + WiFi.softAPmacAddress();
   char ssid[30];
   ssid0.toCharArray(ssid, 30);
+//  WiFi.setTxPower(WIFI_POWER_19_5dBm);    // Set WiFi RF power output to highest level
   if (WiFi.softAP(ssid)) // Name des Access Points
     log_i("WIFI %s OK", ssid);
   else

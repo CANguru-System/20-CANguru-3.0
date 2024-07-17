@@ -43,6 +43,7 @@ namespace InstallGUI
             stepper,
             bridge,
             booster,
+            maxi,
             next
         }
         struct decoderStruct
@@ -105,6 +106,8 @@ namespace InstallGUI
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0101-CANguru-Bridge-Olimex-Version-3.5\\.pio\\build\\esp32-evb\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = false });
             // booster
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0106-CANguru-Booster\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            // maxi
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0107-MaxiSignal-PCA9685\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -503,6 +506,13 @@ namespace InstallGUI
         private void rbBooster_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.booster];
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            loaded = firmware.none;
+        }
+
+        private void rbMaxi_CheckedChanged(object sender, EventArgs e)
+        {
+            currDecoder = decoderliste[(int)decoders.maxi];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
         }
