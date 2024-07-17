@@ -24,7 +24,6 @@
 #include "soc/rtc_cntl_reg.h"
 
 Preferences preferences;
-const char* prefName = "CANguru";
 
 // Forward-Declaration
 void sendConfig();
@@ -65,6 +64,7 @@ Kanals CONFIGURATION_Status_Index = Kanal00;
 
 const uint8_t decoderadr = minadr;
 uint8_t uid_device[uid_num];
+uint16_t ms_nativeDelay;
 
 // Zeigen an, ob eine entsprechende Anforderung eingegangen ist
 bool CONFIG_Status_Request = false;
