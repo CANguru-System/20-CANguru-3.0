@@ -42,7 +42,7 @@ const uint8_t minLEDsignaldelay = 2;
 const uint8_t maxLEDsignaldelay = 99;
 const uint8_t stdLEDsignaldelay = (minLEDsignaldelay + maxLEDsignaldelay - 1) / 2;
 
-const uint8_t minFormsignaldelay = 200;
+const uint8_t minFormsignaldelay = 100;
 const uint8_t maxFormsignaldelay = 255;
 const uint8_t stdFormsignaldelay = (minFormsignaldelay + maxFormsignaldelay) / 2;
 

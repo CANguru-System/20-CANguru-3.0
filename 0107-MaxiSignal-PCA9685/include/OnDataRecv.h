@@ -97,6 +97,7 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
         if (LEDSignals[led].ColorChg())
         {
           switchLED(led);
+          log_d("LED: %d", led);
         }
         break;
       }
@@ -111,6 +112,7 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
         if (FormSignals[form].ColorChg())
         {
           switchForm(form);
+          log_d("FORM: %d", form);
         }
         break;
       }

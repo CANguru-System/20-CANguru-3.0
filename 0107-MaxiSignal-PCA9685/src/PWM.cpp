@@ -185,6 +185,7 @@ void FormSignalClass::Attach(uint8_t ch)
 // Zielfarbe ist Rot
 void FormSignalClass::GoRed()
 {
+  log_d("ROT");
   // es ist ROT
   // jetzt umschalten auf GRÜN
   // dutyCycle_curr läuft von 70 auf 100
@@ -207,6 +208,7 @@ void FormSignalClass::GoRed()
 // Zielfarbe ist Grün
 void FormSignalClass::GoGreen()
 {
+  log_d("GRUEN");
   // es ist GRÜN
   // jetzt umschalten auf ROT
   // dutyCycle_curr läuft von 100 auf 70
