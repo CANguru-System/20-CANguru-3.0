@@ -45,6 +45,7 @@ namespace InstallGUI
             this.label4 = new System.Windows.Forms.Label();
             this.processBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.rbMaxi = new System.Windows.Forms.RadioButton();
             this.rbBridge = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.rbBooster = new System.Windows.Forms.RadioButton();
@@ -59,7 +60,7 @@ namespace InstallGUI
             this.qrcode = new System.Windows.Forms.Button();
             this.url4qrcode = new System.Windows.Forms.TextBox();
             this.eyeicon = new System.Windows.Forms.PictureBox();
-            this.rbMaxi = new System.Windows.Forms.RadioButton();
+            this.rbFormsignal = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
@@ -189,6 +190,7 @@ namespace InstallGUI
             this.groupBox1.Controls.Add(this.rbBridge);
             this.groupBox1.Controls.Add(this.radioButton1);
             this.groupBox1.Controls.Add(this.rbBooster);
+            this.groupBox1.Controls.Add(this.rbFormsignal);
             this.groupBox1.Controls.Add(this.rbstepper);
             this.groupBox1.Controls.Add(this.rbgleisbesetztmelder);
             this.groupBox1.Location = new System.Drawing.Point(20, 362);
@@ -197,6 +199,18 @@ namespace InstallGUI
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Decoder";
+            // 
+            // rbMaxi
+            // 
+            this.rbMaxi.AutoSize = true;
+            this.rbMaxi.Location = new System.Drawing.Point(220, 23);
+            this.rbMaxi.Name = "rbMaxi";
+            this.rbMaxi.Size = new System.Drawing.Size(128, 17);
+            this.rbMaxi.TabIndex = 4;
+            this.rbMaxi.TabStop = true;
+            this.rbMaxi.Text = "Maxisignal auf ESP32";
+            this.rbMaxi.UseVisualStyleBackColor = true;
+            this.rbMaxi.CheckedChanged += new System.EventHandler(this.rbMaxi_CheckedChanged);
             // 
             // rbBridge
             // 
@@ -213,7 +227,7 @@ namespace InstallGUI
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(220, 49);
+            this.radioButton1.Location = new System.Drawing.Point(220, 75);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(112, 17);
             this.radioButton1.TabIndex = 2;
@@ -336,17 +350,17 @@ namespace InstallGUI
             this.eyeicon.TabIndex = 22;
             this.eyeicon.TabStop = false;
             // 
-            // rbMaxi
+            // rbFormsignal
             // 
-            this.rbMaxi.AutoSize = true;
-            this.rbMaxi.Location = new System.Drawing.Point(220, 23);
-            this.rbMaxi.Name = "rbMaxi";
-            this.rbMaxi.Size = new System.Drawing.Size(128, 17);
-            this.rbMaxi.TabIndex = 4;
-            this.rbMaxi.TabStop = true;
-            this.rbMaxi.Text = "Maxisignal auf ESP32";
-            this.rbMaxi.UseVisualStyleBackColor = true;
-            this.rbMaxi.CheckedChanged += new System.EventHandler(this.rbMaxi_CheckedChanged);
+            this.rbFormsignal.AutoSize = true;
+            this.rbFormsignal.Location = new System.Drawing.Point(220, 49);
+            this.rbFormsignal.Name = "rbFormsignal";
+            this.rbFormsignal.Size = new System.Drawing.Size(145, 17);
+            this.rbFormsignal.TabIndex = 1;
+            this.rbFormsignal.TabStop = true;
+            this.rbFormsignal.Text = "Formsignal auf ESP32-C3";
+            this.rbFormsignal.UseVisualStyleBackColor = true;
+            this.rbFormsignal.CheckedChanged += new System.EventHandler(this.rbFormsignal_CheckedChanged);
             // 
             // Form1
             // 
@@ -419,6 +433,7 @@ namespace InstallGUI
         private System.Windows.Forms.TextBox url4qrcode;
         private System.Windows.Forms.PictureBox eyeicon;
         private RadioButton rbMaxi;
+        private RadioButton rbFormsignal;
     }
 }
 

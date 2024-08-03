@@ -44,6 +44,7 @@ namespace InstallGUI
             bridge,
             booster,
             maxi,
+            formsignal,
             next
         }
         struct decoderStruct
@@ -100,7 +101,7 @@ namespace InstallGUI
             String line;
             // gleisbesetztmelder
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0103-Gleisbesetztmelder\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
-            // stepper
+            // weichenstepper
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0104-Weiche-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             // bridge 
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0101-CANguru-Bridge-Olimex-Version-3.5\\.pio\\build\\esp32-evb\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = false });
@@ -108,6 +109,8 @@ namespace InstallGUI
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0106-CANguru-Booster\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // maxi
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0107-MaxiSignal-PCA9685\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            // formsignalstepper
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -485,6 +488,13 @@ namespace InstallGUI
         private void rbstepper_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.stepper];
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            loaded = firmware.none;
+        }
+
+        private void rbFormsignal_CheckedChanged(object sender, EventArgs e)
+        {
+            currDecoder = decoderliste[(int)decoders.formsignal];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
         }
