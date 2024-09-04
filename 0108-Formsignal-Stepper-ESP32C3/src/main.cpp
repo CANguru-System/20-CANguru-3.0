@@ -63,7 +63,7 @@ StepperwButton button(btn_Step_pin);
 uint8_t decoderadr;
 uint8_t stepperDelay;
 uint16_t stepsToEnd;
-position rightORleft;
+position DownORUpward;
 stepDirections stepDirection;
 
 const uint16_t stepsToEnd_min = 100;
@@ -143,8 +143,8 @@ void setup()
     preferences.putUChar("SrvDel", stepperDelay);
     //
     // Status der Magnetartikel zu Beginn auf rechts setzen
-    rightORleft = right;
-    preferences.putUChar("acc_state", rightORleft);
+    DownORUpward = Down;
+    preferences.putUChar("acc_state", DownORUpward);
 
     // Ausrichtung des Stepper Motors
     stepDirection = A_dir;
@@ -170,7 +170,7 @@ void setup()
       // Gesamtumdrehung
       stepsToEnd = readValfromPreferences16(preferences, "stepsToEnd", stepsToEnd_std, stepsToEnd_min, stepsToEnd_max);
       // Status der Magnetartikel versenden an die steppers
-      rightORleft = (position)readValfromPreferences(preferences, "acc_state", right, right, left);
+      DownORUpward = (position)readValfromPreferences(preferences, "acc_state", Down, Down, Upward);
     // Ausrichtung des Stepper Motors
       stepDirection = (stepDirections)readValfromPreferences(preferences, "s_d", A_dir, A_dir, B_dir);
     }
@@ -208,7 +208,7 @@ void setup()
   button.Set_to_address(decoderadr);
   button.SetDelay(stepperDelay);
   button.Set_stepsToSwitch(stepsToEnd);
-  button.SetPosCurr(rightORleft);
+  button.SetPosCurr(DownORUpward);
   button.Attach(stepDirection);
   button.SetPosition();
   // Vorbereiten der Blink-LED
@@ -312,14 +312,14 @@ void switchAcc()
   position set_pos = button.GetPosDest();
   switch (set_pos)
   {
-  case left:
+  case Upward:
   {
-    button.GoLeft();
+    button.GoUpward();
   }
   break;
-  case right:
+  case Down:
   {
-    button.GoRight();
+    button.GoDown();
   }
   break;
   }

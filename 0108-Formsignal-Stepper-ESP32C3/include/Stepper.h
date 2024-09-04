@@ -17,8 +17,8 @@
 // mögliche Positionen des steppers
 enum position
 {
-  right,
-  left
+  Down,
+  Upward
 };
 
 enum directions
@@ -40,6 +40,20 @@ enum setupPhases
   phase2,
   phase3,
   phase4
+};
+
+enum wippPhases
+{
+  hi0,
+  hi1,
+  hi2,
+  hi3,
+  hi4,
+  lo0,
+  lo1,
+  lo2,
+  lo3,
+  lo4
 };
 
 const int steps = 4; // how many pins are in use.
@@ -64,9 +78,11 @@ public:
   // Setzt die Zielposition
   void SetPosition();
   // Zielposition ist links
-  void GoLeft();
+  void _GoUpward(int dest);
+  void GoUpward();
   // Zielposition ist rechts
-  void GoRight();
+  void _GoDown(int dest);
+  void GoDown();
   // Überprüft periodisch, ob die Zielposition erreicht wird
   void Update();
   void SetDirection(stepDirections dir)
@@ -140,7 +156,7 @@ public:
   void Set_stepsToSwitch(uint16_t steps)
   {
     stepsToSwitch = steps;
-    leftpos = stepsToSwitch;
+    Upwardpos = stepsToSwitch;
   }
   // Liefert die Gesamtumdrehungen eines steppers
   uint16_t Get_stepsToSwitch()
@@ -178,13 +194,15 @@ public:
   unsigned long step_delay;      // delay between steps, in us, based on speed
   unsigned long direction_delay; // delay between steps, in us, based on speed
   int16_t stepsToSwitch;
-  int leftpos;  // 74 je groesser desto weiter nach links
-  int rightpos; // 5 je kleiner desto weiter nach rechts
+  int Upwardpos;  // 74 je groesser desto weiter nach links
+  int Downpos; // 5 je kleiner desto weiter nach rechts
   position acc_pos_curr;
   int currpos; // current stepper position
   bool set_stepsToSwitch;
   int destpos;   // stepper position, where to go
   int increment; // increment to move for each interval
+  wippPhases currWippPhase;
+  int wippDist;
 
 private:
   int endpos;

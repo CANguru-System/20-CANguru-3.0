@@ -178,13 +178,13 @@ void StepperwButton::doubleClick()
 
 void StepperwButton::longPressStop()
 {
-  leftpos = stepsToSwitch;
-  acc_pos_curr = left;
+  Upwardpos = stepsToSwitch;
+  acc_pos_curr = Upward;
   phase = phase0;
   currpos = 0;
   set_stepsToSwitch = true;
   readyToStep = stepsToSwitch != 0;
-  GoLeft();
+  GoUpward();
 } // longPressStop
 
 void StepperwButton::multiClick()
@@ -235,15 +235,16 @@ void StepperBase::Attach(stepDirections dir)
   readyToStep = stepsToSwitch != 0;
   set_stepsToSwitch = false;
   no_correction = true;
-  rightpos = 0;
-  leftpos = stepsToSwitch;
+  Downpos = 0;
+  Upwardpos = stepsToSwitch;
+  wippDist = stepsToSwitch / 4;
   switch (acc_pos_curr)
   {
-  case right:
-    currpos = rightpos;
+  case Down:
+    currpos = Downpos;
     break;
-  case left:
-    currpos = leftpos;
+  case Upward:
+    currpos = Upwardpos;
     break;
   }
 }
@@ -314,39 +315,50 @@ void StepperBase::SetPosition()
   acc_pos_dest = acc_pos_curr;
   switch (acc_pos_dest)
   {
-  case left:
+  case Upward:
   {
-    GoLeft();
+    GoUpward();
   }
   break;
-  case right:
+  case Down:
   {
-    GoRight();
+    GoDown();
   }
   break;
   }
 }
 
-// Zielposition ist links
-void StepperBase::GoLeft()
+// Zielposition ist links/up
+void StepperBase::_GoUpward(int dest)
 {
-  log_d("going left C: %d - d: %d", currpos, leftpos);
-  destpos = leftpos;
-  // von currpos < 74 bis 74, des halb increment positiv
+  log_d("going Upward C: %d - d: %d", currpos, Upwardpos);
+  destpos = dest;
   increment = 1;
   step = 0;
   direction = reverse;
 }
 
-// Zielposition ist rechts
-void StepperBase::GoRight()
+void StepperBase::GoUpward()
 {
-  log_d("going right C: %d - d: %d", currpos, leftpos);
-  destpos = rightpos; // 1
-                      // von currpos > 1 bis 1, des halb increment negativ
+  _GoUpward(Upwardpos);
+  currWippPhase = hi0;
+}
+
+// Zielposition ist rechts/down
+void StepperBase::_GoDown(int dest)
+{
+  log_d("going Down C: %d - d: %d", currpos, Upwardpos);
+  destpos = dest;
   increment = -1;
   step = steps - 1;
   direction = forward;
+}
+
+// Zielposition ist rechts/down
+void StepperBase::GoDown()
+{
+  _GoDown(Downpos);
+  currWippPhase = lo0;
 }
 
 // Überprüft periodisch, ob die Zielposition erreicht wird
@@ -362,7 +374,47 @@ void StepperwButton::Update()
       oneStep();
       currpos += increment;
       if (destpos == currpos)
-        stopStepper();
+        switch (currWippPhase)
+        {
+        case hi0:
+          currWippPhase = hi1;
+          _GoDown(currpos - 3 * wippDist);
+          break;
+        case hi1:
+          currWippPhase = hi2;
+          _GoUpward(Upwardpos);
+          break;
+        case hi2:
+          currWippPhase = hi3;
+          _GoDown(currpos - 1.5 * wippDist);
+          break;
+        case hi3:
+          currWippPhase = hi4;
+          _GoUpward(Upwardpos);
+          break;
+        case hi4:
+          stopStepper();
+          break;
+        case lo0:
+          currWippPhase = lo1;
+          _GoUpward(currpos + 2 * wippDist);
+          break;
+        case lo1:
+          currWippPhase = lo2;
+          _GoDown(Downpos);
+          break;
+        case lo2:
+          currWippPhase = lo3;
+          _GoUpward(currpos + wippDist);
+          break;
+        case lo3:
+          currWippPhase = lo4;
+          _GoDown(Downpos);
+          break;
+        case lo4:
+          stopStepper();
+          break;
+        }
     }
   }
 }
