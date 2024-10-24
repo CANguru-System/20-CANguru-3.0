@@ -89,6 +89,9 @@ IPAddress canguruETHClient::getipBroadcast()
 // überträgt einen String, mit nl wahr zusätzlich mit neuer Zeile
 void canguruETHClient::printTelnet(bool nl, String str, uint8_t indent)
 {
+  char charArray[str.length() + 1]; // +1 for the null terminator
+  strcpy(charArray, str.c_str());
+  log_i("%s", charArray);
 
   if (tlntClnt && tlntClnt.connected())
   {

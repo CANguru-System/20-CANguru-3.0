@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -885,9 +886,18 @@ namespace CANguruX
                         CMD cmd = (CMD)content[0];
                         // die Richtung entnehmen und content[0] wieder auf 0x00 setzen
                         content[0] = 0x00;
-                        if ((cmd == CMD.MSGfromBridge) && content[1] == 4)
+                        string msg;
+                        if (cmd == CMD.MSGfromBridge)
                         {
-                            if (decoders.Count > 0)
+                            if ((content[1] == 3) || (content[1] == 4))
+                            {
+                                msg = doMsg4TctWindow(cmd, content);
+                                ChangeMyText(this.TelnetComm, msg);
+                            }
+                        }
+                        if ((cmd == CMD.MSGfromBridge) && content[1] == 4)
+                            {
+                                if (decoders.Count > 0)
                                 foreach (string decoder in decoders)
                                 {
                                     string message = String.Concat("Decoder nicht gefunden:", decoder, "!");
@@ -1150,8 +1160,8 @@ namespace CANguruX
                                             if (CANguruDescriptionNbr == 0)
                                             {
                                                 string descrbtn = read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
-                                                descrbtn += " Adr: " + contenttmp[0x0C].ToString();
-                                                ChangeMyText(this.TelnetComm, "Decoder angemeldet: " + descrbtn);
+                                            //    descrbtn += " Adr: " + contenttmp[0x0C].ToString();
+                                                ChangeMyText(this.TelnetComm, "Decoder angemeldet: " + descrbtn + " Adr: " + contenttmp[0x0C].ToString());
                                                 if (decoders.Contains(descrbtn) == true)
                                                 {
                                                     decoders.Remove(descrbtn);

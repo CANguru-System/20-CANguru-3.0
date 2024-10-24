@@ -347,6 +347,7 @@ void sendToServer(uint8_t *buffer, CMD dest)
   uint16_t packetSize = 0;
   uint8_t cmd = buffer[1];
   buffer[0] = dest;
+  log_i("printMSG: %d", cmd);
   UDPToServer.beginPacket(ipGateway, localPortToServer);
   UDPToServer.write(buffer, CAN_FRAME_SIZE);
   UDPToServer.endPacket();
@@ -466,16 +467,18 @@ bool loadCS2LocFile(uint8_t f)
   sendToServer(M_PATTERN, toUDP);
   // ruft Daten ab
   uint32_t cntFrame = getDataSize(f);
+  char charArray[fName.length() + 1]; // +1 for the null terminator
+  strcpy(charArray, fName.c_str());
   if (cntFrame == 0)
   {
     return false;
   }
   if (LittleFS.exists(fName))
   {
-    log_i("LittleFS exists: %s", fName);
+    log_i("LittleFS exists: %s", charArray);
     return true;
     if (!LittleFS.remove(fName))
-      log_d("Did NOT remove %s", fName);
+      log_d("Did NOT remove %s", charArray);
   }
   locofile = LittleFS.open(fName, FILE_WRITE);
   // Configdaten abrufen
@@ -511,7 +514,7 @@ bool loadCS2LocFile(uint8_t f)
       // write the packet to local file
       if (!locofile.write(httpBuffer, pOUT))
       {
-        log_d("%s write failed", fName);
+        log_d("%s write failed", charArray);
         locofile.close();
         return false;
       }
@@ -519,7 +522,7 @@ bool loadCS2LocFile(uint8_t f)
     }
   }
   locofile.close();
-  log_i("LittleFS read: %s", fName);
+  log_i("LittleFS read: %s", charArray);
   return true;
 }
 
@@ -558,7 +561,9 @@ void analyseHTTP()
   if (urlfound == false)
     return;
   ffound = false;
-  log_d("http: %s", currentLine);
+  char charArray[currentLine.length() + 1]; // +1 for the null terminator
+  strcpy(charArray, currentLine.c_str());
+  log_d("http: %s", charArray);
   currentLine.toLowerCase();
   if (currentLine.indexOf(lokofileName) > 0)
   {
