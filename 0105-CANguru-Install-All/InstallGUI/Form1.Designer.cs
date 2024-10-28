@@ -49,6 +49,7 @@ namespace InstallGUI
             this.rbBridge = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.rbBooster = new System.Windows.Forms.RadioButton();
+            this.rbFormsignal = new System.Windows.Forms.RadioButton();
             this.rbstepper = new System.Windows.Forms.RadioButton();
             this.rbgleisbesetztmelder = new System.Windows.Forms.RadioButton();
             this.helpbtn = new System.Windows.Forms.Button();
@@ -60,7 +61,6 @@ namespace InstallGUI
             this.qrcode = new System.Windows.Forms.Button();
             this.url4qrcode = new System.Windows.Forms.TextBox();
             this.eyeicon = new System.Windows.Forms.PictureBox();
-            this.rbFormsignal = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
@@ -203,7 +203,7 @@ namespace InstallGUI
             // rbMaxi
             // 
             this.rbMaxi.AutoSize = true;
-            this.rbMaxi.Location = new System.Drawing.Point(220, 23);
+            this.rbMaxi.Location = new System.Drawing.Point(199, 23);
             this.rbMaxi.Name = "rbMaxi";
             this.rbMaxi.Size = new System.Drawing.Size(128, 17);
             this.rbMaxi.TabIndex = 4;
@@ -227,7 +227,7 @@ namespace InstallGUI
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(220, 75);
+            this.radioButton1.Location = new System.Drawing.Point(199, 75);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(112, 17);
             this.radioButton1.TabIndex = 2;
@@ -246,6 +246,18 @@ namespace InstallGUI
             this.rbBooster.Text = "CANguru-Booster";
             this.rbBooster.UseVisualStyleBackColor = true;
             this.rbBooster.CheckedChanged += new System.EventHandler(this.rbBooster_CheckedChanged);
+            // 
+            // rbFormsignal
+            // 
+            this.rbFormsignal.AutoSize = true;
+            this.rbFormsignal.Location = new System.Drawing.Point(199, 49);
+            this.rbFormsignal.Name = "rbFormsignal";
+            this.rbFormsignal.Size = new System.Drawing.Size(145, 17);
+            this.rbFormsignal.TabIndex = 1;
+            this.rbFormsignal.TabStop = true;
+            this.rbFormsignal.Text = "Formsignal auf ESP32-C3";
+            this.rbFormsignal.UseVisualStyleBackColor = true;
+            this.rbFormsignal.CheckedChanged += new System.EventHandler(this.rbFormsignal_CheckedChanged);
             // 
             // rbstepper
             // 
@@ -349,18 +361,6 @@ namespace InstallGUI
             this.eyeicon.Size = new System.Drawing.Size(25, 16);
             this.eyeicon.TabIndex = 22;
             this.eyeicon.TabStop = false;
-            // 
-            // rbFormsignal
-            // 
-            this.rbFormsignal.AutoSize = true;
-            this.rbFormsignal.Location = new System.Drawing.Point(220, 49);
-            this.rbFormsignal.Name = "rbFormsignal";
-            this.rbFormsignal.Size = new System.Drawing.Size(145, 17);
-            this.rbFormsignal.TabIndex = 1;
-            this.rbFormsignal.TabStop = true;
-            this.rbFormsignal.Text = "Formsignal auf ESP32-C3";
-            this.rbFormsignal.UseVisualStyleBackColor = true;
-            this.rbFormsignal.CheckedChanged += new System.EventHandler(this.rbFormsignal_CheckedChanged);
             // 
             // Form1
             // 

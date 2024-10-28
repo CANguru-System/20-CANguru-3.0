@@ -213,34 +213,41 @@ void initVariant()
   WiFi.disconnect();
 }
 
-/**************************************************************************/
-/*!
-    @brief  Sorts a list of elements.
-    @param  list        Array of elements to be sorted
-    @param  n           Length of the array
-*/
-/**************************************************************************/
+void assign(slaveInfoStruct dest, slaveInfoStruct source)
+{
+  memcpy(&dest.slave.peer_addr, &source.slave.peer_addr, macLen);
+  dest.slave.channel = WIFI_CHANNEL;
+  dest.slave.encrypt = 0;
+  dest.peer = &slaveInfo[slaveCnt].slave;
+  // integer äquivalent zu mac adresse ausrechnen; damit werden die mac-adressen sortiert
+  dest.intValue = source.intValue;
+  slaveInfo[slaveCnt].decoderIsAlive = isAlive;
+}
+
 void InsertionSort()
 {
   int32_t j = 0;
   slaveInfoStruct slaveInfoKey;
 
-  for (int32_t i = 1; i < slaveCnt; i++)
+  for (uint8_t i = 1; i < slaveCnt; i++)
   {
-    memcpy(&slaveInfoKey, &slaveInfo[i], sizeof(slaveInfoStruct));
+    // slaveInfoKey = slaveInfo[i];
+    assign(slaveInfoKey, slaveInfo[i]);
     j = i - 1;
 
     // Move elements of list[0..i-1], that are
     // greater than key, to one position ahead
     // of their current position
-    while (j >= 0 && slaveInfo[j].intValue > slaveInfoKey.intValue)
+    while (j >= 0 && (slaveInfo[j].intValue > slaveInfoKey.intValue))
     {
       //      list[j + 1] = list[j];
-      memcpy(&slaveInfo[j + 1], &slaveInfo[j], sizeof(slaveInfoStruct));
+      //      slaveInfo[j + 1] = slaveInfo[j];
+      assign(slaveInfo[j + 1], slaveInfo[j]);
       j = j - 1;
     }
     // list[j + 1] = key;
-    memcpy(&slaveInfo[j + 1], &slaveInfoKey, sizeof(slaveInfoStruct));
+    //    slaveInfo[j + 1] = slaveInfoKey;
+    assign(slaveInfo[j + 1], slaveInfoKey);
   }
 };
 
@@ -344,26 +351,12 @@ void sendTheData(uint8_t slave, const uint8_t *data, size_t len)
     if (sendResult != ESP_OK)
     {
       printESPNowError(sendResult);
-      log_i("--------------------------------->");
     }
 
     esp_now_del_peer(slaveInfo[slave].slave.peer_addr);
   }
   else
     log_i("esp_now_add_peer faild Slave: %d", slave);
-  //  delay(10);
-  /*
-    char macStr[30] = {0};
-    sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", slaveInfo[slave].slave.peer_addr[0], slaveInfo[slave].slave.peer_addr[1], slaveInfo[slave].slave.peer_addr[2], slaveInfo[slave].slave.peer_addr[3], slaveInfo[slave].slave.peer_addr[4], slaveInfo[slave].slave.peer_addr[5]);
-    log_i("sendTheData0: %d-%s", slave, macStr);
-    Serial.print("sendTheData1: " + String(slave) + "-(" + String(len) + ")-");
-    for (uint8_t i = 0; i < len; i++)
-    {
-      char s[7];
-      sprintf(s, "%02X:", data[i]);
-      Serial.print(s);
-    }
-    Serial.println();*/
 }
 
 void setallSlavesAreReadyToZero()
@@ -391,20 +384,21 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
 {
   uint8_t Clntbuffer[CAN_FRAME_SIZE]; // buffer to hold incoming packet,
   memcpy(Clntbuffer, data, data_len);
-  if (data_len == macLen)
+  if ((data_len == macLen) || (data_len == macLen + 1))
   {
     // Rückmeldung der slaves, nachdem sie ihre UID festgelegt haben
     // mit nbrSlavesAreReady wird die Anzahl der Rückmeldungen gezählt
     nbrSlavesAreReady++;
     return;
   }
-  if (data_len == macLen + 1)
+/*  if (data_len == macLen + 1)
   {
     // Rückmeldung der slaves, nachdem sie ihre UID festgelegt haben
     // mit nbrSlavesAreReady wird die Anzahl der Rückmeldungen gezählt
     nbrSlavesAreReady++;
+    log_i("macLen+1 %d", nbrSlavesAreReady);
     return;
-  }
+  }*/
   switch (data[0x01])
   {
   case PING_R:
