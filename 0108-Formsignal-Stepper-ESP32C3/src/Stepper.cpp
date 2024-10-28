@@ -182,7 +182,7 @@ void StepperwButton::longPressStop()
   acc_pos_curr = Upward;
   phase = phase0;
   currpos = 0;
-  set_stepsToSwitch = true;
+  set_endpos = true;
   readyToStep = stepsToSwitch != 0;
   GoUpward();
 } // longPressStop
@@ -233,15 +233,15 @@ void StepperBase::Attach(stepDirections dir)
   direction_delay = 250; // 20 * step_delay/1000;
   phase = phase0;
   readyToStep = stepsToSwitch != 0;
-  set_stepsToSwitch = false;
+  set_endpos = false;
   no_correction = true;
-  Downpos = 0;
+  startPos = 0;
   Upwardpos = stepsToSwitch;
   wippDist = stepsToSwitch / 4;
   switch (acc_pos_curr)
   {
   case Down:
-    currpos = Downpos;
+    currpos = startPos;
     break;
   case Upward:
     currpos = Upwardpos;
@@ -331,7 +331,7 @@ void StepperBase::SetPosition()
 // Zielposition ist links/up
 void StepperBase::_GoUpward(int dest)
 {
-  log_d("going Upward C: %d - d: %d", currpos, Upwardpos);
+  log_d("going Upward C: %d - d: %d", currpos, dest);
   destpos = dest;
   increment = 1;
   step = 0;
@@ -347,7 +347,7 @@ void StepperBase::GoUpward()
 // Zielposition ist rechts/down
 void StepperBase::_GoDown(int dest)
 {
-  log_d("going Down C: %d - d: %d", currpos, Upwardpos);
+  log_d("going Down C: %d - d: %d", currpos, dest);
   destpos = dest;
   increment = -1;
   step = steps - 1;
@@ -357,7 +357,7 @@ void StepperBase::_GoDown(int dest)
 // Zielposition ist rechts/down
 void StepperBase::GoDown()
 {
-  _GoDown(Downpos);
+  _GoDown(startPos);
   currWippPhase = lo0;
 }
 
@@ -395,13 +395,17 @@ void StepperwButton::Update()
         case hi4:
           stopStepper();
           break;
+        case hi5:
+          currWippPhase = hi4;
+          _GoUpward(startPos);
+          break;
         case lo0:
           currWippPhase = lo1;
           _GoUpward(currpos + 2 * wippDist);
           break;
         case lo1:
           currWippPhase = lo2;
-          _GoDown(Downpos);
+          _GoDown(startPos);
           break;
         case lo2:
           currWippPhase = lo3;
@@ -409,10 +413,14 @@ void StepperwButton::Update()
           break;
         case lo3:
           currWippPhase = lo4;
-          _GoDown(Downpos);
+          _GoDown(startPos);
           break;
         case lo4:
           stopStepper();
+          break;
+        case lo5:
+          currWippPhase = lo4;
+          _GoDown(startPos);
           break;
         }
     }

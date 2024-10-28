@@ -1,0 +1,164 @@
+[253075][I][espnow.cpp:205] initVariant(): Init Variant ok!
+[253076][I][MOD-LCD.cpp:231] displayLCD(): LCD: ESPNow started!
+[253280][I][main.cpp:766] proc_fromCAN2WDPandServer(): Gleisbox found!
+[253281][I][MOD-LCD.cpp:231] displayLCD(): LCD: Gleisbox found!
+[253283][I][MOD-LCD.cpp:231] displayLCD(): LCD: Suche Slaves ...
+[253289][I][main.cpp:377] msgStartScanning(): Start scanning
+[261708][I][MOD-LCD.cpp:231] displayLCD(): LCD: Scanning finished
+[261716][I][MOD-LCD.cpp:231] displayLCD(): LCD: Scan# 0 - 35 slave(s) found of 1!
+[261727][I][MOD-LCD.cpp:231] displayLCD(): LCD: A4:CF:12:45:BC:69
+[261730][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 1
+
+[261777][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:A4:C5
+[261780][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 2
+
+[261787][I][MOD-LCD.cpp:231] displayLCD(): LCD: 30:AE:A4:FE:55:C9
+[261790][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 3
+
+[261798][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:D9:69
+[261801][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 4
+
+[261809][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3D:C2:B9
+[261812][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 5
+
+[261821][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:01:10:B1
+[261824][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 6
+
+[261873][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:01:09:4D
+[261876][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 7
+
+[261884][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3D:BE:A5
+[261887][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 8
+
+[261895][I][MOD-LCD.cpp:231] displayLCD(): LCD: 34:B7:DA:F8:75:79
+[261898][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 9
+
+[261905][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:F6:15
+[261908][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 10
+
+[261917][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:61:3D
+[261920][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 11
+
+[261969][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3D:B7:B1
+[261972][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 12
+
+[261980][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:AC:45
+[261983][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 13
+
+[261991][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:7B:89
+[261994][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 14
+
+[262002][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:01:39:F5
+[262005][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 15
+
+[262013][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:91:81
+[262016][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 16
+
+[262065][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:CD:71
+[262068][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 17
+
+[262075][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3D:B5:95
+[262078][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 18
+
+[262086][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:41:71
+[262089][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 19
+
+[262097][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:01:3D:AD
+[262100][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 20
+
+[262109][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:01:3B:99
+[262112][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 21
+
+[262161][I][MOD-LCD.cpp:231] displayLCD(): LCD: CC:50:E3:B6:6B:8D
+[262165][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 22
+
+[262172][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:8C:D9
+[262175][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 23
+
+[262183][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3D:CF:DD
+[262186][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 24
+
+[262194][I][MOD-LCD.cpp:231] displayLCD(): LCD: 24:6F:28:15:E5:99
+[262197][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 25
+
+[262205][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:98:85
+[262208][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 26
+
+[262257][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:00:A2:79
+[262260][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 27
+
+[262268][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:88:D1
+[262271][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 28
+
+[262279][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:3C:D9
+[262282][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 29
+
+[262290][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3F:30:61
+[262293][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 30
+
+[262301][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:00:02:65
+[262304][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 31
+
+[262353][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:94:01
+[262356][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 32
+
+[262364][I][MOD-LCD.cpp:231] displayLCD(): LCD: 48:31:B7:3E:96:11
+[262367][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 33
+
+[262375][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:00:8A:5D
+[262378][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 34
+
+[262386][I][MOD-LCD.cpp:231] displayLCD(): LCD: 84:FC:E6:01:3D:2D
+[262389][I][MOD-LCD.cpp:231] displayLCD(): LCD:  -- Added Slave 35
+
+[262442][I][MOD-LCD.cpp:231] displayLCD(): LCD: 35 slave(s) found!
+
+[262985][I][main.cpp:1104] proc_start_lokBuffer(): proc_start_lokBuffer
+[263112][E][vfs_api.cpp:105] open(): /littlefs/lokomotive.cs2 does not exist, no permits for creation
+[263152][I][main.cpp:522] loadCS2LocFile(): LittleFS read: аЌ§?
+[263169][E][vfs_api.cpp:105] open(): /littlefs/geraet.vrs does not exist, no permits for creation
+[263184][I][main.cpp:522] loadCS2LocFile(): LittleFS read: /geraet.vrs
+[264079][I][main.cpp:1197] loop(): systemIsRunning
+[264090][I][main.cpp:921] proc_fromWDP2CAN(): WDP has been started
+[264576][I][main.cpp:921] proc_fromWDP2CAN(): WDP has been started
+[264939][I][main.cpp:921] proc_fromWDP2CAN(): WDP has been started
+[265297][I][main.cpp:921] proc_fromWDP2CAN(): WDP has been started
+[265659][I][main.cpp:921] proc_fromWDP2CAN(): WDP has been started
+[335293][I][main.cpp:921] proc_fromWDP2CAN(): WDP has been started
+[339705][I][main.cpp:475] loadCS2LocFile(): LittleFS exists: 8§?
+[339942][I][main.cpp:475] loadCS2LocFile(): LittleFS exists: §?
+[352045][I][main.cpp:475] loadCS2LocFile(): LittleFS exists: Д§?
+[352103][I][main.cpp:475] loadCS2LocFile(): LittleFS exists: А§?
+[352494][I][main.cpp:475] loadCS2LocFile(): LittleFS exists:Й§?
+[352555][I][main.cpp:475] loadCS2LocFile(): LittleFS exists: Є­§?
+[360784][I][main.cpp:475] loadCS2LocFile(): LittleFS exists:Й§?
+[360841][I][main.cpp:475] loadCS2LocFile(): LittleFS exists: Є­§?
+[1465772][I][utils.h:137] iNetEvtCB(): ETHERNET ?? 3
+ets Jun  8 2016 00:22:57
+
+rst:0xc (SW_CPU_RESET),boot:0x1b (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1184
+load:0x40078000,len:13232
+load:0x40080400,len:3028
+entry 0x400805e4
+[   139][I][espnow.cpp:205] initVariant(): Init Variant ok!
+[   992][I][main.cpp:989] setup():
+
+C A N g u r u - B r i d g e - 3.50a
+[   992][I][main.cpp:990] setup():
+ on OLIMEX ESP32-EVB
+[   993][I][main.cpp:991] setup(): CPU Frequency = 240 Mhz
+[  1240][I][esp32-hal-i2c.c:75] i2cInit(): Initialising I2C Master: sda=13 scl=16 freq=100000
+[  1742][W][Wire.cpp:301] begin(): Bus already started in Master Mode.
+[  3833][I][MOD-LCD.cpp:231] displayLCD(): LCD: CANguru-Bridge
+[  3835][I][MOD-LCD.cpp:231] displayLCD(): LCD: CANguru 3.50a
+[  3837][I][MOD-LCD.cpp:231] displayLCD(): LCD:
+[  5663][I][MOD-LCD.cpp:231] displayLCD(): LCD: ETHERNET Started
+[  5667][I][MOD-LCD.cpp:231] displayLCD(): LCD: ETHERNET Connected
+[  6771][I][MOD-LCD.cpp:231] displayLCD(): LCD:
+[  6772][I][MOD-LCD.cpp:231] displayLCD(): LCD: Connect!
+[ 83192][W][AsyncTCP.cpp:950] _poll(): rx timeout 4
+

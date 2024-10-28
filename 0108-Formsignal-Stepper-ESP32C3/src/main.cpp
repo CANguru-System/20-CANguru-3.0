@@ -33,6 +33,7 @@ enum Kanals
   Kanal01,
   Kanal02,
   Kanal03,
+  Kanal04,
   endofKanals
 };
 
@@ -62,13 +63,18 @@ StepperwButton button(btn_Step_pin);
 
 uint8_t decoderadr;
 uint8_t stepperDelay;
-uint16_t stepsToEnd;
+uint16_t startPos;
+uint16_t endPos;
 position DownORUpward;
 stepDirections stepDirection;
 
-const uint16_t stepsToEnd_min = 100;
-const uint16_t stepsToEnd_std = 500;
-const uint16_t stepsToEnd_max = 1000;
+const uint16_t startPos_min = 0;
+const uint16_t startPos_std = 0;
+const uint16_t startPos_max = 500;
+
+const uint16_t endPos_min = 100;
+const uint16_t endPos_std = 600;
+const uint16_t endPos_max = 800;
 
 IPAddress IP;
 
@@ -134,9 +140,13 @@ void setup()
     decoderadr = 1;
     preferences.putUChar("decoderadr", decoderadr);
     // Anfangswerte
-    // Gesamtumdrehungen des Steppers
-    stepsToEnd = stepsToEnd_std;
-    preferences.putUShort("stepsToEnd", stepsToEnd);
+    // Endposition des Steppers
+    startPos = startPos_std;
+    preferences.putUShort("startPos", startPos);
+
+    // Startposition des Steppers
+    endPos = endPos_std;
+    preferences.putUShort("endPos", endPos);
     //
     // Verzögerung
     stepperDelay = stdstepperdelay;
@@ -167,8 +177,10 @@ void setup()
       decoderadr = readValfromPreferences(preferences, "decoderadr", minadr, minadr, maxadr);
       // Verzögerung
       stepperDelay = readValfromPreferences(preferences, "SrvDel", stdstepperdelay, minstepperdelay, maxstepperdelay);
-      // Gesamtumdrehung
-      stepsToEnd = readValfromPreferences16(preferences, "stepsToEnd", stepsToEnd_std, stepsToEnd_min, stepsToEnd_max);
+      // Startposition
+      startPos = readValfromPreferences16(preferences, "startPos", startPos_std, startPos_min, startPos_max);
+      // Endposition
+      endPos = readValfromPreferences16(preferences, "endPos", endPos_std, endPos_min, endPos_max);
       // Status der Magnetartikel versenden an die steppers
       DownORUpward = (position)readValfromPreferences(preferences, "acc_state", Down, Down, Upward);
     // Ausrichtung des Stepper Motors
@@ -207,7 +219,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(btn_Step_pin), checkButton, CHANGE);
   button.Set_to_address(decoderadr);
   button.SetDelay(stepperDelay);
-  button.Set_stepsToSwitch(stepsToEnd);
+  button.Set_endpos(endPos);
   button.SetPosCurr(DownORUpward);
   button.Attach(stepDirection);
   button.SetPosition();
@@ -230,7 +242,7 @@ void receiveKanalData()
   switch (opFrame[data5])
   {
   // Kanalnummer #1 - Decoderadresse
-  case 1:
+  case Kanal01:
   {
     oldval = decoderadr;
     decoderadr = (opFrame[data6] << 8) + opFrame[data7];
@@ -248,7 +260,7 @@ void receiveKanalData()
   }
   break;
   // Kanalnummer #2 - stepperverzögerung
-  case 2:
+  case Kanal02:
   {
     oldval = stepperDelay;
     stepperDelay = (opFrame[data6] << 8) + opFrame[data7];
@@ -264,21 +276,41 @@ void receiveKanalData()
     }
   }
   break;
-  // Kanalnummer #3 - steppersteps für den Weg
-  case 3:
+  // Kanalnummer #3 - Anfangsposition
+  case Kanal03:
   {
 
-    oldval = stepsToEnd;
-    stepsToEnd = (opFrame[data6] << 8) + opFrame[data7];
-    if (testMinMax(oldval, stepsToEnd, stepsToEnd_min, stepsToEnd_max) && preferences.getUChar("receiveTheData", true))
+    oldval = startPos;
+    startPos = (opFrame[data6] << 8) + opFrame[data7];
+    if (testMinMax(oldval, startPos, startPos_min, startPos_max) && preferences.getUChar("receiveTheData", true))
     {
-      preferences.putUShort("stepsToEnd", stepsToEnd);
-      button.Set_stepsToSwitch(stepsToEnd);
+      preferences.putUShort("startPos", startPos);
+      button.Set_startpos(startPos);
+      if (oldval!=startPos)
+        button.Move_newstartpos(oldval - startPos);
       //
     }
     else
     {
-      stepsToEnd = oldval;
+      startPos = oldval;
+    }
+  }
+  break;
+  // Kanalnummer #4 - Endposition
+  case Kanal04:
+  {
+
+    oldval = endPos;
+    endPos = (opFrame[data6] << 8) + opFrame[data7];
+    if (testMinMax(oldval, endPos, endPos_min, endPos_max) && preferences.getUChar("receiveTheData", true))
+    {
+      preferences.putUShort("endPos", endPos);
+      button.Set_endpos(endPos);
+      //
+    }
+    else
+    {
+      endPos = oldval;
     }
   }
   break;
@@ -403,22 +435,43 @@ Format und Funktion wie Bezeichnung Start. Für das Ende der Darstellung
     // Char Kenner Slider
       2,
     //Word Unterer Wert
-      highByte(stepsToEnd_min), lowByte(stepsToEnd_min),
+      highByte(startPos_min), lowByte(startPos_min),
     // Word Oberer Wert
-      highByte(stepsToEnd_max), lowByte(stepsToEnd_max),
+      highByte(startPos_max), lowByte(startPos_max),
     // Word Aktuelle Einstellung
-      highByte(stepsToEnd), lowByte(stepsToEnd),
+      highByte(startPos), lowByte(startPos),
     // String Auswahlbezeichnung
-      /*2*/ 'M', 'o', 't', 'o', 'r', 's', 'c', 'h',
-      /*3*/ 'r', 'i', 't', 't', 'e', 0,
+      /*2*/ 'S', 't', 'a', 'r', 't', 'p', 'o', 's',
+      /*3*/ 'i', 't', 'i', 'o', 'n', 0,
     // String Bezeichnung Start
     '1', 0, 
     // String Bezeichnung Ende
     /*4*/ '1', 0, 
     // String Einheit
     'S', 't', 'e', 'p',/*5*/ 's', 0, 0, 0, 0, 0, 0, 0};
+  const uint8_t NumLinesKanal04 = 4 * Kanalwidth;
+  uint8_t arrKanal04[NumLinesKanal04] = {
+    // Char Konfigirationskanalnummer
+      /*1*/ Kanal04,
+    // Char Kenner Slider
+      2,
+    //Word Unterer Wert
+      highByte(endPos_min), lowByte(endPos_min),
+    // Word Oberer Wert
+      highByte(endPos_max), lowByte(endPos_max),
+    // Word Aktuelle Einstellung
+      highByte(endPos), lowByte(endPos),
+    // String Auswahlbezeichnung
+      /*2*/ 'E', 'n', 'd', 'p', 'o', 's', 'i', 't',
+      /*3*/ 'i', 'o', 'n', 0,
+    // String Bezeichnung Start
+    '1', 0, 
+    // String Bezeichnung Ende
+    /*4*/ '1', 0, 
+    // String Einheit
+    'S', 't', 'e', 'p',/*5*/ 's', 0};
   uint8_t NumKanalLines[numberofKanals + 1] = {
-      NumLinesKanal00, NumLinesKanal01, NumLinesKanal02, NumLinesKanal03};
+      NumLinesKanal00, NumLinesKanal01, NumLinesKanal02, NumLinesKanal03, NumLinesKanal04};
 
   preferences.putUChar("receiveTheData", true);
   uint8_t paket = 0;
@@ -447,6 +500,11 @@ Format und Funktion wie Bezeichnung Start. Für das Ende der Darstellung
     case Kanal03:
     {
       opFrame[outzeichen + 5] = arrKanal03[inzeichen];
+    }
+    break;
+    case Kanal04:
+    {
+      opFrame[outzeichen + 5] = arrKanal04[inzeichen];
     }
     break;
     case endofKanals:
@@ -491,12 +549,12 @@ void loop()
   // entscheidet dann, welche Routine anschließend aufgerufen wird
   // die steppers werden permant abgefragt, ob es ein Delta zwischen
   // tatsächlicher und gewünschter stepperstellung gibt
-  if (button.Get_set_stepsToSwitch())
+  if (button.Get_set_endpos())
   {
-    stepsToEnd = button.Get_stepsToSwitch();
-    preferences.putUShort("stepsToEnd", stepsToEnd);
+    endPos = button.Get_endpos();
+    preferences.putUShort("endPos", endPos);
     //
-    button.Reset_stepsToSwitch();
+    button.Reset_endpos();
   }
   button.Update();
   bBlinkAlive = button.is_no_Correction();

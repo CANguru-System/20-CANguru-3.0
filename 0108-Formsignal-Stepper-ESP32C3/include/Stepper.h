@@ -49,11 +49,13 @@ enum wippPhases
   hi2,
   hi3,
   hi4,
+  hi5,
   lo0,
   lo1,
   lo2,
   lo3,
-  lo4
+  lo4,
+  lo5
 };
 
 const int steps = 4; // how many pins are in use.
@@ -152,24 +154,43 @@ public:
     log_d("Get_to_address: %d", acc__to_address);
     return acc__to_address;
   }
-  // Setzt die Gesamtumdrehungen eines steppers
-  void Set_stepsToSwitch(uint16_t steps)
+  // Setzt die Endposition des steppers
+  void Move_newstartpos(uint16_t steps2move)
   {
-    stepsToSwitch = steps;
-    Upwardpos = stepsToSwitch;
+    if (steps2move > 0)
+    {
+      currWippPhase = hi5;
+    }
+    else
+    {
+      currWippPhase = lo5;
+    }
+    GoDown();
+  }
+  // Setzt die Endposition des steppers
+  void Set_startpos(uint16_t steps)
+  {
+    startPos = steps;
+    //    Upwardpos = stepsToSwitch;
+  }
+  // Setzt die Endposition des steppers
+  void Set_endpos(uint16_t steps)
+  {
+    stepsToSwitch = steps - startPos;
+    Upwardpos = steps;
   }
   // Liefert die Gesamtumdrehungen eines steppers
-  uint16_t Get_stepsToSwitch()
+  uint16_t Get_endpos()
   {
     return stepsToSwitch;
   }
-  bool Get_set_stepsToSwitch()
+  bool Get_set_endpos()
   {
-    return set_stepsToSwitch;
+    return set_endpos;
   }
-  void Reset_stepsToSwitch()
+  void Reset_endpos()
   {
-    set_stepsToSwitch = false;
+    set_endpos = false;
   }
   bool is_no_Correction()
   {
@@ -194,11 +215,11 @@ public:
   unsigned long step_delay;      // delay between steps, in us, based on speed
   unsigned long direction_delay; // delay between steps, in us, based on speed
   int16_t stepsToSwitch;
-  int Upwardpos;  // 74 je groesser desto weiter nach links
-  int Downpos; // 5 je kleiner desto weiter nach rechts
+  int Upwardpos; // 74 je groesser desto weiter nach links
+  int startPos;  // 5 je kleiner desto weiter nach rechts
   position acc_pos_curr;
   int currpos; // current stepper position
-  bool set_stepsToSwitch;
+  bool set_endpos;
   int destpos;   // stepper position, where to go
   int increment; // increment to move for each interval
   wippPhases currWippPhase;
