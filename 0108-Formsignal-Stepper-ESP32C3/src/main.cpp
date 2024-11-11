@@ -99,9 +99,9 @@ void setup()
   Serial.begin(bdrMonitor);
   uint8_t nativeMACAddress[macLen];
   WiFi.macAddress(nativeMACAddress);
-  ms_nativeDelay = nativeMACAddress[macLen-1];
+  ms_nativeDelay = nativeMACAddress[macLen - 1];
   // a unique delay is necessary to avoid a jam on the way to the router
-  delay(350+ms_nativeDelay);
+  delay(350 + ms_nativeDelay);
   log_d("delay: %d", ms_nativeDelay);
   log_i("\r\n\r\nCANguru - Stepper - Formsignal");
   log_i("\n on %s", ARDUINO_BOARD);
@@ -152,7 +152,7 @@ void setup()
     stepperDelay = stdstepperdelay;
     preferences.putUChar("SrvDel", stepperDelay);
     //
-    // Status der Magnetartikel zu Beginn auf rechts setzen
+    // Status der Magnetartikel zu Beginn auf down (= Signal steht auf STOPP) setzen
     DownORUpward = Down;
     preferences.putUChar("acc_state", DownORUpward);
 
@@ -183,7 +183,7 @@ void setup()
       endPos = readValfromPreferences16(preferences, "endPos", endPos_std, endPos_min, endPos_max);
       // Status der Magnetartikel versenden an die steppers
       DownORUpward = (position)readValfromPreferences(preferences, "acc_state", Down, Down, Upward);
-    // Ausrichtung des Stepper Motors
+      // Ausrichtung des Stepper Motors
       stepDirection = (stepDirections)readValfromPreferences(preferences, "s_d", A_dir, A_dir, B_dir);
     }
     else
@@ -279,20 +279,23 @@ void receiveKanalData()
   // Kanalnummer #3 - Anfangsposition
   case Kanal03:
   {
-
-    oldval = startPos;
-    startPos = (opFrame[data6] << 8) + opFrame[data7];
-    if (testMinMax(oldval, startPos, startPos_min, startPos_max) && preferences.getUChar("receiveTheData", true))
+    if (button.GetPosDest() == Down)
+    // only in DOWN-Position possible
     {
-      preferences.putUShort("startPos", startPos);
-      button.Set_startpos(startPos);
-      if (oldval!=startPos)
-        button.Move_newstartpos(oldval - startPos);
-      //
-    }
-    else
-    {
-      startPos = oldval;
+      oldval = startPos;
+      startPos = (opFrame[data6] << 8) + opFrame[data7];
+      if (testMinMax(oldval, startPos, startPos_min, startPos_max) && preferences.getUChar("receiveTheData", true))
+      {
+        preferences.putUShort("startPos", startPos);
+        button.Set_startpos(startPos);
+        if (oldval != startPos)
+          button.Move_newstartpos(startPos - oldval);
+        //
+      }
+      else
+      {
+        startPos = oldval;
+      }
     }
   }
   break;
@@ -430,46 +433,46 @@ Format und Funktion wie Bezeichnung Start. Für das Ende der Darstellung
 
   const uint8_t NumLinesKanal03 = 5 * Kanalwidth;
   uint8_t arrKanal03[NumLinesKanal03] = {
-    // Char Konfigirationskanalnummer
+      // Char Konfigirationskanalnummer
       /*1*/ Kanal03,
-    // Char Kenner Slider
+      // Char Kenner Slider
       2,
-    //Word Unterer Wert
+      // Word Unterer Wert
       highByte(startPos_min), lowByte(startPos_min),
-    // Word Oberer Wert
+      // Word Oberer Wert
       highByte(startPos_max), lowByte(startPos_max),
-    // Word Aktuelle Einstellung
+      // Word Aktuelle Einstellung
       highByte(startPos), lowByte(startPos),
-    // String Auswahlbezeichnung
+      // String Auswahlbezeichnung
       /*2*/ 'S', 't', 'a', 'r', 't', 'p', 'o', 's',
       /*3*/ 'i', 't', 'i', 'o', 'n', 0,
-    // String Bezeichnung Start
-    '1', 0, 
-    // String Bezeichnung Ende
-    /*4*/ '1', 0, 
-    // String Einheit
-    'S', 't', 'e', 'p',/*5*/ 's', 0, 0, 0, 0, 0, 0, 0};
+      // String Bezeichnung Start
+      '1', 0,
+      // String Bezeichnung Ende
+      /*4*/ '1', 0,
+      // String Einheit
+      'S', 't', 'e', 'p', /*5*/ 's', 0, 0, 0, 0, 0, 0, 0};
   const uint8_t NumLinesKanal04 = 4 * Kanalwidth;
   uint8_t arrKanal04[NumLinesKanal04] = {
-    // Char Konfigirationskanalnummer
+      // Char Konfigirationskanalnummer
       /*1*/ Kanal04,
-    // Char Kenner Slider
+      // Char Kenner Slider
       2,
-    //Word Unterer Wert
+      // Word Unterer Wert
       highByte(endPos_min), lowByte(endPos_min),
-    // Word Oberer Wert
+      // Word Oberer Wert
       highByte(endPos_max), lowByte(endPos_max),
-    // Word Aktuelle Einstellung
+      // Word Aktuelle Einstellung
       highByte(endPos), lowByte(endPos),
-    // String Auswahlbezeichnung
+      // String Auswahlbezeichnung
       /*2*/ 'E', 'n', 'd', 'p', 'o', 's', 'i', 't',
       /*3*/ 'i', 'o', 'n', 0,
-    // String Bezeichnung Start
-    '1', 0, 
-    // String Bezeichnung Ende
-    /*4*/ '1', 0, 
-    // String Einheit
-    'S', 't', 'e', 'p',/*5*/ 's', 0};
+      // String Bezeichnung Start
+      '1', 0,
+      // String Bezeichnung Ende
+      /*4*/ '1', 0,
+      // String Einheit
+      'S', 't', 'e', 'p', /*5*/ 's', 0};
   uint8_t NumKanalLines[numberofKanals + 1] = {
       NumLinesKanal00, NumLinesKanal01, NumLinesKanal02, NumLinesKanal03, NumLinesKanal04};
 

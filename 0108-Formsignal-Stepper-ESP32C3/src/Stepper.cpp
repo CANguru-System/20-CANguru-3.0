@@ -178,13 +178,15 @@ void StepperwButton::doubleClick()
 
 void StepperwButton::longPressStop()
 {
+  log_d("longPressStop");
+  log_d("Zero point");
   Upwardpos = stepsToSwitch;
-  acc_pos_curr = Upward;
+  acc_pos_curr = Upward; // steht weit entfernt vom Motor
   phase = phase0;
-  currpos = 0;
+  currpos = Upwardpos;
   set_endpos = true;
   readyToStep = stepsToSwitch != 0;
-  GoUpward();
+  GoDown();
 } // longPressStop
 
 void StepperwButton::multiClick()
@@ -235,12 +237,13 @@ void StepperBase::Attach(stepDirections dir)
   readyToStep = stepsToSwitch != 0;
   set_endpos = false;
   no_correction = true;
-  startPos = 0;
-  Upwardpos = stepsToSwitch;
+  startPos = 0;              // ganz nahe am Motor
+  Upwardpos = stepsToSwitch; // die weiteste Posion vom Motor entfernt
   wippDist = stepsToSwitch / 4;
   switch (acc_pos_curr)
   {
   case Down:
+    // Standardeinstieg, ganz nahe am Motor
     currpos = startPos;
     break;
   case Upward:
@@ -360,6 +363,21 @@ void StepperBase::GoDown()
   _GoDown(startPos);
   currWippPhase = lo0;
 }
+// Setzt die Startposition des steppers
+void StepperBase::Move_newstartpos(int16_t steps2move)
+{
+  destpos = currpos + steps2move;
+  if (steps2move > 0)
+    _GoUpward(destpos);
+  else
+    _GoDown(destpos);
+/*  for (uint16_t s = 0; s < abs(steps2move); s++)
+  {
+    oneStep();
+    delay(10);
+  }
+  currpos = destpos;*/
+}
 
 // Überprüft periodisch, ob die Zielposition erreicht wird
 void StepperwButton::Update()
@@ -376,6 +394,8 @@ void StepperwButton::Update()
       if (destpos == currpos)
         switch (currWippPhase)
         {
+        case no_action:
+          break;
         case hi0:
           currWippPhase = hi1;
           _GoDown(currpos - 3 * wippDist);

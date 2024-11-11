@@ -55,7 +55,8 @@ enum wippPhases
   lo2,
   lo3,
   lo4,
-  lo5
+  lo5,
+  no_action
 };
 
 const int steps = 4; // how many pins are in use.
@@ -155,19 +156,6 @@ public:
     return acc__to_address;
   }
   // Setzt die Endposition des steppers
-  void Move_newstartpos(uint16_t steps2move)
-  {
-    if (steps2move > 0)
-    {
-      currWippPhase = hi5;
-    }
-    else
-    {
-      currWippPhase = lo5;
-    }
-    GoDown();
-  }
-  // Setzt die Endposition des steppers
   void Set_startpos(uint16_t steps)
   {
     startPos = steps;
@@ -196,6 +184,7 @@ public:
   {
     return no_correction;
   }
+  void Move_newstartpos(int16_t steps2move);
 
   void oneStep();
   void stopStepper();
