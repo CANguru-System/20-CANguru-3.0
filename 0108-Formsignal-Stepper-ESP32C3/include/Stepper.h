@@ -75,6 +75,8 @@ bool getContinue();
 class StepperBase
 {
 public:
+// löscht alle Voreinstellungen
+  void ResetStepper();
   // Voreinstellungen, steppernummer wird physikalisch mit
   // einem stepper verbunden;
   void Attach(stepDirections dir);

@@ -218,6 +218,30 @@ void StepperwButton::multiClick()
   }
 }
 
+void StepperBase::ResetStepper()
+{
+  stopStepper();
+  last_step_time = 0;
+  direction_delay = 250; // 20 * step_delay/1000;
+  phase = phase0;
+  readyToStep = stepsToSwitch != 0;
+  set_endpos = false;
+  no_correction = true;
+  startPos = 0;              // ganz nahe am Motor
+  Upwardpos = stepsToSwitch; // die weiteste Posion vom Motor entfernt
+  wippDist = stepsToSwitch / 6;
+  switch (acc_pos_curr)
+  {
+  case Down:
+    // Standardeinstieg, ganz nahe am Motor
+    currpos = startPos;
+    break;
+  case Upward:
+    currpos = Upwardpos;
+    break;
+  }
+}
+
 void StepperBase::Attach(stepDirections dir)
 {
   // setup the pins on the microcontroller:
@@ -231,25 +255,7 @@ void StepperBase::Attach(stepDirections dir)
   pinMode(B_plus, OUTPUT);
   pinMode(B_minus, OUTPUT);
   stopStepper();
-  last_step_time = 0;
-  direction_delay = 250; // 20 * step_delay/1000;
-  phase = phase0;
-  readyToStep = stepsToSwitch != 0;
-  set_endpos = false;
-  no_correction = true;
-  startPos = 0;              // ganz nahe am Motor
-  Upwardpos = stepsToSwitch; // die weiteste Posion vom Motor entfernt
-  wippDist = stepsToSwitch / 4;
-  switch (acc_pos_curr)
-  {
-  case Down:
-    // Standardeinstieg, ganz nahe am Motor
-    currpos = startPos;
-    break;
-  case Upward:
-    currpos = Upwardpos;
-    break;
-  }
+  ResetStepper();
 }
 
 void StepperBase::oneStep()
@@ -371,12 +377,6 @@ void StepperBase::Move_newstartpos(int16_t steps2move)
     _GoUpward(destpos);
   else
     _GoDown(destpos);
-/*  for (uint16_t s = 0; s < abs(steps2move); s++)
-  {
-    oneStep();
-    delay(10);
-  }
-  currpos = destpos;*/
 }
 
 // Überprüft periodisch, ob die Zielposition erreicht wird
