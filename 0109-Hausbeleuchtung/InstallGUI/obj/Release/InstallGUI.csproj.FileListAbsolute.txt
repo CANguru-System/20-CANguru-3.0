@@ -65,7 +65,6 @@ C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\InstallGUI\bin\Release\QRCoder.dll
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\InstallGUI\obj\Release\InstallGUI.csproj.AssemblyReference.cache
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\InstallGUI\obj\Release\InstallGUI.Form1.resources
-C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\InstallGUI\obj\Release\InstallGUI.Form2.resources
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\InstallGUI\obj\Release\InstallGUI.Properties.Resources.resources
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\InstallGUI\obj\Release\InstallGUI.csproj.GenerateResource.cache
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\InstallGUI\obj\Release\InstallGUI.csproj.CoreCompileInputs.cache

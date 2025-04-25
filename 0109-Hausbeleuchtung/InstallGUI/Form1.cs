@@ -31,43 +31,14 @@ namespace InstallGUI
         // ************************ GLOBAL VARIABLES **************************************************************
 
         byte decoderCnt = 8;
-        string credFile = "credentials.txt";
-        const string esptool = "esptool.exe";
         SerialPort _serialPort;
         char content;
         bool bports;
         bool bssid;
-        bool bpwd;
         bool makeReceive;
-        enum decoders
-        {
-            gleisbesetztmelder = 0,
-            stepper,
-            bridge,
-            booster,
-            maxi,
-            formsignal,
-            next
-        }
-        struct decoderStruct
-        {
-            public String firmware_source;
-            public String scanner_files;
-            public String strprocessor;
-            public bool credentials;
-        }
-        decoderStruct currDecoder;
-
 
         // delegate is used to write to a UI control from a non-UI thread
         private delegate void SetTextDeleg(string text);
-        enum firmware
-        {
-            scanner,
-            decoder,
-            none
-        }
-        firmware loaded;
         private static System.Timers.Timer ahalfsecTimer;
         ArrayList portlist = new ArrayList();
         UInt16 portlistPtr;
@@ -75,72 +46,15 @@ namespace InstallGUI
         public Form1()
         {
             InitializeComponent();
-
-            //Subscribe to Event
-            eyeicon.MouseDown += new MouseEventHandler(eyeicon_MouseDown);
-            eyeicon.MouseUp += new MouseEventHandler(eyeicon_MouseUp);            // 
-
-            password.UseSystemPasswordChar = true;
         }
 
-        private void eyeicon_MouseDown(object sender, MouseEventArgs e)
-        {
-            password.UseSystemPasswordChar = false;
-
-        }
-
-        private void eyeicon_MouseUp(object sender, MouseEventArgs e)
-        {
-            password.UseSystemPasswordChar = true;
-
-        }
         // ************************ FORM LOAD **************************************************************
 
         private void Form1_Load(object sender, EventArgs e)
         {
             bports = false;
             bssid = false;
-            bpwd = false;
             makeReceive = true;
-            loaded = firmware.none;
-            String line;
-            // weichenstepper
-            currDecoder.firmware_source = "..\\0104-Weiche-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\";
-            currDecoder.scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3";
-            currDecoder.strprocessor = "esp32c3";
-            currDecoder.credentials = true;
-            if (System.IO.File.Exists(credFile))
-            {
-                try
-                {
-                    //Pass the file path and file name to the StreamReader constructor
-                    StreamReader sr = new StreamReader(credFile);
-                    //Read the first line of text: COM-Port
-                    line = sr.ReadLine();
-                    lightportsBox.Items.Add(line);
-                    lightportsBox.SelectedIndex = 0;
-                    //        bports = true;
-                    //Read the second line of text: SSID
-                    line = sr.ReadLine();
-                    ssidBox.Items.Add(line);
-                    ssidBox.SelectedIndex = 0;
-                    bssid = true;
-                    //Read the third line of text: Password
-                    line = sr.ReadLine();
-                    password.Text = line;
-                    //close the file
-                    sr.Close();
-                    reportBox.Text = "Gespeicherte Credentials eingelesen." + Environment.NewLine + "Drücken Sie den Knopf Upload, um die Firmware auf den ESP32 zu laden.";
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Exception: " + ex.Message);
-                }
-                finally
-                {
-                    Console.WriteLine("Executing finally block.");
-                }
-            }
             //
             _serialPort = new SerialPort();
             // Set the baud rate (e.g., 9600)
@@ -179,46 +93,6 @@ namespace InstallGUI
             baseTime.Increment = 100;
         }
 
-        // ************************ SAVE SSID AND PASSWORD **************************************************************
-
-        private void saveBtn_Click(object sender, EventArgs e)
-        {
-            bpwd = password.Text.Length > 0;
-            if (bports && bssid && bpwd)
-            {
-                String ssid = ssidBox.SelectedItem.ToString();
-                string[] ssids = ssid.Split('(');
-                try
-                {
-                    //Open the File
-                    StreamWriter sw = new StreamWriter(credFile, false, Encoding.ASCII);
-
-                    //Write out the port
-                    sw.Write(lightportsBox.SelectedItem.ToString());
-                    sw.Write("\n");
-                    //Write out the ssid
-                    sw.Write(ssids[0].Trim());
-                    sw.Write("\n");
-                    //Write out the password
-                    sw.Write(password.Text);
-
-                    //close the file
-                    sw.Close();
-                    reportBox.Text = "Credentials gespeichert.";
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Exception: " + ex.Message);
-                }
-                finally
-                {
-                    Console.WriteLine("Executing finally block.");
-                }
-            }
-            else
-                MessageBox.Show("Bitte zunächst den Port wählen, die SSID scannen und das Passwort eingaben!");
-        }
-
         // ************************ FINISH APP **************************************************************
 
         private void finishBtn_Click(object sender, EventArgs e)
@@ -226,128 +100,6 @@ namespace InstallGUI
             this.Close();
         }
 
-        // ************************ HELPER LOAD FIRMWARE TO DECODER **************************************************************
-
-        bool loadFirmware(string cpu, string source, string txt, firmware fw)
-        {
-            int errNo = -1;
-            reportBox.Text = "Bitte warten ...";
-            try
-            {
-                if (_serialPort.IsOpen)
-                    _serialPort.Close();
-
-                Process P = new Process();
-                P.StartInfo.FileName = esptool;
-                // hier kann z.B. eine Textdatei mit übergeben werden
-                if (cpu == "esp32")
-                    P.StartInfo.Arguments = "--chip " + cpu + " --port " + lightportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x1000 " + source + "/bootloader.bin 0x8000 " + source + "/partitions.bin 0x10000 " + source + "/firmware.bin";
-                if (cpu == "esp32c3")
-                    P.StartInfo.Arguments = "--chip " + cpu + " --port " + lightportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 " + source + "/bootloader.bin 0x8000 " + source + "/partitions.bin 0xE000 boot_app0.bin 0x10000 " + source + "/firmware.bin";
-                processBox.Text = P.StartInfo.FileName + " " + P.StartInfo.Arguments + Environment.NewLine;
-                P.StartInfo.UseShellExecute = false;
-                P.StartInfo.RedirectStandardOutput = true;
-                P.StartInfo.CreateNoWindow = true;
-                P.Start();
-                while (!P.StandardOutput.EndOfStream)
-                {
-                    processBox.AppendText(P.StandardOutput.ReadLine() + Environment.NewLine);
-                }
-                P.WaitForExit();
-                errNo = P.ExitCode;
-                P.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error ESPTOOL :: " + ex.Message, "Error!");
-            }
-            finally
-            {
-                if (errNo == 0)
-                    reportBox.Text = txt + " installiert";
-                else
-                    reportBox.Text = txt + " nicht installiert! Fehler: " + errNo.ToString();
-                loaded = fw;
-            }
-            return (errNo == 0);
-        }
-
-        // ************************ HELPER ERASE FLASH **************************************************************
-
-        private void erasebtn_Click(object sender, EventArgs e)
-        {
-            int errNo = -1;
-            reportBox.Text = "Bitte warten ...";
-            try
-            {
-                Process P = new Process();
-                P.StartInfo.FileName = esptool;
-                P.StartInfo.Arguments = "--chip " + currDecoder.strprocessor + " --port " + lightportsBox.SelectedItem.ToString() + " erase_flash";
-                processBox.Text = P.StartInfo.FileName + " " + P.StartInfo.Arguments + Environment.NewLine;
-                P.StartInfo.UseShellExecute = false;
-                P.StartInfo.RedirectStandardOutput = true;
-                P.StartInfo.CreateNoWindow = true;
-                P.Start();
-                while (!P.StandardOutput.EndOfStream)
-                {
-                    processBox.AppendText(P.StandardOutput.ReadLine() + Environment.NewLine);
-                }
-                P.WaitForExit();
-                errNo = P.ExitCode;
-                P.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error ESPTOOL :: " + ex.Message, "Error!");
-            }
-            finally
-            {
-                if (errNo == 0)
-                    reportBox.Text = "Flash-Speicher gelöscht";
-                else
-                    reportBox.Text = "Flash-Speicher nicht gelöscht! Fehler: " + errNo.ToString();
-                loaded = firmware.none;
-            }
-        }
-
-        // ************************ SERIAL COMMUNICATION **************************************************************
-
-        /*       void openPort()
-               {
-                   try
-                   {
-                       if (lightportsBox.SelectedIndex == -1)
-                       {
-                           MessageBox.Show("Bitte zunächst ComPort festlegen", "Error!");
-                           return;
-                       }
-                       if (_serialPort == null)
-                       {
-                           // noch kein serial-Port
-                           _serialPort = new SerialPort(lightportsBox.SelectedItem.ToString(), 115200, Parity.None, 8, StopBits.One);
-                           _serialPort.Handshake = Handshake.None;
-                           _serialPort.DataReceived += new SerialDataReceivedEventHandler(sp_DataReceived);
-                           _serialPort.ReadTimeout = 500;
-                           _serialPort.WriteTimeout = 500;
-                           _serialPort.Open();
-                           return;
-                       }
-                       // ist geöffnet und korrekter Port: keine Aktion
-                       if ((_serialPort.IsOpen) && (_serialPort.PortName == lightportsBox.SelectedItem.ToString()))
-                           return;
-                       else
-                       // ist geöffnet oder falscher Port: Schließen und neu
-                       if ((_serialPort.IsOpen) || (_serialPort.PortName != lightportsBox.SelectedItem.ToString()))
-                           _serialPort.Close();
-                       openPort();
-
-                   }
-                   catch (Exception ex)
-                   {
-                       MessageBox.Show("Error opening to serial port :: " + ex.Message, "Error!");
-                   }
-               }
-       */
         bool write2Port(string subcommand)
         {
             //
@@ -447,16 +199,6 @@ namespace InstallGUI
             }
         }
 
-        // ************************ SCAN SSID **************************************************************
-        private void scanSSIDBtn_Click(object sender, EventArgs e)
-        {
-            // Clear the listbox
-            ssidBox.Items.Clear();
-            if (loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner))
-                bssid = write2Port("SCAN");
-            //
-        }
-
         // ************************ SCAN PORTS **************************************************************
 
         private void Seta1halfsecTimer()
@@ -518,31 +260,6 @@ namespace InstallGUI
             }
         }
 
-
-        private void scanPortsBtn_Click(object sender, EventArgs e)
-        {
-            // Clear the listbox
-            comportsBox.Items.Clear();
-            // Get a list of serial port names.
-            string[] ports = SerialPort.GetPortNames();
-
-            foreach (string port in ports)
-            {
-                comportsBox.Items.Add(port);
-            }
-            if (comportsBox.Items.Count > 0)
-            {
-                comportsBox.SelectedIndex = 0;
-                bports = true;
-                reportBox.Text = "COM-Ports geladen.";
-            }
-            else
-            {
-                reportBox.Text = "KEINE COM-Ports gefunden.";
-                comportsBox.Items.Add("kein Port!");
-            }
-        }
-
         private void changePortname(string pn)
         {
             if (_serialPort.IsOpen)
@@ -564,48 +281,6 @@ namespace InstallGUI
             {
                 changePortname(lightportsBox.SelectedItem.ToString());
             }
-        }
-
-        // ************************ UPLOAD DECODER-FIRMWARE **************************************************************
-
-        private void uploadBtn_Click(object sender, EventArgs e)
-        {
-            string command;
-            bool res = true;
-            if (currDecoder.credentials == true)
-            {
-                // load scanner firmware to decoder
-                if (loaded != firmware.scanner)
-                    res = loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner);
-                // prepare and send ssid via port
-                if (res && (ssidBox.Items.Count > 0))
-                {
-                    String ssid = ssidBox.SelectedItem.ToString();
-                    if (ssidBox.SelectedItem.ToString().IndexOf('(') != -1)
-                    {
-                        string[] ssids = ssid.Split('(');
-                        command = "SSID" + ssids[0].Trim();
-                    }
-                    else
-                        command = "SSID" + ssid;
-                    bssid = write2Port(command);
-                }
-                else
-                    MessageBox.Show("FEHLER!");
-            }
-            else
-                loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
-        }
-
-        // ************************ HELP WINDOW **************************************************************
-
-        private void helpbtn_Click(object sender, EventArgs e)
-        {
-            // create an object of `Form2` form in the current form
-            Form2 helpForm = new Form2();
-
-            // use the `Show()` method to access the new non-modal form
-            helpForm.ShowDialog();
         }
 
         private void transmitBtn_Click(object sender, EventArgs e)
