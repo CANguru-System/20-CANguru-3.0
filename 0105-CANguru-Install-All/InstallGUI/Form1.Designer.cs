@@ -47,7 +47,7 @@ namespace InstallGUI
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbMaxi = new System.Windows.Forms.RadioButton();
             this.rbBridge = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.rbLight = new System.Windows.Forms.RadioButton();
             this.rbBooster = new System.Windows.Forms.RadioButton();
             this.rbFormsignal = new System.Windows.Forms.RadioButton();
             this.rbstepper = new System.Windows.Forms.RadioButton();
@@ -61,6 +61,7 @@ namespace InstallGUI
             this.qrcode = new System.Windows.Forms.Button();
             this.url4qrcode = new System.Windows.Forms.TextBox();
             this.eyeicon = new System.Windows.Forms.PictureBox();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
@@ -188,7 +189,8 @@ namespace InstallGUI
             // 
             this.groupBox1.Controls.Add(this.rbMaxi);
             this.groupBox1.Controls.Add(this.rbBridge);
-            this.groupBox1.Controls.Add(this.radioButton1);
+            this.groupBox1.Controls.Add(this.radioButton2);
+            this.groupBox1.Controls.Add(this.rbLight);
             this.groupBox1.Controls.Add(this.rbBooster);
             this.groupBox1.Controls.Add(this.rbFormsignal);
             this.groupBox1.Controls.Add(this.rbstepper);
@@ -224,16 +226,17 @@ namespace InstallGUI
             this.rbBridge.UseVisualStyleBackColor = true;
             this.rbBridge.CheckedChanged += new System.EventHandler(this.rbBridge_CheckedChanged);
             // 
-            // radioButton1
+            // rbLight
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(199, 75);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(112, 17);
-            this.radioButton1.TabIndex = 2;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Nächster Decoder";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.rbLight.AutoSize = true;
+            this.rbLight.Location = new System.Drawing.Point(199, 75);
+            this.rbLight.Name = "rbLight";
+            this.rbLight.Size = new System.Drawing.Size(109, 17);
+            this.rbLight.TabIndex = 2;
+            this.rbLight.TabStop = true;
+            this.rbLight.Text = "Hausbeleuchtung";
+            this.rbLight.UseVisualStyleBackColor = true;
+            this.rbLight.CheckedChanged += new System.EventHandler(this.rbLight_CheckedChanged);
             // 
             // rbBooster
             // 
@@ -362,6 +365,17 @@ namespace InstallGUI
             this.eyeicon.TabIndex = 22;
             this.eyeicon.TabStop = false;
             // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(199, 101);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(112, 17);
+            this.radioButton2.TabIndex = 2;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Nächster Decoder";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -428,12 +442,13 @@ namespace InstallGUI
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox reportBox;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton rbLight;
         private System.Windows.Forms.Button qrcode;
         private System.Windows.Forms.TextBox url4qrcode;
         private System.Windows.Forms.PictureBox eyeicon;
         private RadioButton rbMaxi;
         private RadioButton rbFormsignal;
+        private RadioButton radioButton2;
     }
 }
 

@@ -45,6 +45,7 @@ namespace InstallGUI
             booster,
             maxi,
             formsignal,
+            hausbeleuchtung,
             next
         }
         struct decoderStruct
@@ -111,6 +112,8 @@ namespace InstallGUI
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0107-MaxiSignal-PCA9685\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // formsignalstepper
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            // hausbeleuchtung
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0109-Hausbeleuchtung\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -484,6 +487,13 @@ namespace InstallGUI
         }
 
         // ************************ SELECT DECODER **************************************************************
+
+        private void rbLight_CheckedChanged(object sender, EventArgs e)
+        {
+            currDecoder = decoderliste[(int)decoders.hausbeleuchtung];
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            loaded = firmware.none;
+        }
 
         private void rbstepper_CheckedChanged(object sender, EventArgs e)
         {
