@@ -47,6 +47,7 @@ namespace InstallGUI
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbMaxi = new System.Windows.Forms.RadioButton();
             this.rbBridge = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.rbLight = new System.Windows.Forms.RadioButton();
             this.rbBooster = new System.Windows.Forms.RadioButton();
             this.rbFormsignal = new System.Windows.Forms.RadioButton();
@@ -61,7 +62,6 @@ namespace InstallGUI
             this.qrcode = new System.Windows.Forms.Button();
             this.url4qrcode = new System.Windows.Forms.TextBox();
             this.eyeicon = new System.Windows.Forms.PictureBox();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
@@ -205,7 +205,7 @@ namespace InstallGUI
             // rbMaxi
             // 
             this.rbMaxi.AutoSize = true;
-            this.rbMaxi.Location = new System.Drawing.Point(199, 23);
+            this.rbMaxi.Location = new System.Drawing.Point(190, 23);
             this.rbMaxi.Name = "rbMaxi";
             this.rbMaxi.Size = new System.Drawing.Size(128, 17);
             this.rbMaxi.TabIndex = 4;
@@ -226,15 +226,26 @@ namespace InstallGUI
             this.rbBridge.UseVisualStyleBackColor = true;
             this.rbBridge.CheckedChanged += new System.EventHandler(this.rbBridge_CheckedChanged);
             // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(190, 101);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(112, 17);
+            this.radioButton2.TabIndex = 2;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Nächster Decoder";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
             // rbLight
             // 
             this.rbLight.AutoSize = true;
-            this.rbLight.Location = new System.Drawing.Point(199, 75);
+            this.rbLight.Location = new System.Drawing.Point(190, 75);
             this.rbLight.Name = "rbLight";
-            this.rbLight.Size = new System.Drawing.Size(109, 17);
+            this.rbLight.Size = new System.Drawing.Size(158, 17);
             this.rbLight.TabIndex = 2;
             this.rbLight.TabStop = true;
-            this.rbLight.Text = "Hausbeleuchtung";
+            this.rbLight.Text = "Hausbeleuchtung ESP32C3";
             this.rbLight.UseVisualStyleBackColor = true;
             this.rbLight.CheckedChanged += new System.EventHandler(this.rbLight_CheckedChanged);
             // 
@@ -253,7 +264,7 @@ namespace InstallGUI
             // rbFormsignal
             // 
             this.rbFormsignal.AutoSize = true;
-            this.rbFormsignal.Location = new System.Drawing.Point(199, 49);
+            this.rbFormsignal.Location = new System.Drawing.Point(190, 49);
             this.rbFormsignal.Name = "rbFormsignal";
             this.rbFormsignal.Size = new System.Drawing.Size(145, 17);
             this.rbFormsignal.TabIndex = 1;
@@ -364,17 +375,6 @@ namespace InstallGUI
             this.eyeicon.Size = new System.Drawing.Size(25, 16);
             this.eyeicon.TabIndex = 22;
             this.eyeicon.TabStop = false;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(199, 101);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(112, 17);
-            this.radioButton2.TabIndex = 2;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Nächster Decoder";
-            this.radioButton2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

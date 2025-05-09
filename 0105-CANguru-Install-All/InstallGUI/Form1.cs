@@ -37,6 +37,7 @@ namespace InstallGUI
         bool bports;
         bool bssid;
         bool bpwd;
+        bool no_wifi;
         enum decoders
         {
             gleisbesetztmelder = 0,
@@ -98,6 +99,7 @@ namespace InstallGUI
             bports = false;
             bssid = false;
             bpwd = false;
+            no_wifi = false;
             loaded = firmware.none;
             String line;
             // gleisbesetztmelder
@@ -113,7 +115,7 @@ namespace InstallGUI
             // formsignalstepper
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0109-Hausbeleuchtung\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0109-Hausbeleuchtung\\ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -493,6 +495,7 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.hausbeleuchtung];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
+            no_wifi = true;
         }
 
         private void rbstepper_CheckedChanged(object sender, EventArgs e)
@@ -500,6 +503,7 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.stepper];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
+            no_wifi = false;
         }
 
         private void rbFormsignal_CheckedChanged(object sender, EventArgs e)
@@ -507,6 +511,7 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.formsignal];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
+            no_wifi = false;
         }
 
         private void rbgleisbesetztmelder_CheckedChanged(object sender, EventArgs e)
@@ -514,6 +519,7 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.gleisbesetztmelder];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
+            no_wifi = false;
         }
 
         private void rbBridge_CheckedChanged(object sender, EventArgs e)
@@ -521,6 +527,7 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.bridge];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
+            no_wifi = false;
         }
 
         private void rbBooster_CheckedChanged(object sender, EventArgs e)
@@ -528,6 +535,7 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.booster];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
+            no_wifi = true;
         }
 
         private void rbMaxi_CheckedChanged(object sender, EventArgs e)
@@ -535,6 +543,7 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.maxi];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
+            no_wifi = false;
         }
 
         // ************************ UPLOAD DECODER-FIRMWARE **************************************************************
@@ -543,6 +552,11 @@ namespace InstallGUI
         {
             string command;
             bool res = true;
+            if (no_wifi)
+            {
+                loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
+                return;
+            }
             if (currDecoder.credentials == true)
             {
                 // load scanner firmware to decoder

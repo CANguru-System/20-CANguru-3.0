@@ -88,7 +88,7 @@ namespace InstallGUI
             brightness.Maximum = 255;
             brightness.Minimum = 1;
             // Grenzen für baseTime
-            baseTime.Maximum = 5000;
+            baseTime.Maximum = 100000;
             baseTime.Minimum = 100;
             baseTime.Increment = 100;
         }
