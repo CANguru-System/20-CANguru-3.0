@@ -105,7 +105,7 @@ namespace InstallGUI
             // gleisbesetztmelder
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0103-Gleisbesetztmelder\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // weichenstepper
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0104-Weiche-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0104-Weiche-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             // bridge 
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0101-CANguru-Bridge-Olimex-Version-3.5\\.pio\\build\\esp32-evb\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = false });
             // booster
@@ -113,9 +113,9 @@ namespace InstallGUI
             // maxi
             decoderliste.Add(new decoderStruct { firmware_source = "..\\0107-MaxiSignal-PCA9685\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // formsignalstepper
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0109-Hausbeleuchtung\\ESP32C3\\.pio\\build\\seeed_xiao_esp32c3\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { firmware_source = "..\\0109-Hausbeleuchtung\\ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
