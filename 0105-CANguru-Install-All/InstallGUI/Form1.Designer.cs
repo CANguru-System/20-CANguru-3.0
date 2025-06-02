@@ -62,6 +62,7 @@ namespace InstallGUI
             this.qrcode = new System.Windows.Forms.Button();
             this.url4qrcode = new System.Windows.Forms.TextBox();
             this.eyeicon = new System.Windows.Forms.PictureBox();
+            this.mklittlefs = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
@@ -101,7 +102,7 @@ namespace InstallGUI
             // 
             // saveBtn
             // 
-            this.saveBtn.Location = new System.Drawing.Point(380, 299);
+            this.saveBtn.Location = new System.Drawing.Point(380, 298);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(75, 23);
             this.saveBtn.TabIndex = 4;
@@ -131,7 +132,7 @@ namespace InstallGUI
             // 
             // uploadBtn
             // 
-            this.uploadBtn.Location = new System.Drawing.Point(380, 369);
+            this.uploadBtn.Location = new System.Drawing.Point(380, 400);
             this.uploadBtn.Name = "uploadBtn";
             this.uploadBtn.Size = new System.Drawing.Size(75, 23);
             this.uploadBtn.TabIndex = 7;
@@ -309,7 +310,7 @@ namespace InstallGUI
             // 
             // erasebtn
             // 
-            this.erasebtn.Location = new System.Drawing.Point(380, 334);
+            this.erasebtn.Location = new System.Drawing.Point(380, 332);
             this.erasebtn.Name = "erasebtn";
             this.erasebtn.Size = new System.Drawing.Size(75, 23);
             this.erasebtn.TabIndex = 15;
@@ -376,11 +377,22 @@ namespace InstallGUI
             this.eyeicon.TabIndex = 22;
             this.eyeicon.TabStop = false;
             // 
+            // mklittlefs
+            // 
+            this.mklittlefs.Location = new System.Drawing.Point(381, 366);
+            this.mklittlefs.Name = "mklittlefs";
+            this.mklittlefs.Size = new System.Drawing.Size(75, 23);
+            this.mklittlefs.TabIndex = 23;
+            this.mklittlefs.Text = "LittleFS";
+            this.mklittlefs.UseVisualStyleBackColor = true;
+            this.mklittlefs.Click += new System.EventHandler(this.mklittlefs_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(479, 538);
+            this.Controls.Add(this.mklittlefs);
             this.Controls.Add(this.eyeicon);
             this.Controls.Add(this.url4qrcode);
             this.Controls.Add(this.qrcode);
@@ -449,6 +461,7 @@ namespace InstallGUI
         private RadioButton rbMaxi;
         private RadioButton rbFormsignal;
         private RadioButton radioButton2;
+        private Button mklittlefs;
     }
 }
 

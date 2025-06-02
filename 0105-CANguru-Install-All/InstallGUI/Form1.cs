@@ -22,6 +22,8 @@ using System.Net;
 using static System.Net.Mime.MediaTypeNames;
 using QRCoder;
 using System.Windows.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
+using System.Windows.Documents;
 
 namespace InstallGUI
 {
@@ -31,6 +33,7 @@ namespace InstallGUI
 
         string credFile = "credentials.txt";
         const string esptool = "esptool.exe";
+        const string littlefstool = "mklittlefs.exe";
         SerialPort _serialPort;
         int count = 0;
         char content;
@@ -51,6 +54,7 @@ namespace InstallGUI
         }
         struct decoderStruct
         {
+            public String directory;
             public String firmware_source;
             public String scanner_files;
             public String strprocessor;
@@ -103,19 +107,19 @@ namespace InstallGUI
             loaded = firmware.none;
             String line;
             // gleisbesetztmelder
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0103-Gleisbesetztmelder\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0103-Gleisbesetztmelder\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // weichenstepper
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0104-Weiche-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0104-Weiche-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // bridge 
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0101-CANguru-Bridge-Olimex-Version-3.5\\.pio\\build\\esp32-evb\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = false });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0101-CANguru-Bridge-Olimex-Version-3.5\\.pio\\build\\esp32-evb\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = false });
             // booster
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0106-CANguru-Booster\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0106-CANguru-Booster\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // maxi
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0107-MaxiSignal-PCA9685\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0107-MaxiSignal-PCA9685\\.pio\\build\\nodemcu-32s\\", scanner_files = "ScanPorts\\.pio\\build\\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // formsignalstepper
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
-            decoderliste.Add(new decoderStruct { firmware_source = "..\\0109-Hausbeleuchtung\\ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\seeed_xiao_esp32c3", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "..\\0109-Hausbeleuchtung", firmware_source = "..\\0109-Hausbeleuchtung\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -292,6 +296,81 @@ namespace InstallGUI
                     reportBox.Text = "Flash-Speicher gelöscht";
                 else
                     reportBox.Text = "Flash-Speicher nicht gelöscht! Fehler: " + errNo.ToString();
+                loaded = firmware.none;
+            }
+        }
+
+        // ************************ Make LittleFS.bin and upload *******************************************************
+
+        private void mklittlefs_Click(object sender, EventArgs e)
+        {
+            int errNo = -1;
+            reportBox.Text = "Bitte warten ...";
+            try
+            {
+                Process P0 = new Process();
+                P0.StartInfo.FileName = littlefstool;
+                // "mklittlefs" -c data -s 1441792 -p 256 -b 4096 .pio\build\esp32c3_supermini\littlefs.bin
+                // .\mklittlefs.exe -c ..\0109-Hausbeleuchtung\data -s 1441792 -p 256 -b 4096 ..\0109-Hausbeleuchtung\.pio\build\esp32c3_supermini\littlefs.bin
+                P0.StartInfo.Arguments = "-c " + currDecoder.directory + "\\data -s 1441792 -p 256 -b 4096 " + currDecoder.directory + "\\.pio\\build\\esp32c3_supermini\\littlefs.bin";
+                processBox.Text = P0.StartInfo.FileName + " " + P0.StartInfo.Arguments + Environment.NewLine;
+                P0.StartInfo.UseShellExecute = false;
+                P0.StartInfo.RedirectStandardOutput = true;
+                P0.StartInfo.CreateNoWindow = true;
+                P0.Start();
+                while (!P0.StandardOutput.EndOfStream)
+                {
+                    processBox.AppendText(P0.StandardOutput.ReadLine() + Environment.NewLine);
+                }
+                P0.WaitForExit();
+                errNo = P0.ExitCode;
+                P0.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error MKLittleFS :: " + ex.Message, "Error!");
+            }
+            finally
+            {
+                if (errNo == 0)
+                {
+                    reportBox.Text = "Daten erzeugt";
+                    errNo = -1;
+                    try
+                    {
+                        Process P1 = new Process();
+                        P1.StartInfo.FileName = esptool;
+                        //--chip esp32c3 --port "COM12"--baud 460800--before default_reset --after hard_reset write_flash -z--flash_mode dio --flash_freq 80m--flash_size 4MB 2686976.pio\build\esp32c3_supermini\littlefs.bin
+                        P1.StartInfo.Arguments = "--chip " + currDecoder.strprocessor + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 2686976 " + currDecoder.directory + "\\.pio\\build\\esp32c3_supermini\\littlefs.bin";
+                        processBox.Text += P1.StartInfo.FileName + " " + P1.StartInfo.Arguments + Environment.NewLine;
+                        P1.StartInfo.UseShellExecute = false;
+                        P1.StartInfo.RedirectStandardOutput = true;
+                        P1.StartInfo.CreateNoWindow = true;
+                        P1.Start();
+                        while (!P1.StandardOutput.EndOfStream)
+                        {
+                            processBox.AppendText(P1.StandardOutput.ReadLine() + Environment.NewLine);
+                        }
+                        P1.WaitForExit();
+
+                        errNo = P1.ExitCode;
+                        P1.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error ESPTool :: " + ex.Message, "Error!");
+                    }
+                    finally
+                    {
+                        if (errNo == 0)
+                            reportBox.Text = "Daten erzeugt und hochgeladen";
+                        else
+                            reportBox.Text = "Daten erzeugt, aber nicht hochgeladen! Fehler: " + errNo.ToString();
+                        loaded = firmware.none;
+                    }
+                }
+                else
+                    reportBox.Text = "Daten nicht erzeugt! Fehler: " + errNo.ToString();
                 loaded = firmware.none;
             }
         }
@@ -495,7 +574,8 @@ namespace InstallGUI
             currDecoder = decoderliste[(int)decoders.hausbeleuchtung];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
-            no_wifi = true;
+            no_wifi = false;
+            mklittlefs.Enabled = true;
         }
 
         private void rbstepper_CheckedChanged(object sender, EventArgs e)
@@ -504,6 +584,7 @@ namespace InstallGUI
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
             no_wifi = false;
+            mklittlefs.Enabled = false;
         }
 
         private void rbFormsignal_CheckedChanged(object sender, EventArgs e)
@@ -512,6 +593,7 @@ namespace InstallGUI
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
             no_wifi = false;
+            mklittlefs.Enabled = false;
         }
 
         private void rbgleisbesetztmelder_CheckedChanged(object sender, EventArgs e)
@@ -520,6 +602,7 @@ namespace InstallGUI
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
             no_wifi = false;
+            mklittlefs.Enabled = false;
         }
 
         private void rbBridge_CheckedChanged(object sender, EventArgs e)
@@ -528,6 +611,7 @@ namespace InstallGUI
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
             no_wifi = false;
+            mklittlefs.Enabled = false;
         }
 
         private void rbBooster_CheckedChanged(object sender, EventArgs e)
@@ -536,6 +620,7 @@ namespace InstallGUI
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
             no_wifi = true;
+            mklittlefs.Enabled = false;
         }
 
         private void rbMaxi_CheckedChanged(object sender, EventArgs e)
@@ -544,6 +629,7 @@ namespace InstallGUI
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             loaded = firmware.none;
             no_wifi = false;
+            mklittlefs.Enabled = false;
         }
 
         // ************************ UPLOAD DECODER-FIRMWARE **************************************************************
@@ -563,7 +649,7 @@ namespace InstallGUI
                 if (loaded != firmware.scanner)
                     res = loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner);
                 // prepare and send ssid via port
-                if (res && (ssidBox.Items.Count>0))
+                if (res && (ssidBox.Items.Count > 0))
                 {
                     String ssid = ssidBox.SelectedItem.ToString();
                     if (ssidBox.SelectedItem.ToString().IndexOf('(') != -1)

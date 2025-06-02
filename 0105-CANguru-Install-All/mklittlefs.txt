@@ -1,0 +1,3 @@
+"mklittlefs" -c data -s 1441792 -p 256 -b 4096 .pio\build\esp32c3_supermini\littlefs.bin
+
+"C:\Users\gusta\.platformio\penv\Scripts\python.exe" "C:\Users\gusta\.platformio\packages\tool-esptoolpy\esptool.py" --chip esp32c3 --port "COM12" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 2686976 .pio\build\esp32c3_supermini\littlefs.bin

@@ -1,0 +1,624 @@
+<!DOCTYPE HTML>
+<html>
+<!-----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <gustavwostrack@web.de> wrote this file. As long as you retain this
+ * notice you can do whatever you want with this stuff. If we meet some day,
+ * and you think this stuff is worth it, you can buy me a beer in return
+ * Gustav Wostrack
+ * --------------------------------------------------------------------------->
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            width: 100%;
+            height: auto;
+        }
+
+        h2 {
+            font-family: Arial;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        /* ///////////////////// */
+        input[type=range] {
+            -webkit-appearance: none;
+            position: absolute;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+            background: lightskyblue;
+        }
+
+        .sliderh {
+            left: 74px;
+            width: 80%;
+            height: 25px;
+            margin: 5px;
+        }
+
+        .sliderv {
+            height: 25px;
+            width: 200px;
+            margin-top: 75px;
+            margin-left: 10px;
+            outline: none;
+            transform-origin: 75px 75px;
+            transform: rotate(-90deg);
+        }
+
+        input[type=range]:hover {
+            opacity: 1;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+
+        /* ///////////////////// */
+        .textstyle {
+            position: absolute;
+            margin-top: 10px;
+            font-family: Arial;
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .verticaltextstyle {
+            position: absolute;
+            margin-top: 5px;
+            margin-left: 15px;
+            font-family: Arial;
+            font-size: 14px;
+            align-items: center;
+        }
+
+        output.txtstyle {
+            margin-left: 700px;
+        }
+
+        span.txtstyle {
+            margin-left: 5px;
+        }
+
+        /* ///////////////////// */
+        button.buttonstyle {
+            text-align: center;
+            border: none;
+            height: 30px;
+            position: relative;
+            top: 3px;
+            left: 5px;
+            border-radius: 8px;
+            color: var(--color);
+            background: transparent;
+            margin: 4px 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--color);
+            color: white;
+        }
+
+        /* ///////////////////// */
+        .veryshortbutton {
+            width: 110px;
+            font-size: 14px;
+        }
+
+        .shortbutton {
+            width: 160px;
+            font-size: 14px;
+        }
+
+        .mediumbutton {
+            width: 260px;
+            font-size: 14px;
+        }
+
+        .longbutton {
+            width: 725px;
+            font-size: 16px;
+        }
+
+        /* ///////////////////// */
+        #blastCurve {
+            background-color: lightblue;
+        }
+
+        #bofenTest {
+            background-color: red;
+        }
+
+        #bSOLL {
+            background-color: lightgreen;
+        }
+
+        /* ///////////////////// */
+        #bReflow {
+            background-color: lightsalmon;
+        }
+
+        #bSTOP {
+            background-color: red;
+        }
+
+        /* ///////////////////// */
+        div.box {
+            position: relative;
+            height: 240px;
+            width: 815px;
+            left: 30%;
+            border: 3px solid lightgrey;
+        }
+
+        div.buttonslice {
+            position: relative;
+            height: 45px;
+            width: 740px;
+            left: 5px;
+        }
+
+        div.rangeslice {
+            position: relative;
+            height: 30px;
+            width: 770px;
+            left: 5px;
+        }
+
+        div.datalistslice {
+            position: relative;
+            width: 75%;
+            height: 7%;
+            margin-left: 85px;
+        }
+
+        div.datalistverticalslice {
+            position: absolute;
+            top: 12%;
+            right: 0%;
+            width: 3%;
+            height: 85%;
+        }
+
+        div.verticalslice {
+            position: absolute;
+            top: 1%;
+            right: 2%;
+            width: 5%;
+            height: 95%;
+        }
+
+        .range__list {
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+            margin-top: 1px;
+            font-family: Arial;
+            font-size: 10px;
+            align-items: center;
+            margin-top: 1px;
+        }
+
+        .range__list_vert {
+            flex-direction: column-reverse;
+            height: 95%;
+            justify-content: space-between;
+        }
+
+        .range__list__opt:before {
+            content: "";
+            display: block;
+            padding-left: 3px;
+            text-indent: 0;
+        }
+
+        .vl {
+            border-left: 3px solid lightgray;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Hausbeleuchtung 1.00</h2>
+    <div id="container" style="width:100%; height:400px;"></div>
+</body>
+<div class="box">
+    <div class="buttonslice">
+        <button class="buttonstyle shortbutton" id="bSOLL">
+            SOLL-Kurve
+        </button>
+        <button class="buttonstyle mediumbutton" id="bReflow">
+            REFLOW-Prozess starten
+        </button>
+        <button class="buttonstyle shortbutton" id="blastCurve">
+            HIST-Kurve
+        </button>
+        <button class="buttonstyle veryshortbutton" id="bofenTest">
+            Ofentest
+        </button>
+    </div>
+    <div class="rangeslice">
+        <span class="textstyle txtstyle">Preheat</span>
+        <input type="range" class="sliderh" id="preHeatgradient" name="preHeatgradient" value="80" min="20"
+            max="100" step="2" list="tickmarks" oninput="preHeatgradientValue.value=preHeatgradient.value" />
+        <output name="preHeatgradientValue" class="textstyle txtstyle" id="preHeatgradientValue"
+            for="preHeatgradient">80</output>
+    </div>
+    <div class="datalistslice">
+        <datalist class="range__list" id="tickmarks">
+            <option class="range__opt opt0">20</option>
+            <option class="range__opt opt">30</option>
+            <option class="range__opt opt">40</option>
+            <option class="range__opt">50</option>
+            <option class="range__opt">60</option>
+            <option class="range__opt">70</option>
+            <option class="range__opt">80</option>
+            <option class="range__opt">90</option>
+            <option class="range__opt">100</option>
+        </datalist>
+    </div>
+    <div class="rangeslice">
+        <span class="textstyle txtstyle">Soak</span>
+        <input type="range" class="sliderh" id="soakgradient" name="soakgradient" value="60" min="20" max="100"
+            step="2" list="tickmarks" oninput="soakgradientValue.value=soakgradient.value" />
+        <output name="soakgradientValue" class="textstyle txtstyle" id="soakgradientValue"
+            for="soakgradient">60</output>
+    </div>
+    <div class="datalistslice">
+        <datalist class="range__list" id="tickmarks">
+            <option class="range__opt opt0">20</option>
+            <option class="range__opt opt">30</option>
+            <option class="range__opt opt">40</option>
+            <option class="range__opt">50</option>
+            <option class="range__opt">60</option>
+            <option class="range__opt">70</option>
+            <option class="range__opt">80</option>
+            <option class="range__opt">90</option>
+            <option class="range__opt">100</option>
+        </datalist>
+    </div>
+    <div class="rangeslice">
+        <span class="textstyle txtstyle">Reflow</span>
+        <input type="range" class="sliderh" id="reflowgradient" name="reflowgradient" value="80" min="20" max="100"
+            step="2" list="tickmarks" oninput="reflowgradientValue.value=reflowgradient.value" />
+        <output name="reflowgradientValue" class="textstyle txtstyle" id="reflowgradientValue"
+            for="reflowgradient">80</output>
+    </div>
+    <div class="datalistslice">
+        <datalist class="range__list" id="tickmarks">
+            <option class="range__opt opt0">20</option>
+            <option class="range__opt opt">30</option>
+            <option class="range__opt opt">40</option>
+            <option class="range__opt">50</option>
+            <option class="range__opt">60</option>
+            <option class="range__opt">70</option>
+            <option class="range__opt">80</option>
+            <option class="range__opt">90</option>
+            <option class="range__opt">100</option>
+        </datalist>
+    </div>
+    <div class="buttonslice">
+        <button class="buttonstyle longbutton" id="bSTOP">
+            S T O P - OFEN AUS
+        </button>
+    </div>
+    <div class="vl verticalslice">
+        <input type="range" class="sliderv" id="pre" name="pre" value="35" min="25" max="100" step="5" list="pretickmarks"
+            oninput="preValue.value=pre.value" />
+        <output name="preValue" class="verticaltextstyle" id="preValue" for="preValue">5</output>
+    </div>
+    <div class="datalistverticalslice">
+        <datalist class="range__list range__list_vert" id="pretickmarks">
+            <option>25</option>
+            <option>50</option>
+            <option>75</option>
+            <option>100</option>
+        </datalist>
+    </div>
+</div>
+<script>
+
+    /*
+    Direktstart (beim Start der Seite)
+        myMAXPHASETimer: lädt maxPhase und MaxTemp
+    Button bREFLOW:
+        makeREFLOW
+
+    Button bReflow:
+        showSOLL: start
+        showTEMP:
+    */
+    /////////////////////////////////////////////////////////////////////////////////////
+    // ruft die maximale Zeit des Reflowprozesses in Sekunden ab (=maxPhase)
+    // startet direkt nach Aufruf der Seite;
+    var rcvdREFLOW = 0;
+    var preheatGrad = 40;
+    var soakGrad = 30;
+    var reflowGrad = 50;
+    var preGrad = 5;
+    var maxPhase = 0;
+    var maxTemp = 0;
+    var mySOLLTimer;
+    var myMAXPHASETimer = setInterval(function () {
+        var xhttpMAXPHASE = new XMLHttpRequest();
+        xhttpMAXPHASE.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var array_reponseMAXPHASE = xhttpMAXPHASE.responseText.split("/"); //
+                maxPhase = parseInt(array_reponseMAXPHASE[0]);
+                //
+                preheatGrad = parseInt(array_reponseMAXPHASE[1]);
+                preHeatgradient.value = preheatGrad;
+                preHeatgradientValue.value = preHeatgradient.value;
+                //
+                soakGrad = parseInt(array_reponseMAXPHASE[2]);
+                soakgradient.value = soakGrad;
+                soakgradientValue.value = soakgradient.value;
+                //
+                reflowGrad = parseInt(array_reponseMAXPHASE[3]);
+                reflowgradient.value = reflowGrad;
+                reflowgradientValue.value = reflowgradient.value;
+                //
+                preGrad = parseInt(array_reponseMAXPHASE[4]);
+                pre.value = preGrad;
+                preValue.value = pre.value;
+                //
+                if (maxPhase > 0) {
+                    clearInterval(myMAXPHASETimer);
+                    myTEMPTimer = setInterval(showTEMP, 1000);
+                    rcvdREFLOW = 0;
+                }
+            }
+        };
+        xhttpMAXPHASE.open("GET", "/MAXPHASE", true);
+        xhttpMAXPHASE.send();
+    }, 1000);
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // zeigt die Temperatur vor dem Drücken des Reflow-Buttons an
+    // läuft bis der Button gedrückt wird
+    var myTEMPTimer;
+    var showTEMP = function () {
+        var xhttpTEMP = new XMLHttpRequest();
+        xhttpTEMP.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                chartT.setTitle(null, { text: 'Momentane Temperatur: ' + xhttpTEMP.responseText });
+                if (xhttpTEMP.responseText > 30.0)
+                    chartT.setTitle({ text: 'Vorsicht HEISS!' });
+                else
+                    chartT.setTitle({ text: 'Leerlauf' });
+            }
+        };
+        xhttpTEMP.open("GET", "/TEMP", true);
+        xhttpTEMP.send();
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // wird von Button "Reflow" gestartet
+    var myREFLOWTimer;
+    var makeREFLOW = function () {
+        var xhttpREFLOW = new XMLHttpRequest();
+        xhttpREFLOW.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var array_reponseREFLOW = xhttpREFLOW.responseText.split("/"); //
+                var xx = parseInt(array_reponseREFLOW[0]);  // X-Wert
+                var yy = parseInt(array_reponseREFLOW[1]);  // Temperatur
+                var pp = parseInt(array_reponseREFLOW[2])   // Phase
+
+                //    REFLOW_STATE_PREHEAT,
+                if (pp == 1)
+                    chartT.setTitle({ text: 'Phase PREHEAT' });
+                //  REFLOW_STATE_SOAK,
+                if (pp == 2)
+                    chartT.setTitle({ text: 'Phase SOAK' });
+                //    REFLOW_STATE_HEAT,
+                if (pp == 3)
+                    chartT.setTitle({ text: 'Phase Reflow' });
+                //    REFLOW_STATE_LEVEL,
+                if (pp == 4)
+                    chartT.setTitle({ text: 'Phase Cooling - Bitte vorsichtig die Tuere oeffnen!' });
+                //    REFLOW_STATE_COMPLETE,
+                if (pp == 5) {
+                    chartT.setTitle({ text: 'COMPLETE' });
+                    if (pp == 5) {
+                        clearInterval(myREFLOWTimer);
+                        myTEMPTimer = setInterval(showTEMP, 1000);
+                        rcvdREFLOW = 0;
+                    }
+                }
+                if (pp > 0)
+                    chartT.series[0].addPoint([xx, yy], true, false, true);
+                else
+                    chartT.setTitle({ text: 'Heizt auf!' });
+                chartT.setTitle(null, { text: 'Temperatur: ' + yy });
+                rcvdREFLOW = 1;
+            }
+        };
+        // Werte für rcvdREFLOW
+        // 0: Start, Übergabe der Parameter
+        // 1: Abruf und Empfang der IST-Daten
+        // 2: Warte bis der aktuelle Abruf beantwortet ist
+        if (rcvdREFLOW == 1) {
+            xhttpREFLOW.open("GET", "/REFLOW", true);
+            xhttpREFLOW.send();
+            rcvdREFLOW = 2;
+        }
+        if (rcvdREFLOW == 0) {
+            preheatGrad = parseInt(preHeatgradient.value)
+            soakGrad = parseInt(soakgradient.value);
+            reflowGrad = parseInt(reflowgradient.value);
+            preGrad = parseInt(pre.value);
+            var callSrv = "/PARAM/" + String(preheatGrad) + "/" + String(soakGrad) + "/" + String(reflowGrad) + "/" + String(preGrad) + "/";
+            xhttpREFLOW.open("GET", callSrv, true);
+            xhttpREFLOW.send();
+            rcvdREFLOW = 1;
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // ruft eine vergangene Temperaturkurve ab; 
+    // 
+    var rcvdCURVE = 0;
+    var myCURVETimer;
+    var lastCurve = function () {
+        var xhttpCURVE = new XMLHttpRequest();
+        xhttpCURVE.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var array_reponseCURVE = xhttpCURVE.responseText.split("/"); //
+                var xx = parseInt(array_reponseCURVE[0]);
+                var yy = parseInt(array_reponseCURVE[1]);
+                var zz = parseInt(array_reponseCURVE[2]);
+                if (zz > 1) {
+                    clearInterval(myCURVETimer);
+                    chartT.setTitle(null, { text: 'Zum Start bitte Knopf bet\xE4tigen!' });
+                    myTEMPTimer = setInterval(showTEMP, 1000);
+                }
+                else {
+                    chartT.series[2].addPoint([xx, yy], true, false, true);
+                }
+                chartT.setTitle(null, { text: 'Lade CURVE-Temperatur ...' + yy });
+                rcvdCURVE = 0;
+            }
+        };
+        if (rcvdCURVE == 0) {
+            xhttpCURVE.open("GET", "/CURVE", true);
+            xhttpCURVE.send();
+            rcvdCURVE++;
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // überträgt die Solltemperaturkurve; 
+    // 
+    var xSOLL = 0;
+    var xSOLLaddedPts = 0;
+    var showSOLL = function () {
+        var xhttpSOLL = new XMLHttpRequest();
+        xhttpSOLL.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var array_reponseSOLL = xhttpSOLL.responseText.split("/"); //separe les differents champs du str reponse
+                chartT.series[1].addPoint([parseInt(array_reponseSOLL[0]), parseFloat(array_reponseSOLL[1])], false, false, true);
+                xSOLLaddedPts++;
+                if (xSOLLaddedPts % (10) == 0) {
+                    chartT.setTitle(null, { text: 'Lade SOLL-Temperatur ...' + xSOLLaddedPts + ' von ' + maxPhase });
+                    chartT.redraw();
+                }
+                if (xSOLLaddedPts >= maxPhase) {
+                    chartT.setTitle(null, { text: 'Zum Start bitte Knopf bet\xE4tigen!' });
+                    myTEMPTimer = setInterval(showTEMP, 1000);
+                }
+            }
+        };
+        if (xSOLL >= maxPhase) {
+            clearInterval(mySOLLTimer);
+        }
+        else {
+            xSOLL++;
+            xhttpSOLL.open("GET", "/SOLL", true);
+            xhttpSOLL.send();
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // veranlasst, dass der Reflowprozess gestoppt und der Ofen ausgeschaltet wird; 
+    // 
+    var rcvdSTOP = 0;
+    var mySTOPTimer;
+    var makeSTOP = function () {
+        var xhttpSTOP = new XMLHttpRequest();
+        xhttpSTOP.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (parseInt(xhttpSTOP.responseText) > 0) {
+                    clearInterval(mySTOPTimer);
+                    chartT.setTitle(null, { text: 'GESTOPPT!' });
+                    myTEMPTimer = setInterval(showTEMP, 1000);
+                }
+                chartT.setTitle(null, { text: 'Wird geSTOPPt' });
+                rcvdSTOP = 0;
+            }
+        };
+        if (rcvdSTOP == 0) {
+            xhttpSTOP.open("GET", "/STOP", true);
+            xhttpSTOP.send();
+            rcvdSTOP++;
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Startet das Ausmessen der Ofenparameter
+    var rcvdOFEN = 0;
+    var myOFENTimer;
+    var ofenTest = function () {
+        var xhttpOFEN = new XMLHttpRequest();
+        xhttpOFEN.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (parseInt(xhttpOFEN.responseText) > 0) {
+                    clearInterval(myOFENTimer);
+                    chartT.setTitle(null, { text: 'GEMESSEN!' });
+                    myTEMPTimer = setInterval(showTEMP, 1000);
+                }
+                chartT.setTitle(null, { text: 'Wird gemessen' });
+            //    rcvdOFEN = 0;
+            }
+        };
+        if (rcvdOFEN == 0) {
+            xhttpOFEN.open("GET", "/OFEN", true);
+            xhttpOFEN.send();
+            rcvdOFEN++;
+        }
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Hier erfolgt die Verknüpfung der Knöpfe mit den einzelnen Prozeduren 
+    /////////// Buttons
+    // bSOLL-Button
+    document.getElementById('bSOLL').addEventListener('click', () => {
+        clearInterval(myTEMPTimer);
+        xSOLL = 0;
+        xSOLLaddedPts = 0;
+        mySOLLTimer = setInterval(showSOLL, 1);
+    });
+    ////////////////////////////////
+    // blastCurve-Button
+    document.getElementById('blastCurve').addEventListener('click', () => {
+        clearInterval(myTEMPTimer);
+        myCURVETimer = setInterval(lastCurve, 1);
+    });
+    ////////////////////////////////
+    // bReflow-Button
+    document.getElementById("bReflow").addEventListener('click', () => {
+        clearInterval(myTEMPTimer);
+        myREFLOWTimer = setInterval(makeREFLOW, 1000);
+    });
+    ////////////////////////////////
+    // bSTOPP-Button
+    document.getElementById("bSTOP").addEventListener('click', () => {
+        clearInterval(myREFLOWTimer);
+        mySTOPTimer = setInterval(makeSTOP, 10);
+        rcvdREFLOW = 0;
+    });
+    // bofenTest-Button
+    document.getElementById('bofenTest').addEventListener('click', () => {
+        clearInterval(myTEMPTimer);
+        myOFENTimer = setInterval(ofenTest, 10);
+    });
+</script>
+
+</html>

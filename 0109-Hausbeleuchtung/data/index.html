@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+<!-----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * <gustavwostrack@web.de> wrote this file. As long as you retain this
+ * notice you can do whatever you want with this stuff. If we meet some day,
+ * and you think this stuff is worth it, you can buy me a beer in return
+ * Gustav Wostrack
+ * --------------------------------------------------------------------------->
+
+<head>
+    <title>Hausbeleuchtung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+    <h2>Hausbeleuchtung 1.00</h2>
+    <div id="container" style="width:100%; height:400px;"></div>
+</body>
+<div class="box">
+    <div class="rangeslice">
+        <span class="textstyle txtstyle">onTime</span>
+        <input type="range" class="sliderh" id="onTime" name="onTime" value="80" min="20" max="100" step="1"
+            list="tickmarks" oninput="onTimeValue.value=onTime.value" />
+        <output name="onTimeValue" class="textstyle txtstyle" id="onTimeValue" for="onTime">80</output>
+    </div>
+    <div class="datalistslice">
+        <datalist class="range__list" id="tickmarks">
+            <option class="range__opt opt0">20</option>
+            <option class="range__opt opt">30</option>
+            <option class="range__opt opt">40</option>
+            <option class="range__opt">50</option>
+            <option class="range__opt">60</option>
+            <option class="range__opt">70</option>
+            <option class="range__opt">80</option>
+            <option class="range__opt">90</option>
+            <option class="range__opt">100</option>
+        </datalist>
+    </div>
+    <div class="rangeslice">
+        <span class="textstyle txtstyle">offTime</span>
+        <input type="range" class="sliderh" id="soakgradient" name="soakgradient" value="60" min="20" max="100" step="2"
+            list="tickmarks" oninput="soakgradientValue.value=soakgradient.value" />
+        <output name="soakgradientValue" class="textstyle txtstyle" id="soakgradientValue"
+            for="soakgradient">60</output>
+    </div>
+    <div class="datalistslice">
+        <datalist class="range__list" id="tickmarks">
+            <option class="range__opt opt0">20</option>
+            <option class="range__opt opt">30</option>
+            <option class="range__opt opt">40</option>
+            <option class="range__opt">50</option>
+            <option class="range__opt">60</option>
+            <option class="range__opt">70</option>
+            <option class="range__opt">80</option>
+            <option class="range__opt">90</option>
+            <option class="range__opt">100</option>
+        </datalist>
+    </div>
+    <div class="rangeslice">
+        <span class="textstyle txtstyle">Helligkeit</span>
+        <input type="range" class="sliderh" id="reflowgradient" name="reflowgradient" value="80" min="20" max="100"
+            step="2" list="tickmarks" oninput="reflowgradientValue.value=reflowgradient.value" />
+        <output name="reflowgradientValue" class="textstyle txtstyle" id="reflowgradientValue"
+            for="reflowgradient">80</output>
+    </div>
+    <div class="datalistslice">
+        <datalist class="range__list" id="tickmarks">
+            <option class="range__opt opt0">20</option>
+            <option class="range__opt opt">30</option>
+            <option class="range__opt opt">40</option>
+            <option class="range__opt">50</option>
+            <option class="range__opt">60</option>
+            <option class="range__opt">70</option>
+            <option class="range__opt">80</option>
+            <option class="range__opt">90</option>
+            <option class="range__opt">100</option>
+        </datalist>
+    </div>
+    <div class="buttonslice">
+        <button class="buttonstyle longbutton" id="bSTOP">
+            S P E I C H E R N
+        </button>
+    </div>
+    <div class="vl verticalslice">
+        <input type="range" class="sliderv" id="pre" name="pre" value="16" min="1" max="24" step="1" list="pretickmarks"
+            oninput="preValue.value=pre.value" />
+        <output name="preValue" class="verticaltextstyle" id="preValue" for="preValue">5</output>
+    </div>
+    <div class="datalistverticalslice">
+        <datalist class="range__list range__list_vert" id="pretickmarks">
+            <option>6</option>
+            <option>12</option>
+            <option>18</option>
+            <option>24</option>
+        </datalist>
+    </div>
+</div>
+
+</html>
