@@ -13,8 +13,8 @@ Preferences preferences_light;
 Preferences preferences_CANguru;
 
 // Replace with your network credentials
-//const char *ssid = "FRITZ!Box 6591 Cable RC_EXT";
-//const char *password = "Ko-Cc3!dRe!";
+// const char *ssid = "FRITZ!Box 6591 Cable RC_EXT";
+// const char *password = "Ko-Cc3!dRe!";
 
 #define LED_PIN_HOUSELIGHT 2
 #define LED_PIN_RUNNINGLIGHT 3
@@ -133,11 +133,96 @@ void light(statusType s)
   }
 }
 
+//////////////////////////////////////////
+
+// Teilt einen String mit Hilfe des Separators in seine Bestandteile auf
+// und gibt den index-Teil zurück
+String getStringPartByNr(String data, char separator, int index)
+{
+  int stringData = 0;   // variable to count data part nr
+  String dataPart = ""; // variable to hole the return text
+
+  for (int i = 0; i < data.length() - 1; i++)
+  { // Walk through the text one letter at a time
+    if (data[i] == separator)
+    {
+      // Count the number of times separator character appears in the text
+      stringData++;
+    }
+    else if (stringData == index)
+    {
+      // get the text when separator is the rignt one
+      dataPart.concat(data[i]);
+    }
+    else if (stringData > index)
+    {
+      // return text and stop if the next separator appears - to save CPU-time
+      return dataPart;
+      break;
+    }
+  }
+  // return text if this is the last part
+  return dataPart;
+}
+
+void onRequest(AsyncWebServerRequest *request)
+{
+  String urlLine = request->url();
+  String val;
+  uint8_t v0;
+  uint8_t v1;
+  uint8_t v2;
+  uint8_t v3;
+  if (urlLine.indexOf("/PARAM") >= 0)
+  {
+    Serial.println("Message: " + String(urlLine));
+    for (uint8_t p = 0; p < 4; p++)
+    {
+      // beginne mit dem 2. Parameter (ohne /PARAM)
+      val = getStringPartByNr(urlLine, '/', p + 2);
+      switch (p)
+      {
+      case 0:
+        v0 = (uint8_t)val.toInt();
+        //      EEPROM.writeByte(eepromAdrParameter0, preheatPWM);
+        break;
+      case 1:
+        v1 = (uint8_t)val.toInt();
+        //      EEPROM.writeByte(eepromAdrParameter1, soakPWM);
+        break;
+      case 2:
+        v2 = (uint8_t)val.toInt();
+        //      EEPROM.writeByte(eepromAdrParameter2, reflowPWM);
+        break;
+      case 3:
+        v3 = (uint8_t)val.toInt();
+        //      EEPROM.writeByte(eepromAdrParameter6, preTimeFactor);
+        break;
+      }
+      //    EEPROM.commit();
+    }
+    Serial.println(v0);
+    Serial.println(v1);
+    Serial.println(v2);
+    Serial.println(v3);
+  }
+}
+// Diese Funktion wird von der Browseranwendung direkt zu Beginn aufgeruen und
+// gibt zurück, die Gesamtzeit eines Temperaturverlaufes, sowie die PWM-Werte der
+// einzelnen Phasen.
+String IPNbr()
+{
+  String ipString = WiFi.localIP().toString().c_str();
+  Serial.println(ipString);
+  return ipString;
+}
+
 void setup()
 {
   char buffer[25]; // Enough to hold 3 digits and a null terminator
   Serial.begin(bdrMonitor);
 
+  Serial.println("\r\n\r\nCANguru - Hausbeleuchtung");
   log_i("\r\n\r\nCANguru - Hausbeleuchtung");
   log_i("\n on %s", ARDUINO_BOARD);
   log_i("CPU Frequency = %d Mhz", F_CPU / 1000000);
@@ -145,7 +230,6 @@ void setup()
   //  log_d("VERBOSE");
   //  log_w("WARNING");
   //  log_d("INFO");
-
 
   // Initialize LittleFS
   if (!LittleFS.begin(true))
@@ -187,11 +271,15 @@ void setup()
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(LittleFS, "/style.css", "text/css"); });
 
+  server.on("/IPNbr", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send_P(200, "text/plain", IPNbr().c_str()); });
+
   // Route to set GPIO to HIGH
   server.on("/save", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(LittleFS, "/index.html", String(), false, processor); });
 
   // Start server
+  server.onNotFound(onRequest);
   server.begin();
 
   houselight.begin();
@@ -270,111 +358,111 @@ void setup()
 
 void loop()
 {
-/*
-  if (Serial.available() > 0)
-  {
-    // read the incoming byte:
-    char inByte = Serial.read();
-    command += inByte;
-    if (inByte == '$')
+  /*
+    if (Serial.available() > 0)
     {
-      //
-      // Mit dem Kommando DECX werden die Daten des Raumes X (zwischen 0 und 7) zu einem String ontime!offtime!brightness!basetime
-      // zusammengefügt und übermittelt
-      if (command.substring(0, 3) == "DEC")
+      // read the incoming byte:
+      char inByte = Serial.read();
+      command += inByte;
+      if (inByte == '$')
       {
-        Serial.println("&A");
-        delay(50);
-        uint8_t d = command.charAt(3) - 0x30;
-        load = String(rooms[d].onTime) + del + String(rooms[d].offTime) + del + String(rooms[d].brightness) + del + baseTime_house;
-        Serial.println(load);
-      }
-      if (command.substring(0, 3) == "RES")
-      {
-        // setup_done auf "TRUE" setzen
-        preferences_light.putUChar("setup_done", setup_NOTdone);
-        ESP.restart();
-      }
-      // Alle gefundenen USB-Ports werden mit "USB0" aufgerufen.
-      // Nur die richtigen Hausbeleuchtungen antworten mit "USB"
-      if (command.substring(0, 4) == "USB0")
-      {
-        Serial.println("&B");
-        delay(50);
-        Serial.println("USB");
-      }
-      // Ein neuer geänderter Datensatz wird mit der Länge XXX übermittelt. Der Trenner ist ein "!"
-      // L!index!ontime!offtime!brightness!basetime
-      // L!3!27!39!32!1500$
-      // cnt = 12;
-      if (command.substring(0, 1) == "L")
-      {
-        int startIndex = 0;
-        int8_t index;
-        String indx;
-        uint8_t substr = 0;
-        char buffer[25]; // Enough to hold 3 digits and a null terminator
-        Serial.println("&C");
-        delay(50);
-        for (int i = 0; i < command.length(); i++)
+        //
+        // Mit dem Kommando DECX werden die Daten des Raumes X (zwischen 0 und 7) zu einem String ontime!offtime!brightness!basetime
+        // zusammengefügt und übermittelt
+        if (command.substring(0, 3) == "DEC")
         {
-          if (command[i] == del)
-          {
-            String substring = command.substring(startIndex, i);
-            switch (substr)
-            {
-            case 0:
-              // "L"
-              substr++;
-              break;
-            case 1:
-              // index
-              index = substring.toInt();
-              substr++;
-              break;
-            // changeable values
-            case 2:
-              // lightOn
-              sprintf(buffer, "onTime%d", index);
-              rooms[index].onTime = substring.toInt();
-              preferences_light.putUShort(buffer, rooms[index].onTime);
-              substr++;
-              break;
-            case 3:
-              // lightOff
-              sprintf(buffer, "offTime%d", index);
-              rooms[index].offTime = substring.toInt();
-              preferences_light.putUShort(buffer, rooms[index].offTime);
-              substr++;
-              break;
-            case 4:
-              // brightness
-              sprintf(buffer, "brightness%d", index);
-              rooms[index].brightness = substring.toInt();
-              preferences_light.putUShort(buffer, rooms[index].brightness);
-              substr++;
-              break;
-            default:
-              break;
-            }
-            startIndex = i + 1;
-          }
+          Serial.println("&A");
+          delay(50);
+          uint8_t d = command.charAt(3) - 0x30;
+          load = String(rooms[d].onTime) + del + String(rooms[d].offTime) + del + String(rooms[d].brightness) + del + baseTime_house;
+          Serial.println(load);
         }
-        // baseTime
-        baseTime_house = command.substring(startIndex).toInt();
-        preferences_light.putUShort("baseTime", baseTime_house);
-        // unchangeable values
-        rooms[index].colorOn = houselight.Color(rooms[index].brightness, rooms[index].brightness, rooms[index].brightness);
-        rooms[index].colorOff = houselight.Color(0, 0, 0);
-        rooms[index].status = lightOff;
-        rooms[index].goneTime = 0;
-        rooms[index].duration = rooms[index].onTime + rooms[index].offTime;
-        houselight.setPixelColor(index, houselight.Color(0, 0, 0));
+        if (command.substring(0, 3) == "RES")
+        {
+          // setup_done auf "TRUE" setzen
+          preferences_light.putUChar("setup_done", setup_NOTdone);
+          ESP.restart();
+        }
+        // Alle gefundenen USB-Ports werden mit "USB0" aufgerufen.
+        // Nur die richtigen Hausbeleuchtungen antworten mit "USB"
+        if (command.substring(0, 4) == "USB0")
+        {
+          Serial.println("&B");
+          delay(50);
+          Serial.println("USB");
+        }
+        // Ein neuer geänderter Datensatz wird mit der Länge XXX übermittelt. Der Trenner ist ein "!"
+        // L!index!ontime!offtime!brightness!basetime
+        // L!3!27!39!32!1500$
+        // cnt = 12;
+        if (command.substring(0, 1) == "L")
+        {
+          int startIndex = 0;
+          int8_t index;
+          String indx;
+          uint8_t substr = 0;
+          char buffer[25]; // Enough to hold 3 digits and a null terminator
+          Serial.println("&C");
+          delay(50);
+          for (int i = 0; i < command.length(); i++)
+          {
+            if (command[i] == del)
+            {
+              String substring = command.substring(startIndex, i);
+              switch (substr)
+              {
+              case 0:
+                // "L"
+                substr++;
+                break;
+              case 1:
+                // index
+                index = substring.toInt();
+                substr++;
+                break;
+              // changeable values
+              case 2:
+                // lightOn
+                sprintf(buffer, "onTime%d", index);
+                rooms[index].onTime = substring.toInt();
+                preferences_light.putUShort(buffer, rooms[index].onTime);
+                substr++;
+                break;
+              case 3:
+                // lightOff
+                sprintf(buffer, "offTime%d", index);
+                rooms[index].offTime = substring.toInt();
+                preferences_light.putUShort(buffer, rooms[index].offTime);
+                substr++;
+                break;
+              case 4:
+                // brightness
+                sprintf(buffer, "brightness%d", index);
+                rooms[index].brightness = substring.toInt();
+                preferences_light.putUShort(buffer, rooms[index].brightness);
+                substr++;
+                break;
+              default:
+                break;
+              }
+              startIndex = i + 1;
+            }
+          }
+          // baseTime
+          baseTime_house = command.substring(startIndex).toInt();
+          preferences_light.putUShort("baseTime", baseTime_house);
+          // unchangeable values
+          rooms[index].colorOn = houselight.Color(rooms[index].brightness, rooms[index].brightness, rooms[index].brightness);
+          rooms[index].colorOff = houselight.Color(0, 0, 0);
+          rooms[index].status = lightOff;
+          rooms[index].goneTime = 0;
+          rooms[index].duration = rooms[index].onTime + rooms[index].offTime;
+          houselight.setPixelColor(index, houselight.Color(0, 0, 0));
+        }
+        command = "";
       }
-      command = "";
     }
-  }
-    */
+      */
   // Hausbeleuchtung
   if (millis() - lastTime_house >= baseTime_house)
   {

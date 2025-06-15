@@ -1,79 +1,178 @@
-html {
-  font-family: Helvetica;
-  display: inline-block;
-  margin: 0px auto;
-  text-align: center;
-}
-h1{
-  color: #0F3376;
-  padding: 2vh;
-}
-p{
-  font-size: 1.5rem;
-}
-form{
-  font-size: 1.5rem;
-	display: grid;
-	grid-template-columns: 20em 3em;
-}
-.button {
-  display: inline-block;
-  background-color: #008CBA;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  padding: 16px 40px;
-  text-decoration: none;
-  font-size: 30px;
-  margin: 2px;
-  cursor: pointer;
-}
-.button2 {
-  background-color: #f44336;
-}
+/* ///////////////////// */
 
-label {
-	display: block;
-	padding: .2em;
-}
+	    body {
+            width: 100%;
+            height: auto;
+        }
 
-label:after {
-	content: ": ";
-}
+        h2 {
+            font-family: Arial;
+            font-size: 2.5rem;
+            text-align: center;
+        }
 
-[type=range] {
-	accent-color: gold;
-}
+        /* ///////////////////// */
+        input[type=range] {
+            -webkit-appearance: none;
+            position: absolute;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+            background: lightskyblue;
+        }
 
-[type=range]:nth-of-type(2) {
-	accent-color: #c82f04;
-}
+        .dropdown {
+            left: 100px;
+            width: 30%;
+            height: 25px;
+            margin: 5px;
+        }
 
-output {
-	font-size: 1.5em;
-	font-weight: bold;
-	border: thin solid;
-	border-radius: 0.5em;
-	width: 1.25em;
-	aspect-ratio: 1/1;
-	text-align: center;
-}
+        .sliderh {
+            left: 100px;
+            width: 80%;
+            height: 25px;
+            margin: 5px;
+        }
 
-datalist {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	width: 92%;
-	margin-left: 4%;
-}
+        input[type=range]:hover {
+            opacity: 1;
+        }
 
-option {
-	padding: 0;
-}
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
 
-label,
-input,
-datalist,
-p {
-	grid-column: 1/2;
-}
+        input[type=range]::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+
+        /* ///////////////////// */
+        .textstyle {
+            position: absolute;
+            margin-top: 10px;
+            font-family: Arial;
+            font-size: 18px;
+            text-align: left;
+        }
+
+        .verticaltextstyle {
+            position: absolute;
+            margin-top: 5px;
+            margin-left: 15px;
+            font-family: Arial;
+            font-size: 14px;
+            align-items: center;
+        }
+
+        output.txtstyle {
+            margin-left: 700px;
+        }
+
+        span.txtstyle {
+            margin-left: 5px;
+        }
+
+        /* ///////////////////// */
+        button.buttonstyle {
+            text-align: center;
+            border: none;
+            height: 30px;
+            position: relative;
+            top: 3px;
+            left: 5px;
+            border-radius: 8px;
+            color: var(--color);
+            background: transparent;
+            margin: 4px 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--color);
+            color: white;
+        }
+
+        /* ///////////////////// */
+        .veryshortbutton {
+            width: 110px;
+            font-size: 14px;
+        }
+
+        .shortbutton {
+            width: 160px;
+            font-size: 14px;
+        }
+
+        .mediumbutton {
+            width: 260px;
+            font-size: 14px;
+        }
+
+        .longbutton {
+            width: 725px;
+            font-size: 16px;
+        }
+
+        /* ///////////////////// */
+        div.box {
+            position: relative;
+            height: 400px;
+            width: 815px;
+            left: 25%;
+			padding: 10px;
+            border: 3px solid lightgrey;
+        }
+
+        div.buttonslice {
+            position: relative;
+            height: 45px;
+            width: 740px;
+            left: 5px;
+        }
+
+        div.rangeslice {
+            position: relative;
+            height: 30px;
+            width: 770px;
+            left: 5px;
+        }
+
+        div.datalistslice {
+            position: relative;
+            width: 620px;
+            height: 7%;
+            margin-left: 110px;
+        }
+
+        .range__list {
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+            margin-top: 1px;
+            font-family: Arial;
+            font-size: 10px;
+            align-items: center;
+            margin-top: 1px;
+        }
+
+        .range__list__opt:before {
+            content: "";
+            display: block;
+            padding-left: 3px;
+            text-indent: 0;
+        }
+
+        .vl {
+            border-left: 3px solid lightgray;
+            height: 100%;
+        }
