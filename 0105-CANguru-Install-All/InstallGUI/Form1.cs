@@ -24,6 +24,7 @@ using QRCoder;
 using System.Windows.Controls;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using System.Windows.Documents;
+using System.Windows.Shapes;
 
 namespace InstallGUI
 {
@@ -119,7 +120,7 @@ namespace InstallGUI
             // formsignalstepper
             decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
-            decoderliste.Add(new decoderStruct { directory = "..\\0109-Hausbeleuchtung", firmware_source = "..\\0109-Hausbeleuchtung\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "..\\0109-Hausbeleuchtung\\Licht", firmware_source = "..\\0109-Hausbeleuchtung\\Licht\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -139,9 +140,11 @@ namespace InstallGUI
                     //Read the third line of text: Password
                     line = sr.ReadLine();
                     password.Text = line;
+                    hostBox.Text = "42";
                     //close the file
                     sr.Close();
                     reportBox.Text = "Gespeicherte Credentials eingelesen." + Environment.NewLine + "Drücken Sie den Knopf Upload, um die Firmware auf den ESP32 zu laden.";
+                    reportBox.Refresh();
                 }
                 catch (Exception ex)
                 {
@@ -157,6 +160,7 @@ namespace InstallGUI
                 line = "COM1";
                 comportsBox.Items.Add(line);
                 comportsBox.SelectedIndex = 0;
+                hostBox.Text = line.Substring(3);
             }
             // Festlegen der Checked-Eigenschaft des Optionsfelds
             currDecoder = decoderliste[(int)decoders.gleisbesetztmelder];
@@ -195,6 +199,7 @@ namespace InstallGUI
                     //close the file
                     sw.Close();
                     reportBox.Text = "Credentials gespeichert.";
+                    reportBox.Refresh();
                 }
                 catch (Exception ex)
                 {
@@ -222,6 +227,7 @@ namespace InstallGUI
         {
             int errNo = -1;
             reportBox.Text = "Bitte warten ...";
+            reportBox.Refresh();
             try
             {
                 if (_serialPort.IsOpen)
@@ -257,6 +263,7 @@ namespace InstallGUI
                     reportBox.Text = txt + " installiert";
                 else
                     reportBox.Text = txt + " nicht installiert! Fehler: " + errNo.ToString();
+                reportBox.Refresh();
                 loaded = fw;
             }
             return (errNo == 0);
@@ -268,6 +275,7 @@ namespace InstallGUI
         {
             int errNo = -1;
             reportBox.Text = "Bitte warten ...";
+            reportBox.Refresh();
             try
             {
                 Process P = new Process();
@@ -296,6 +304,7 @@ namespace InstallGUI
                     reportBox.Text = "Flash-Speicher gelöscht";
                 else
                     reportBox.Text = "Flash-Speicher nicht gelöscht! Fehler: " + errNo.ToString();
+                reportBox.Refresh();
                 loaded = firmware.none;
             }
         }
@@ -306,6 +315,7 @@ namespace InstallGUI
         {
             int errNo = -1;
             reportBox.Text = "Bitte warten ...";
+            reportBox.Refresh();
             try
             {
                 Process P0 = new Process();
@@ -335,6 +345,7 @@ namespace InstallGUI
                 if (errNo == 0)
                 {
                     reportBox.Text = "Daten erzeugt";
+                    reportBox.Refresh();
                     errNo = -1;
                     try
                     {
@@ -371,6 +382,7 @@ namespace InstallGUI
                 }
                 else
                     reportBox.Text = "Daten nicht erzeugt! Fehler: " + errNo.ToString();
+                reportBox.Refresh();
                 loaded = firmware.none;
             }
         }
@@ -436,6 +448,7 @@ namespace InstallGUI
                 return false;
             }
         }
+
         void sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             Thread.Sleep(500);
@@ -467,13 +480,20 @@ namespace InstallGUI
                             MessageBox.Show("Fehler beim Speichern der SSID: " + data, "Error!");
                         break;
                     case 'C':
+                        password.Text = data;
+                        password.Refresh();
                         if (!data.Equals(password.Text))
                             MessageBox.Show("Fehler beim Speichern des Passwortes: " + data, "Error!");
                         break;
                     case 'D':
-                        ipbox.Text = data;
+                         ipbox.Text = data;
+                         ipbox.Refresh();
                         if (data == "0.0.0.0")
                             MessageBox.Show("WLAN-Fehler; Keine IP-Adresse: " + data, "Error!");
+                        break;
+                    case 'E':
+                        if (!data.Equals(hostBox.Text))
+                            MessageBox.Show("Fehler beim Speichern des MDNS: " + data, "Error!");
                         break;
                     default:
                         break;
@@ -503,12 +523,20 @@ namespace InstallGUI
                             // IP-Address
                             reportBox.Text = "IP-Adresse gespeichert.";
                             // load decoder firmware to decoder
-                            if (data != "0.0.0.0")
+                            if (hostBox.Enabled)
+                                // send HOST via port
+                                bpwd = write2Port("HOST" + hostBox.Text);
+                            break;
+                        case 'E':
+                            // HOST
+                            reportBox.Text = "HOST " + data + " gespeichert.";
+                            if (ipbox.Text != "0.0.0.0")
                                 loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
                             break;
                         default:
                             break;
                     }
+                    reportBox.Refresh();
                 }
             }
         }
@@ -535,6 +563,7 @@ namespace InstallGUI
             foreach (string port in ports)
             {
                 comportsBox.Items.Add(port);
+                hostBox.Text = port.Substring(3);
             }
             if (comportsBox.Items.Count > 0)
             {
@@ -545,6 +574,7 @@ namespace InstallGUI
             else
             {
                 reportBox.Text = "KEINE COM-Ports gefunden.";
+                reportBox.Refresh();
                 comportsBox.Items.Add("kein Port!");
             }
         }
@@ -564,6 +594,7 @@ namespace InstallGUI
                 _serialPort.DataReceived += new SerialDataReceivedEventHandler(sp_DataReceived);
                 _serialPort.ReadTimeout = 500;
                 _serialPort.WriteTimeout = 500;
+                hostBox.Text = comportsBox.SelectedItem.ToString().Substring(3);
             }
         }
 
@@ -573,63 +604,77 @@ namespace InstallGUI
         {
             currDecoder = decoderliste[(int)decoders.hausbeleuchtung];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
             mklittlefs.Enabled = true;
+            hostBox.Enabled = true;
         }
 
         private void rbstepper_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.stepper];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
             mklittlefs.Enabled = false;
+            hostBox.Enabled = false;
         }
 
         private void rbFormsignal_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.formsignal];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
             mklittlefs.Enabled = false;
+            hostBox.Enabled = false;
         }
 
         private void rbgleisbesetztmelder_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.gleisbesetztmelder];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
             mklittlefs.Enabled = false;
+            hostBox.Enabled = false;
         }
 
         private void rbBridge_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.bridge];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
             mklittlefs.Enabled = false;
+            hostBox.Enabled = false;
         }
 
         private void rbBooster_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.booster];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = true;
             mklittlefs.Enabled = false;
+            hostBox.Enabled = false;
         }
 
         private void rbMaxi_CheckedChanged(object sender, EventArgs e)
         {
             currDecoder = decoderliste[(int)decoders.maxi];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
             mklittlefs.Enabled = false;
+            hostBox.Enabled = false;
         }
 
         // ************************ UPLOAD DECODER-FIRMWARE **************************************************************

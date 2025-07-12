@@ -10,6 +10,7 @@ String command;
 String subCommand;
 String ssid;
 String password;
+String host;
 Preferences preferences;
 const uint8_t wifItrialsMax = 10;
 uint8_t wifItrials;
@@ -31,15 +32,15 @@ void netzwerkScan()
     printf("&%dA\r\n", n);
     for (int i = 0; i < n; ++i)
     {
-  /*
-  RSSI Value Range	WiFi Signal Strength
-  RSSI > -30 dBm	 Amazing
-  RSSI < – 55 dBm	 Very good signal
-  RSSI < – 67 dBm	 Fairly Good
-  RSSI < – 70 dBm	 Okay
-  RSSI < – 80 dBm	 Not good
-  RSSI < – 90 dBm	 Extremely weak signal (unusable)
-  */
+      /*
+      RSSI Value Range	WiFi Signal Strength
+      RSSI > -30 dBm	 Amazing
+      RSSI < – 55 dBm	 Very good signal
+      RSSI < – 67 dBm	 Fairly Good
+      RSSI < – 70 dBm	 Okay
+      RSSI < – 80 dBm	 Not good
+      RSSI < – 90 dBm	 Extremely weak signal (unusable)
+      */
       // Drucke SSID and RSSI für jedes gefundene Netzwerk
       printf("%s (%d)\r\n", WiFi.SSID(i).c_str(), WiFi.RSSI(i));
       delay(10);
@@ -141,18 +142,20 @@ void loop()
     if (subCommand == "SSID")
     {
       ssid = command.substring(4);
+      preferences.putString("ssid", ssid);
+      // Antwort an InstallGUI
       Serial.println("&1B");
       Serial.println(ssid);
-      preferences.putString("ssid", ssid);
       delay(10);
       command = "";
     }
     if (subCommand == "PASW")
     {
       password = command.substring(4, command.length());
+      preferences.putString("password", password);
+      // Antwort an InstallGUI
       Serial.println("&1C");
       Serial.println(password);
-      preferences.putString("password", password);
       delay(10);
       command = "";
     }
@@ -165,7 +168,7 @@ void loop()
       {
         status = (wl_status_t)WiFi.waitForConnectResult(2000);
 
-//        connectionStatusMessage(status);
+        //        connectionStatusMessage(status);
         wifItrials--;
       }
       if (wifItrials == 0)
@@ -180,20 +183,30 @@ void loop()
         IP = WiFi.localIP();
       }
       char ip[4]; // prepare a buffer for the data
-      printf("&1D\r\n");
-      for (uint8_t i = 0; i < 4; i++)
-      {
-        ip[i] = IP[i];
-        if (i < 3)
-          printf("%d.", IP[i]);
-        else
-          printf("%d\r\n", IP[i]);
-      }
+      /*      for (uint8_t i = 0; i < 4; i++)
+            {
+              ip[i] = IP[i];
+              if (i < 3)
+                printf("%d.", IP[i]);
+              else
+                printf("%d\r\n", IP[i]);
+            }*/
       preferences.putBytes("IP0", ip, 4);
+      // Antwort an InstallGUI
+      Serial.println("&1D");
+      Serial.println(IP.toString());
       delay(10);
-      preferences.end();
+      command = "";
+    }
+    if (subCommand == "HOST")
+    {
+      host = command.substring(4, command.length());
+      preferences.putString("HOST", host);
+      Serial.println("&1E");
+      Serial.println(host);
+      delay(10);
       command = "";
     }
   }
-  delay(1000);
+  delay(500);
 }

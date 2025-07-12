@@ -1,0 +1,11 @@
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\TSTZahl.csproj.AssemblyReference.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\TSTZahl.Properties.Resources.resources
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\TSTZahl.csproj.GenerateResource.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\TSTZahl.csproj.CoreCompileInputs.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\bin\Debug\TSTZahl.exe.config
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\bin\Debug\TSTZahl.exe
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\bin\Debug\TSTZahl.pdb
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\TSTZahl.exe
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\TSTZahl.pdb
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\TSTZahl.exe.config
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\TSTZahl\obj\Debug\AsyncPingApp.Form1.resources

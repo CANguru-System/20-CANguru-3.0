@@ -63,6 +63,8 @@ namespace InstallGUI
             this.url4qrcode = new System.Windows.Forms.TextBox();
             this.eyeicon = new System.Windows.Forms.PictureBox();
             this.mklittlefs = new System.Windows.Forms.Button();
+            this.hostBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
             this.SuspendLayout();
@@ -79,7 +81,7 @@ namespace InstallGUI
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 297);
+            this.label2.Location = new System.Drawing.Point(20, 304);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(50, 13);
             this.label2.TabIndex = 1;
@@ -97,7 +99,7 @@ namespace InstallGUI
             // 
             this.password.Location = new System.Drawing.Point(20, 322);
             this.password.Name = "password";
-            this.password.Size = new System.Drawing.Size(130, 20);
+            this.password.Size = new System.Drawing.Size(90, 20);
             this.password.TabIndex = 3;
             // 
             // saveBtn
@@ -143,7 +145,7 @@ namespace InstallGUI
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(17, 153);
+            this.label3.Location = new System.Drawing.Point(20, 153);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 8;
@@ -179,7 +181,7 @@ namespace InstallGUI
             // 
             // processBox
             // 
-            this.processBox.Location = new System.Drawing.Point(23, 25);
+            this.processBox.Location = new System.Drawing.Point(20, 25);
             this.processBox.Multiline = true;
             this.processBox.Name = "processBox";
             this.processBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -320,15 +322,15 @@ namespace InstallGUI
             // 
             // ipbox
             // 
-            this.ipbox.Location = new System.Drawing.Point(240, 322);
+            this.ipbox.Location = new System.Drawing.Point(145, 322);
             this.ipbox.Name = "ipbox";
-            this.ipbox.Size = new System.Drawing.Size(127, 20);
+            this.ipbox.Size = new System.Drawing.Size(90, 20);
             this.ipbox.TabIndex = 16;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(240, 302);
+            this.label5.Location = new System.Drawing.Point(145, 304);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(57, 13);
             this.label5.TabIndex = 17;
@@ -336,7 +338,7 @@ namespace InstallGUI
             // 
             // reportBox
             // 
-            this.reportBox.Location = new System.Drawing.Point(26, 119);
+            this.reportBox.Location = new System.Drawing.Point(20, 119);
             this.reportBox.Name = "reportBox";
             this.reportBox.Size = new System.Drawing.Size(429, 20);
             this.reportBox.TabIndex = 18;
@@ -344,7 +346,7 @@ namespace InstallGUI
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(26, 100);
+            this.label6.Location = new System.Drawing.Point(20, 100);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(60, 13);
             this.label6.TabIndex = 19;
@@ -371,7 +373,7 @@ namespace InstallGUI
             // 
             this.eyeicon.Image = ((System.Drawing.Image)(resources.GetObject("eyeicon.Image")));
             this.eyeicon.InitialImage = ((System.Drawing.Image)(resources.GetObject("eyeicon.InitialImage")));
-            this.eyeicon.Location = new System.Drawing.Point(152, 324);
+            this.eyeicon.Location = new System.Drawing.Point(112, 324);
             this.eyeicon.Name = "eyeicon";
             this.eyeicon.Size = new System.Drawing.Size(25, 16);
             this.eyeicon.TabIndex = 22;
@@ -387,11 +389,29 @@ namespace InstallGUI
             this.mklittlefs.UseVisualStyleBackColor = true;
             this.mklittlefs.Click += new System.EventHandler(this.mklittlefs_Click);
             // 
+            // hostBox
+            // 
+            this.hostBox.Location = new System.Drawing.Point(270, 322);
+            this.hostBox.Name = "hostBox";
+            this.hostBox.Size = new System.Drawing.Size(90, 20);
+            this.hostBox.TabIndex = 24;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(270, 304);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(37, 13);
+            this.label7.TabIndex = 25;
+            this.label7.Text = "HOST";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(479, 538);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.hostBox);
             this.Controls.Add(this.mklittlefs);
             this.Controls.Add(this.eyeicon);
             this.Controls.Add(this.url4qrcode);
@@ -462,6 +482,8 @@ namespace InstallGUI
         private RadioButton rbFormsignal;
         private RadioButton radioButton2;
         private Button mklittlefs;
+        private TextBox hostBox;
+        private Label label7;
     }
 }
 

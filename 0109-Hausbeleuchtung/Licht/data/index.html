@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Hausbeleuchtung</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h2>Hausbeleuchtung 1.00</h2>
+    <div class="ipnbr" id="IPNbr">XXX</div>
+    <div class="box">
+        <!-- Raum relativ -->
+        <div class="dropdown0 dropdownleft">
+            <label class="selectstyle" for="Raum">Raum</label>
+            <select id="Raum"></select>
+        </div>
+        <!-- onTime 1 - 25 -->
+        <div class="dropdown0 dropdownright">
+            <label class="selectstyle" for="onTime">onTime</label>
+            <select id="onTime"></select>
+        </div>
+        <!-- offTime 1 - 25 -->
+        <div class="dropdown1 dropdownleft">
+            <label class="selectstyle" for="offTime">offTime</label>
+            <select id="offTime"></select>
+        </div>
+        <!-- Brightness 1 - 255 -->
+        <div class="dropdown1 dropdownright">
+            <label class="selectstyle" for="brightness">Brightness</label>
+            <select id="brightness"></select>
+        </div>
+        <div class="line-with-text">für alle Räume</div>
+        <!-- Zeitfaktor 500 - 50000 -->
+        <div class="dropdown2 dropdownleft">
+            <label class="selectstyle" for="zeitfaktor">Zeitfaktor</label>
+            <select id="zeitfaktor"></select>
+        </div>
+        <!-- Nutzung 1 - 24 -->
+        <div class="dropdown2 dropdownright">
+            <label class="selectstyle" for="nutzung">genutzte LED</label>
+            <select id="nutzung"></select>
+        </div>
+        <div class="dropdown3 dropdownmiddle">
+            <button class="buttonstyle" id="bSAVE">
+                S P E I C H E R N
+            </button>
+        </div>
+    </div>
+</body>
+
+<script>
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+
+    // fragt den ESP32C3 nach der IP-Adresse und zeigt sie auf der HTML-Seite an
+    var myIPTimer;
+    var call4IP = function () {
+        var xhttpIP = new XMLHttpRequest();
+        xhttpIP.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("IPNbr").innerText = "IP: " + xhttpIP.responseText;
+                clearInterval(myIPTimer);
+            }
+        };
+        xhttpIP.open("GET", "/IPNBR/", true);
+        xhttpIP.send();
+    };
+
+    // fragt den ESP32C3 nach den aktuellen Parametern und zeigt sie auf der HTML-Seite an
+    var myParamsTimer;
+    var call4Params = function () {
+        var xhttpParams = new XMLHttpRequest();
+        xhttpParams.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var array_reponseParams = xhttpParams.responseText.split("/"); //
+                const param0 = document.getElementById('onTime');
+                param0.value = parseInt(array_reponseParams[0]);
+                const param1 = document.getElementById('offTime');
+                param1.value = parseInt(array_reponseParams[1]);
+                const param2 = document.getElementById('brightness');
+                param2.value = parseInt(array_reponseParams[2]);
+                const param3 = document.getElementById('zeitfaktor');
+                param3.value = parseInt(array_reponseParams[3]);
+                const param4 = document.getElementById('nutzung');
+                param4.value = parseInt(array_reponseParams[4]);
+                clearInterval(myParamsTimer);
+            }
+        };
+        xhttpParams.open("GET", "/GETPARAMS/", true);
+        xhttpParams.send();
+    };
+
+    // erzeugt gemäß den übergebenen Paramtern eine dropdown-liste, die bei Draufklicken angezeigt wird
+    function setNumberValue(element) {
+        // Set the range limits
+        var min;
+        var max;
+        var step;
+        var val;
+        var xhttpParams = new XMLHttpRequest();
+        xhttpParams.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var array_reponseParams = xhttpParams.responseText.split("/"); // min, max, step, val
+                min = parseInt(array_reponseParams[0]);
+                max = parseInt(array_reponseParams[1]);
+                step = parseInt(array_reponseParams[2]);
+                val = parseInt(array_reponseParams[3]);
+                clearInterval(myParamsTimer);
+                // Get the dropdown element
+                const dropdown = document.getElementById(element);
+
+                // Populate the dropdown with numbers within the range
+                for (let i = min; i <= max; i += step) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    dropdown.appendChild(option);
+                }
+                // Set its value
+                dropdown.value = val;
+            }
+        };
+        xhttpParams.open("GET", "/" + element, true);
+        xhttpParams.send();
+
+    }
+
+    // Laden der IP-Adresse
+    myIPTimer = setInterval(call4IP, 200);
+
+    // Füllen der drpdown-Liste
+    setNumberValue('Raum');
+    setNumberValue('onTime');
+    setNumberValue('offTime');
+    setNumberValue('brightness');
+    setNumberValue('zeitfaktor');
+    setNumberValue('nutzung');
+
+    // Laden der Paramter Raum, onTime. offtime, brightness, zeitfaktor
+    myParamsTimer = setInterval(call4Params, 200);
+
+    // nach Ändern der Raumnummer wird diese an den ESP32C3 gesendet und dieser sendet die
+    // zu dieser Raumnummer gehörenden Werte, und diese werden auf der HTML-Seite angezeigt
+    const chgRaum = document.getElementById('Raum');
+    chgRaum.addEventListener('change', function (event) {
+        var chgRaum = new XMLHttpRequest();
+        const v = document.getElementById('Raum');
+        var value = parseInt(v.value)
+        chgRaum.open("GET", "/CHGRAUM/" + String(value) + "/", true);
+        chgRaum.send();
+        myParamsTimer = setInterval(call4Params, 200);
+    });
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    // Hier erfolgt die Verknüpfung der Knöpfe mit den einzelnen Prozeduren 
+    /////////// Buttons
+    // bSAVE-Button
+    /////////////////////////////////////////////////////////////////////////////////////
+    // überträgt alle Werte auf den ESP32C3
+    // 
+    document.getElementById('bSAVE').addEventListener('click', () => {
+        var xhttpsetparams = new XMLHttpRequest();
+        var raum = parseInt(Raum.value);
+        var onT = parseInt(onTime.value);
+        var offT = parseInt(offTime.value);
+        var bright = parseInt(brightness.value);
+        var zeitf = parseInt(zeitfaktor.value);
+        var nutz = parseInt(nutzung.value);
+        var callSrv = "/SETPARAMS/" + String(raum) + "/" + String(onT) + "/" + String(offT) + "/" + String(bright) + "/" + String(zeitf) + "/" + String(nutz) + "/";
+        xhttpsetparams.open("GET", callSrv, true);
+        xhttpsetparams.send();
+    });
+
+</script>
+
+</html>
