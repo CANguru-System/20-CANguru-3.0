@@ -61,6 +61,8 @@ uint8_t curr_pin = LED_PIN_HOUSELIGHT2;
 
 Adafruit_NeoPixel houselight(LED_COUNT, curr_pin, NEO_RGB + NEO_KHZ800);
 
+boolean LED_onoff;
+
 #define prefNameLight "HOUSELIGHT"
 #define setup_done 0x47
 #define setup_NOTdone 0xFF
@@ -447,25 +449,20 @@ void setup()
     currRoom = preferences_light.getUShort("currRoom", 0);
   }
   houselight.show();
+  LED_onoff = true;
   LED_begin(GPIO_NUM_8);
 }
 
 void loop()
 {
-  bool onoff = true;
   // Hausbeleuchtung
   if (millis() - lastTime_house >= baseTime_house)
   {
-    if (onoff)
-    {
+    if (LED_onoff)
       LED_on();
-      onoff = false;
-    }
     else
-    {
       LED_off();
-      onoff = true;
-    }
+    LED_onoff = !LED_onoff;
     // get the timeStamp of when you stepped:
     lastTime_house = millis();
     for (uint8_t r = 0; r < nutzung; r++)
