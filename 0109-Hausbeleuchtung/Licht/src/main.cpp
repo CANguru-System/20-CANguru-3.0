@@ -7,8 +7,9 @@
 #include "WiFi.h"
 #include "ESPAsyncWebServer.h"
 #include "LittleFS.h"
-#include "CANguruDefs.h"
 #include <ESPmDNS.h>
+#include "CANguruDefs.h"
+#include "OWN_LED.h"
 
 const char *hostnameBel = "LICHT";
 char hostname[25]; // Enough to hold 3 digits and a null terminator
@@ -446,13 +447,25 @@ void setup()
     currRoom = preferences_light.getUShort("currRoom", 0);
   }
   houselight.show();
+  LED_begin(GPIO_NUM_8);
 }
 
 void loop()
 {
+  bool onoff = true;
   // Hausbeleuchtung
   if (millis() - lastTime_house >= baseTime_house)
   {
+    if (onoff)
+    {
+      LED_on();
+      onoff = false;
+    }
+    else
+    {
+      LED_off();
+      onoff = true;
+    }
     // get the timeStamp of when you stepped:
     lastTime_house = millis();
     for (uint8_t r = 0; r < nutzung; r++)
