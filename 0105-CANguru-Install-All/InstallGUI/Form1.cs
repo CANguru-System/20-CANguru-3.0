@@ -51,6 +51,7 @@ namespace InstallGUI
             maxi,
             formsignal,
             hausbeleuchtung,
+            testdecoder,
             next
         }
         struct decoderStruct
@@ -121,6 +122,8 @@ namespace InstallGUI
             decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0108-Formsignal-Stepper-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
             decoderliste.Add(new decoderStruct { directory = "..\\0109-Hausbeleuchtung\\Licht", firmware_source = "..\\0109-Hausbeleuchtung\\Licht\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            // testdecoder
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = "..\\0200-TestDecoder-ESP32C3\\.pio\\build\\esp32c3_supermini\\", scanner_files = "ScanPorts\\.pio\\build\\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -486,8 +489,8 @@ namespace InstallGUI
                             MessageBox.Show("Fehler beim Speichern des Passwortes: " + data, "Error!");
                         break;
                     case 'D':
-                         ipbox.Text = data;
-                         ipbox.Refresh();
+                        ipbox.Text = data;
+                        ipbox.Refresh();
                         if (data == "0.0.0.0")
                             MessageBox.Show("WLAN-Fehler; Keine IP-Adresse: " + data, "Error!");
                         break;
@@ -526,10 +529,17 @@ namespace InstallGUI
                             if (hostBox.Enabled)
                                 // send HOST via port
                                 bpwd = write2Port("HOST" + hostBox.Text);
+                            else
+                            {
+                                if (ipbox.Text != "0.0.0.0")
+                                    loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
+                            }
                             break;
                         case 'E':
                             // HOST
-                            reportBox.Text = "HOST " + data + " gespeichert.";
+                            if (hostBox.Enabled)
+                                // send HOST via port
+                                reportBox.Text = "HOST " + data + " gespeichert.";
                             if (ipbox.Text != "0.0.0.0")
                                 loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
                             break;
@@ -677,6 +687,17 @@ namespace InstallGUI
             hostBox.Enabled = false;
         }
 
+        private void tstDecoder_CheckedChanged(object sender, EventArgs e)
+        {
+            currDecoder = decoderliste[(int)decoders.testdecoder];
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            reportBox.Refresh();
+            loaded = firmware.none;
+            no_wifi = false;
+            mklittlefs.Enabled = false;
+            hostBox.Enabled = false;
+        }
+
         // ************************ UPLOAD DECODER-FIRMWARE **************************************************************
 
         private void uploadBtn_Click(object sender, EventArgs e)
@@ -747,5 +768,6 @@ namespace InstallGUI
                 imageForm.ShowDialog();
             }
         }
+
     }
 }

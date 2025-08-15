@@ -47,7 +47,7 @@ namespace InstallGUI
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbMaxi = new System.Windows.Forms.RadioButton();
             this.rbBridge = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.tstDecoder = new System.Windows.Forms.RadioButton();
             this.rbLight = new System.Windows.Forms.RadioButton();
             this.rbBooster = new System.Windows.Forms.RadioButton();
             this.rbFormsignal = new System.Windows.Forms.RadioButton();
@@ -192,7 +192,7 @@ namespace InstallGUI
             // 
             this.groupBox1.Controls.Add(this.rbMaxi);
             this.groupBox1.Controls.Add(this.rbBridge);
-            this.groupBox1.Controls.Add(this.radioButton2);
+            this.groupBox1.Controls.Add(this.tstDecoder);
             this.groupBox1.Controls.Add(this.rbLight);
             this.groupBox1.Controls.Add(this.rbBooster);
             this.groupBox1.Controls.Add(this.rbFormsignal);
@@ -229,16 +229,17 @@ namespace InstallGUI
             this.rbBridge.UseVisualStyleBackColor = true;
             this.rbBridge.CheckedChanged += new System.EventHandler(this.rbBridge_CheckedChanged);
             // 
-            // radioButton2
+            // tstDecoder
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(190, 101);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(112, 17);
-            this.radioButton2.TabIndex = 2;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Nächster Decoder";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.tstDecoder.AutoSize = true;
+            this.tstDecoder.Location = new System.Drawing.Point(190, 101);
+            this.tstDecoder.Name = "tstDecoder";
+            this.tstDecoder.Size = new System.Drawing.Size(139, 17);
+            this.tstDecoder.TabIndex = 2;
+            this.tstDecoder.TabStop = true;
+            this.tstDecoder.Text = "Test-Decoder ESP32C3";
+            this.tstDecoder.UseVisualStyleBackColor = true;
+            this.tstDecoder.CheckedChanged += new System.EventHandler(this.tstDecoder_CheckedChanged);
             // 
             // rbLight
             // 
@@ -438,7 +439,7 @@ namespace InstallGUI
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "CANguru-Installationsprogramm 1.0";
+            this.Text = "CANguru-Installationsprogramm 1.1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -480,7 +481,7 @@ namespace InstallGUI
         private System.Windows.Forms.PictureBox eyeicon;
         private RadioButton rbMaxi;
         private RadioButton rbFormsignal;
-        private RadioButton radioButton2;
+        private RadioButton tstDecoder;
         private Button mklittlefs;
         private TextBox hostBox;
         private Label label7;

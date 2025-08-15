@@ -14,6 +14,9 @@
 const char *hostnameBel = "LICHT";
 char hostname[25]; // Enough to hold 3 digits and a null terminator
 
+const uint8_t macLen = 6;
+uint8_t nativeMACAddress[macLen];
+
 Preferences preferences_light;
 Preferences preferences_CANguru;
 
@@ -287,6 +290,7 @@ void startAPMode()
   strcat(hostname, hostChar); // Concatenate str2 to str1
   WiFi.setHostname(hostname); // hostnameBel+host);
   WiFi.mode(WIFI_STA);
+  WiFi.macAddress(nativeMACAddress);
 }
 
 void setup()
@@ -391,6 +395,7 @@ void setup()
   uint8_t setup_todo = preferences_light.getUChar("setup_done", 0xFF);
   if (setup_todo != setup_done)
   {
+    randomSeed(nativeMACAddress[0] + nativeMACAddress[1] + nativeMACAddress[2] + nativeMACAddress[3] + nativeMACAddress[4] + nativeMACAddress[5]);
     for (uint8_t r = 0; r < houselight.numPixels(); r++)
     {
       // changeable values
@@ -456,32 +461,44 @@ void setup()
 void loop()
 {
   // Hausbeleuchtung
+  const uint8_t TestRoom = 0;
   if (millis() - lastTime_house >= baseTime_house)
   {
+    //
     if (LED_onoff)
+    {
       LED_on();
+      houselight.setPixelColor(TestRoom, houselight.Color(32, 32, 32));
+      houselight.setPixelColor(TestRoom+1, houselight.Color(0, 0, 0));
+    }
     else
+    {
       LED_off();
+      houselight.setPixelColor(TestRoom, houselight.Color(0, 0, 0));
+      houselight.setPixelColor(TestRoom+1, houselight.Color(32, 32, 32));
+    }
+    houselight.show();
     LED_onoff = !LED_onoff;
+    //
     // get the timeStamp of when you stepped:
     lastTime_house = millis();
-    for (uint8_t r = 0; r < nutzung; r++)
-    {
-      rooms[r].goneTime++;
-      if (rooms[r].goneTime > rooms[r].duration)
-      {
-        rooms[r].goneTime = 0;
-        rooms[r].status = lightOff;
-      }
-      if (rooms[r].goneTime > rooms[r].offTime)
-      {
-        rooms[r].status = lightOn;
-      }
-      if (rooms[r].status == lightOn)
-        houselight.setPixelColor(r, rooms[r].colorOn);
-      else
-        houselight.setPixelColor(r, rooms[r].colorOff);
-      houselight.show();
-    }
+    /*    for (uint8_t r = 0; r < nutzung; r++)
+        {
+          rooms[r].goneTime++;
+          if (rooms[r].goneTime > rooms[r].duration)
+          {
+            rooms[r].goneTime = 0;
+            rooms[r].status = lightOff;
+          }
+          if (rooms[r].goneTime > rooms[r].offTime)
+          {
+            rooms[r].status = lightOn;
+          }
+          if (rooms[r].status == lightOn)
+            houselight.setPixelColor(r, rooms[r].colorOn);
+          else
+            houselight.setPixelColor(r, rooms[r].colorOff);
+          houselight.show();
+        }*/
   }
 }

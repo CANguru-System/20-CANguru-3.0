@@ -4,7 +4,6 @@ using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Security.Policy;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,6 +18,7 @@ namespace AsyncPingApp
         public Form1()
         {
             InitializeComponent();
+
             if (System.IO.File.Exists(lightFile))
             {
                 try
@@ -43,6 +43,8 @@ namespace AsyncPingApp
                     Console.WriteLine("Executing finally block.");
                 }
             }
+            // DoubleClick - Ereignis abonnieren
+            listBoxResults.DoubleClick += listBoxResults_DoubleClick;
         }
 
         private async void btnScan_Click(object sender, EventArgs e)
@@ -73,7 +75,7 @@ namespace AsyncPingApp
                         // Zugriff auf jeden Eintrag
                         writer.WriteLine(item);
                     }
-                }                
+                }
                 txtIP.Text += "Licht-Adressen gespeichert.";
                 // Den Index des letzten Eintrags auswählen
                 listBoxResults.SelectedIndex = listBoxResults.Items.Count - 1;
@@ -95,12 +97,12 @@ namespace AsyncPingApp
                             string url = hostEntry.HostName.ToString();
                             int pos = url.IndexOf(".");
                             url = url.Substring(0, pos);
-                        //    url += "/" + reply.Address.ToString();
+                            //    url += "/" + reply.Address.ToString();
                             listBoxResults.Items.Add(url);
                             listBoxResults.TopIndex = listBoxResults.Items.Count - 1;
                         }
                     }
-                    txtIP.Text = ipAddress +" - " + reply.Status;
+                    txtIP.Text = ipAddress + " - " + reply.Status;
                 }
             }
             catch (Exception ex)
@@ -115,29 +117,45 @@ namespace AsyncPingApp
             Application.Exit();
         }
 
+        private void Start_HTML(string url)
+        {
+            try
+            {
+                url = "http://" + url + ".local";
+
+                // Standardbrowser mit der URL öffnen
+                ProcessStartInfo psi = new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                };
+
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Fehler beim Öffnen der URL: {ex.Message}", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             if (listBoxResults.SelectedItem != null)
             {
-                string url = listBoxResults.SelectedItem.ToString();
-                try
-                {
-                    url = "http://" + url + ".local";
+                Start_HTML( listBoxResults.SelectedItem.ToString());
+            }
+        }
 
-                    // Standardbrowser mit der URL öffnen
-                    ProcessStartInfo psi = new ProcessStartInfo
-                    {
-                        FileName = url,
-                        UseShellExecute = true
-                    };
-
-                    Process.Start(psi);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Fehler beim Öffnen der URL: {ex.Message}", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+        private void listBoxResults_DoubleClick(object sender, EventArgs e)
+        {
+            // Überprüfen, ob ein Element ausgewählt ist
+            ListBox listBoxResults = sender as ListBox;
+            if (listBoxResults?.SelectedItem != null)
+            {
+                // Aktion ausführen
+                Start_HTML(listBoxResults.SelectedItem.ToString());
             }
         }
     }
 }
+
