@@ -83,6 +83,7 @@ void printCANFrame(uint8_t *buffer, CMD dir)
 void proc2CAN(uint8_t *buffer, CMD dir)
 {
   twai_message_t Message2Send;
+  //
   // CAN uses (network) big endian format
   // Maerklin TCP/UDP Format: always 13 (CAN_FRAME_SIZE) bytes
   //   byte 0 - 3  CAN ID
