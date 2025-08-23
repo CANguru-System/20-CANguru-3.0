@@ -11,6 +11,11 @@
 #include "CANguruDefs.h"
 #include "OWN_LED.h"
 
+  uint8_t TestRoom = 0;
+  uint8_t TestNutzung = 5;
+  uint16_t TestbaseTime = 250; // delay between steps, in ms, based on speed
+
+
 const char *hostnameBel = "LICHT";
 char hostname[25]; // Enough to hold 3 digits and a null terminator
 
@@ -461,27 +466,31 @@ void setup()
 void loop()
 {
   // Hausbeleuchtung
-  const uint8_t TestRoom = 0;
-  if (millis() - lastTime_house >= baseTime_house)
+  if (millis() - lastTime_house >= TestbaseTime)
   {
+    lastTime_house = millis();
     //
     if (LED_onoff)
     {
       LED_on();
       houselight.setPixelColor(TestRoom, houselight.Color(32, 32, 32));
-      houselight.setPixelColor(TestRoom+1, houselight.Color(0, 0, 0));
     }
     else
     {
       LED_off();
       houselight.setPixelColor(TestRoom, houselight.Color(0, 0, 0));
-      houselight.setPixelColor(TestRoom+1, houselight.Color(32, 32, 32));
+      TestRoom++;
+      if (TestRoom >= nutzung)
+      {
+        TestRoom = 0;
+      }
     }
     houselight.show();
     LED_onoff = !LED_onoff;
+  }
+
     //
     // get the timeStamp of when you stepped:
-    lastTime_house = millis();
     /*    for (uint8_t r = 0; r < nutzung; r++)
         {
           rooms[r].goneTime++;
@@ -501,4 +510,3 @@ void loop()
           houselight.show();
         }*/
   }
-}
