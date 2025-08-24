@@ -56,9 +56,7 @@ boolean bDecoderIsAlive;
 #define VERS_HIGH 0x00 // Versionsnummer vor dem Punkt
 #define VERS_LOW 0x01  // Versionsnummer nach dem Punkt
 
-/*
-Variablen der steppers & Magnetartikel
-*/
+// Variablen der steppers & Magnetartikel
 StepperwButton button(btn_Step_pin);
 
 uint8_t decoderadr;
