@@ -65,8 +65,12 @@ namespace InstallGUI
             this.mklittlefs = new System.Windows.Forms.Button();
             this.hostBox = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.pio = new System.Windows.Forms.RadioButton();
+            this.binFile = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -114,7 +118,7 @@ namespace InstallGUI
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(380, 507);
+            this.button2.Location = new System.Drawing.Point(380, 533);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -355,7 +359,7 @@ namespace InstallGUI
             // 
             // qrcode
             // 
-            this.qrcode.Location = new System.Drawing.Point(299, 507);
+            this.qrcode.Location = new System.Drawing.Point(299, 533);
             this.qrcode.Name = "qrcode";
             this.qrcode.Size = new System.Drawing.Size(75, 23);
             this.qrcode.TabIndex = 20;
@@ -365,7 +369,7 @@ namespace InstallGUI
             // 
             // url4qrcode
             // 
-            this.url4qrcode.Location = new System.Drawing.Point(23, 507);
+            this.url4qrcode.Location = new System.Drawing.Point(23, 533);
             this.url4qrcode.Name = "url4qrcode";
             this.url4qrcode.Size = new System.Drawing.Size(256, 20);
             this.url4qrcode.TabIndex = 21;
@@ -406,11 +410,47 @@ namespace InstallGUI
             this.label7.TabIndex = 25;
             this.label7.Text = "HOST";
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.pio);
+            this.groupBox3.Controls.Add(this.binFile);
+            this.groupBox3.Location = new System.Drawing.Point(23, 501);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(351, 22);
+            this.groupBox3.TabIndex = 26;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Firmwaresource";
+            // 
+            // pio
+            // 
+            this.pio.AutoSize = true;
+            this.pio.Location = new System.Drawing.Point(186, -2);
+            this.pio.Name = "pio";
+            this.pio.Size = new System.Drawing.Size(42, 17);
+            this.pio.TabIndex = 1;
+            this.pio.TabStop = true;
+            this.pio.Text = ".pio";
+            this.pio.UseVisualStyleBackColor = true;
+            this.pio.CheckedChanged += new System.EventHandler(this.pio_CheckedChanged);
+            // 
+            // binFile
+            // 
+            this.binFile.AutoSize = true;
+            this.binFile.Location = new System.Drawing.Point(96, -1);
+            this.binFile.Name = "binFile";
+            this.binFile.Size = new System.Drawing.Size(55, 17);
+            this.binFile.TabIndex = 0;
+            this.binFile.TabStop = true;
+            this.binFile.Text = "binFile";
+            this.binFile.UseVisualStyleBackColor = true;
+            this.binFile.CheckedChanged += new System.EventHandler(this.binFile_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(479, 538);
+            this.ClientSize = new System.Drawing.Size(479, 563);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.hostBox);
             this.Controls.Add(this.mklittlefs);
@@ -444,6 +484,8 @@ namespace InstallGUI
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.eyeicon)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -485,6 +527,9 @@ namespace InstallGUI
         private Button mklittlefs;
         private TextBox hostBox;
         private Label label7;
+        private GroupBox groupBox3;
+        private RadioButton pio;
+        private RadioButton binFile;
     }
 }
 
