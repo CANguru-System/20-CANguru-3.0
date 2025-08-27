@@ -145,21 +145,21 @@ namespace InstallGUI
             decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0200-TestDecoder-ESP32C3\.pio\build\esp32c3_supermini", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // binfiles
             // gleisbesetztmelder
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0103-Gleisbesetztmelder\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0103-Gleisbesetztmelder\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // weichenstepper
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0104-Weiche-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0104-Weiche-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // bridge 
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0101-CANguru-Bridge-Olimex-Version-3.5\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = false });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0101-CANguru-Bridge-Olimex-Version-3.5\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = false });
             // booster
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0106-CANguru-Booster\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0106-CANguru-Booster\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // maxi
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0107-MaxiSignal-PCA9685\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0107-MaxiSignal-PCA9685\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // formsignalstepper
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0108-Formsignal-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0108-Formsignal-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
-            decoderliste.Add(new decoderStruct { directory = partPath + @"0109-Hausbeleuchtung\Licht", firmware_source = partPath + @"0109-Hausbeleuchtung\Licht\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = partPath + @"0109-Hausbeleuchtung\Licht", firmware_source = partPath + @"0109-Hausbeleuchtung\Licht\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // testdecoder
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0200-TestDecoder-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0200-TestDecoder-ESP32C3\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
