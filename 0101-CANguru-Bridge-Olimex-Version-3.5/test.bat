@@ -1,0 +1,1 @@
+esptool.exe --chip esp32 --port COM3 --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x1000 ..\0101-CANguru-Bridge-Olimex-Version-3.5\binFile/bootloader.bin 0x8000 ..\0101-CANguru-Bridge-Olimex-Version-3.5\binFile/partitions.bin 0x10000 ..\0101-CANguru-Bridge-Olimex-Version-3.5\binFile/firmware.bin
