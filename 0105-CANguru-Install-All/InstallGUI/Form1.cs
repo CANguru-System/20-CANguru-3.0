@@ -1,30 +1,31 @@
-﻿using System;
-using System.Management;
+﻿using QRCoder;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.IO.Ports;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Threading;
-using static System.Net.WebRequestMethods;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-using System.Collections;
-using System.Xml;
-using System.Timers;
+using System.Linq;
+using System.Management;
 using System.Net;
-using static System.Net.Mime.MediaTypeNames;
-using QRCoder;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Controls;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using System.Windows.Documents;
+using System.Windows.Forms;
+using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
+using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Net.WebRequestMethods;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using File = System.IO.File;
 
 namespace InstallGUI
@@ -57,7 +58,7 @@ namespace InstallGUI
         }
         enum decoders_binFile
         {
-            a, b, c, d, e, f, g, h,   
+            a, b, c, d, e, f, g, h,
             gleisbesetztmelder,
             stepper,
             bridge,
@@ -68,7 +69,7 @@ namespace InstallGUI
             testdecoder,
             next
         }
-        const UInt16 decoderdist = (ushort) decoders_native.next;
+        const UInt16 decoderdist = (ushort)decoders_native.next;
         struct decoderStruct
         {
             public String directory;
@@ -126,7 +127,7 @@ namespace InstallGUI
             String basis;
             basis = AppDomain.CurrentDomain.BaseDirectory;
             int index = basis.IndexOf("105");
-            String partPath = basis.Substring(0, index-1);
+            String partPath = basis.Substring(0, index - 1);
             // native
             // gleisbesetztmelder
             decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0103-Gleisbesetztmelder\.pio\build\nodemcu-32s", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
@@ -361,15 +362,35 @@ namespace InstallGUI
             int errNo = -1;
             reportBox.Text = "Bitte warten ...";
             reportBox.Refresh();
+            //   string filePath = "\"" + currDecoder.directory + "\"" + @"\.pio\build\esp32c3_supermini";
+            string directoryPath = @"..\0109-Hausbeleuchtung\Licht\.pio\build\esp32c3_supermini";
+            string filePath = @"..\0109-Hausbeleuchtung\Licht\.pio\build\esp32c3_supermini\littlefs.bin";
             try
             {
-                Process P0 = new Process();
-                P0.StartInfo.FileName = littlefstool;
+                // Überprüfen, ob die Datei existiert
+                if (!Directory.Exists(directoryPath))
+                {
+                    // Datei erstellen, wenn sie nicht existiert
+                    Directory.CreateDirectory(directoryPath);
+                }
+                if (!File.Exists(filePath))
+                    File.WriteAllText(filePath, "Inhalt");
+            }
+            catch (Exception ex)
+            {
+                // Fehlerbehandlung
+                reportBox.Text = ex.Message + " " + filePath;
+                reportBox.Refresh();
+            }
+            try
+            {
                 // "mklittlefs" -c data -s 1441792 -p 256 -b 4096 .pio\build\esp32c3_supermini\littlefs.bin
                 // .\mklittlefs.exe -c ..\0109-Hausbeleuchtung\data -s 1441792 -p 256 -b 4096 ..\0109-Hausbeleuchtung\.pio\build\esp32c3_supermini\littlefs.bin
-                if (!File.Exists(currDecoder.directory + @"\.pio\build\esp32c3_supermini\littlefs.bin"))
-                    File.Create(currDecoder.directory + @"\.pio\build\esp32c3_supermini\littlefs.bin");
-                P0.StartInfo.Arguments = "-c " + currDecoder.directory + @"\data -s 1441792 -p 256 -b 4096 " + currDecoder.directory + @"\.pio\build\esp32c3_supermini\littlefs.bin";
+                // Pfad zur Datei (kann angepasst werden)
+
+                Process P0 = new Process();
+                P0.StartInfo.FileName = littlefstool;
+                P0.StartInfo.Arguments = "-c " + @"..\0109-Hausbeleuchtung\Licht\\data -s 1441792 -p 256 -b 4096 " + @"..\0109-Hausbeleuchtung\Licht\.pio\build\esp32c3_supermini\littlefs.bin";
                 processBox.Text = P0.StartInfo.FileName + " " + P0.StartInfo.Arguments + Environment.NewLine;
                 P0.StartInfo.UseShellExecute = false;
                 P0.StartInfo.RedirectStandardOutput = true;
@@ -399,7 +420,7 @@ namespace InstallGUI
                         Process P1 = new Process();
                         P1.StartInfo.FileName = esptool;
                         //--chip esp32c3 --port "COM12"--baud 460800--before default_reset --after hard_reset write_flash -z--flash_mode dio --flash_freq 80m--flash_size 4MB 2686976.pio\build\esp32c3_supermini\littlefs.bin
-                        P1.StartInfo.Arguments = "--chip " + currDecoder.strprocessor + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 2686976 " + currDecoder.directory + @"\.pio\build\esp32c3_supermini\littlefs.bin";
+                        P1.StartInfo.Arguments = "--chip " + currDecoder.strprocessor + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 2686976 " + filePath;
                         processBox.Text += P1.StartInfo.FileName + " " + P1.StartInfo.Arguments + Environment.NewLine;
                         P1.StartInfo.UseShellExecute = false;
                         P1.StartInfo.RedirectStandardOutput = true;
@@ -655,6 +676,42 @@ namespace InstallGUI
         }
 
         // ************************ SELECT DECODER **************************************************************
+        private void checkpio(String dp, ref decoderStruct cD)
+        {
+            try
+            {
+                // Überprüfen, ob die Datei existiert
+                if (!Directory.Exists(dp))
+                {
+                    binFile.Checked = true;
+                    pio.Checked = false;
+                    currDecoder = cD;
+                    reportBox.Text = "Nur binFile möglich";
+                    reportBox.Refresh();
+                }
+                else
+                {
+                    if (!File.Exists(dp + @"\firmware.bin"))
+                    {
+                        binFile.Checked = true;
+                        pio.Checked = false;
+                        currDecoder = cD;
+                        reportBox.Text = "Nur binFile möglich";
+                        reportBox.Refresh();
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // Fehlerbehandlung
+                reportBox.Text = ex.Message + " Nur binFile möglich";
+                reportBox.Refresh();
+                binFile.Checked = true;
+                pio.Checked = false;
+            }
+        }
+
 
         private void rbLight_CheckedChanged(object sender, EventArgs e)
         {
@@ -663,7 +720,11 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.hausbeleuchtung];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.hausbeleuchtung];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -671,7 +732,7 @@ namespace InstallGUI
             mklittlefs.Enabled = true;
             hostBox.Enabled = true;
         }
-        
+
         private void rbstepper_CheckedChanged(object sender, EventArgs e)
         {
             if (!rbstepper.Checked)
@@ -679,7 +740,11 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.stepper];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.stepper];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -695,7 +760,11 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.formsignal];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.formsignal];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -711,7 +780,11 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.gleisbesetztmelder];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -727,7 +800,11 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.bridge];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.bridge];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -743,7 +820,11 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.booster];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.booster];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -759,7 +840,12 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.maxi];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.maxi];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
+            currDecoder = decoderliste[(int)decoders_native.maxi];
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -775,7 +861,11 @@ namespace InstallGUI
             if (binFile.Checked)
                 currDecoder = decoderliste[(int)decoders_binFile.testdecoder];
             else
+            {
                 currDecoder = decoderliste[(int)decoders_native.testdecoder];
+                string directoryPath = currDecoder.firmware_source;
+                checkpio(directoryPath, ref currDecoder);
+            }
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
             reportBox.Refresh();
             loaded = firmware.none;
@@ -924,6 +1014,7 @@ namespace InstallGUI
             if (rbLight.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.hausbeleuchtung];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
@@ -931,6 +1022,7 @@ namespace InstallGUI
             if (rbstepper.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.stepper];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
@@ -938,6 +1030,7 @@ namespace InstallGUI
             if (rbBridge.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.bridge];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
@@ -945,6 +1038,7 @@ namespace InstallGUI
             if (rbFormsignal.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.formsignal];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
@@ -952,6 +1046,7 @@ namespace InstallGUI
             if (rbgleisbesetztmelder.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
@@ -959,6 +1054,7 @@ namespace InstallGUI
             if (rbBooster.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.booster];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
@@ -966,6 +1062,7 @@ namespace InstallGUI
             if (rbMaxi.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.maxi];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
@@ -973,6 +1070,7 @@ namespace InstallGUI
             if (tstDecoder.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.testdecoder];
+                checkpio(currDecoder.firmware_source, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
                 reportBox.Refresh();
                 return;
