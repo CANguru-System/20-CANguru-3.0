@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using System.Windows.Documents;
 using System.Windows.Shapes;
+using File = System.IO.File;
 
 namespace InstallGUI
 {
@@ -366,6 +367,8 @@ namespace InstallGUI
                 P0.StartInfo.FileName = littlefstool;
                 // "mklittlefs" -c data -s 1441792 -p 256 -b 4096 .pio\build\esp32c3_supermini\littlefs.bin
                 // .\mklittlefs.exe -c ..\0109-Hausbeleuchtung\data -s 1441792 -p 256 -b 4096 ..\0109-Hausbeleuchtung\.pio\build\esp32c3_supermini\littlefs.bin
+                if (!File.Exists(currDecoder.directory + @"\.pio\build\esp32c3_supermini\littlefs.bin"))
+                    File.Create(currDecoder.directory + @"\.pio\build\esp32c3_supermini\littlefs.bin");
                 P0.StartInfo.Arguments = "-c " + currDecoder.directory + @"\data -s 1441792 -p 256 -b 4096 " + currDecoder.directory + @"\.pio\build\esp32c3_supermini\littlefs.bin";
                 processBox.Text = P0.StartInfo.FileName + " " + P0.StartInfo.Arguments + Environment.NewLine;
                 P0.StartInfo.UseShellExecute = false;
