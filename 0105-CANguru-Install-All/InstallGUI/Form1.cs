@@ -56,24 +56,13 @@ namespace InstallGUI
             testdecoder,
             next
         }
-        enum decoders_binFile
-        {
-            a, b, c, d, e, f, g, h,
-            gleisbesetztmelder,
-            stepper,
-            bridge,
-            booster,
-            maxi,
-            formsignal,
-            hausbeleuchtung,
-            testdecoder,
-            next
-        }
+
         const UInt16 decoderdist = (ushort)decoders_native.next;
         struct decoderStruct
         {
             public String directory;
-            public String firmware_source;
+            public String firmware_source_pio;
+            public String firmware_source_binFile;
             public String scanner_files;
             public String strprocessor;
             public bool credentials;
@@ -124,44 +113,23 @@ namespace InstallGUI
             no_wifi = false;
             loaded = firmware.none;
             String line;
-            String basis;
-            basis = AppDomain.CurrentDomain.BaseDirectory;
-            int index = basis.IndexOf("105");
-            String partPath = basis.Substring(0, index - 1);
             // native
             // gleisbesetztmelder
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0103-Gleisbesetztmelder\.pio\build\nodemcu-32s", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0103-Gleisbesetztmelder\.pio\build\nodemcu-32s", firmware_source_binFile = @"..\0103-Gleisbesetztmelder\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // weichenstepper
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0104-Weiche-Stepper-ESP32C3\.pio\build\esp32c3_supermini", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0104-Weiche-Stepper-ESP32C3\.pio\build\esp32c3_supermini", firmware_source_binFile = @"..\0104-Weiche-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // bridge 
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0101-CANguru-Bridge-Olimex-Version-3.5\.pio\build\esp32-evb", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = false });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0101-CANguru-Bridge-Olimex-Version-3.5\.pio\build\esp32-evb", firmware_source_binFile = @"..\0101-CANguru-Bridge-Olimex-Version-3.5\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = false });
             // booster
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0106-CANguru-Booster\.pio\build\nodemcu-32s", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0106-CANguru-Booster\.pio\build\nodemcu-32s", firmware_source_binFile = @"..\0106-CANguru-Booster\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // maxi
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0107-MaxiSignal-PCA9685\.pio\build\nodemcu-32s", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0107-MaxiSignal-PCA9685\.pio\build\nodemcu-32s", firmware_source_binFile = @"..\0107-MaxiSignal-PCA9685\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // formsignalstepper
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0108-Formsignal-Stepper-ESP32C3\.pio\build\esp32c3_supermini", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0108-Formsignal-Stepper-ESP32C3\.pio\build\esp32c3_supermini", firmware_source_binFile = @"..\0108-Formsignal-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
-            decoderliste.Add(new decoderStruct { directory = partPath + @"0109-Hausbeleuchtung\Licht", firmware_source = partPath + @"0109-Hausbeleuchtung\Licht\.pio\build\esp32c3_supermini", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = @"..\0109-Hausbeleuchtung\Licht", firmware_source_pio = @"..\0109-Hausbeleuchtung\Licht\.pio\build\esp32c3_supermini", firmware_source_binFile = @"..\0109-Hausbeleuchtung\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // testdecoder
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0200-TestDecoder-ESP32C3\.pio\build\esp32c3_supermini", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
-            // binfiles
-            // gleisbesetztmelder
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0103-Gleisbesetztmelder\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = true });
-            // weichenstepper
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0104-Weiche-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
-            // bridge 
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0101-CANguru-Bridge-Olimex-Version-3.5\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = false });
-            // booster
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0106-CANguru-Booster\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = true });
-            // maxi
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0107-MaxiSignal-PCA9685\binfiles", scanner_files = @"ScanPorts\binfiles\nodemcu-32s", strprocessor = "esp32", credentials = true });
-            // formsignalstepper
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0108-Formsignal-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
-            // hausbeleuchtung
-            decoderliste.Add(new decoderStruct { directory = partPath + @"0109-Hausbeleuchtung\Licht", firmware_source = partPath + @"0109-Hausbeleuchtung\Licht\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
-            // testdecoder
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source = partPath + @"0200-TestDecoder-ESP32C3\binfiles", scanner_files = @"ScanPorts\binfiles\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0200-TestDecoder-ESP32C3\.pio\build\esp32c3_supermini", firmware_source_binFile = @"..\0200-TestDecoder-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -204,10 +172,7 @@ namespace InstallGUI
                 hostBox.Text = line.Substring(3);
             }
             // Festlegen der Checked-Eigenschaft des Optionsfelds
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.gleisbesetztmelder];
-            else
-                currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
+            currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
             rbgleisbesetztmelder.Checked = true;
             binFile.Checked = true;
             // 
@@ -268,11 +233,20 @@ namespace InstallGUI
 
         // ************************ HELPER LOAD FIRMWARE TO DECODER **************************************************************
 
-        bool loadFirmware(string cpu, string source, string txt, firmware fw)
+        bool loadFirmware(string cpu, decoderStruct cd, string txt, firmware fw, bool fCopy)
         {
             int errNo = -1;
             reportBox.Text = "Bitte warten ...";
             reportBox.Refresh();
+            string source = "";
+            string destination = "";
+            if (txt == "Decoderfirmware")
+            {
+                source = cd.firmware_source_pio;
+                destination = cd.firmware_source_binFile;
+            }
+            else
+                source = cd.scanner_files;
             try
             {
                 if (_serialPort.IsOpen)
@@ -282,10 +256,10 @@ namespace InstallGUI
                 P.StartInfo.FileName = esptool;
                 // hier kann z.B. eine Textdatei mit übergeben werden
                 if (cpu == "esp32")
-                    P.StartInfo.Arguments = "--chip " + cpu + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x1000 " + "\"" + source + @"\bootloader.bin" + "\"" + " 0x8000 " + "\"" + source + @"\partitions.bin" + "\"" + " 0x10000 " + "\"" + source + @"\firmware.bin" + "\"";
+                    P.StartInfo.Arguments = "--chip " + cpu + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x1000 " + source + @"\bootloader.bin" + " 0x8000 " + source + @"\partitions.bin" + " 0x10000 " + source + @"\firmware.bin";
                 if (cpu == "esp32c3")
                     // P.StartInfo.Arguments = "--chip " + cpu + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 " + "\"" + source + "\\bootloader.bin 0x8000 " + "\"" + source + "\\partitions.bin 0xE000 boot_app0.bin 0x10000 " + source + "\\firmware.bin";
-                    P.StartInfo.Arguments = "--chip " + cpu + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 " + "\"" + source + @"\bootloader.bin" + "\"" + " 0x8000 " + "\"" + source + @"\partitions.bin" + "\"" + " 0x10000 " + "\"" + source + @"\firmware.bin" + "\"";
+                    P.StartInfo.Arguments = "--chip " + cpu + " --port " + comportsBox.SelectedItem.ToString() + " --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size 4MB 0x0000 " + source + @"\bootloader.bin" + " 0x8000 " + source + @"\partitions.bin" + " 0x10000 " + source + @"\firmware.bin";
                 processBox.Text = P.StartInfo.FileName + " " + P.StartInfo.Arguments + Environment.NewLine;
                 P.StartInfo.UseShellExecute = false;
                 P.StartInfo.RedirectStandardOutput = true;
@@ -311,6 +285,47 @@ namespace InstallGUI
                     reportBox.Text = txt + " nicht installiert! Fehler: " + errNo.ToString();
                 reportBox.Refresh();
                 loaded = fw;
+            }
+            if (fCopy && pio.Checked)
+            {
+                // Quell- und Zielpfade definieren
+                string searchPattern = "*.bin";
+                try
+                {
+                    // Überprüfen, ob das Quellverzeichnis existiert
+                    if (!Directory.Exists(source))
+                    {
+                        MessageBox.Show("Das Quellverzeichnis existiert nicht: " + source);
+                        return (errNo == 0);
+                    }
+                    if (!Directory.Exists(destination))
+                    {
+                        Directory.CreateDirectory(destination);
+                    }
+                    // Dateien mit dem Muster suchen
+                    string[] files = Directory.GetFiles(source, searchPattern);
+                    if (files.Length == 0)
+                    {
+                        MessageBox.Show($"Keine Dateien mit dem Muster '{searchPattern}' im Verzeichnis '{source}' gefunden.");
+                        return (errNo == 0);
+                    }
+                    // Datei kopieren
+                    foreach (string filePath in files)
+                    {
+                        string fileName = System.IO.Path.GetFileName(filePath); // Nur den Dateinamen extrahieren
+                        string destinationPath = System.IO.Path.Combine(destination, fileName);
+
+                        // Datei kopieren
+                        File.Copy(filePath, destinationPath, overwrite: true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Fehlerbehandlung
+                    MessageBox.Show("Fehler beim Kopieren der Datei " + ex.Message);
+                }
+                reportBox.Text = "Dateien kopiert.";
+                reportBox.Refresh();
             }
             return (errNo == 0);
         }
@@ -599,7 +614,7 @@ namespace InstallGUI
                             else
                             {
                                 if (ipbox.Text != "0.0.0.0")
-                                    loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
+                                    loadFirmware(currDecoder.strprocessor, currDecoder, "Decoderfirmware", firmware.decoder, true);
                             }
                             break;
                         case 'E':
@@ -608,7 +623,7 @@ namespace InstallGUI
                                 // send HOST via port
                                 reportBox.Text = "HOST " + data + " gespeichert.";
                             if (ipbox.Text != "0.0.0.0")
-                                loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
+                                loadFirmware(currDecoder.strprocessor, currDecoder, "Decoderfirmware", firmware.decoder, true);
                             break;
                         default:
                             break;
@@ -623,7 +638,7 @@ namespace InstallGUI
         {
             // Clear the listbox
             ssidBox.Items.Clear();
-            if (loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner))
+            if (loadFirmware(currDecoder.strprocessor, currDecoder, "Scanfirmware", firmware.scanner, false))
                 bssid = write2Port("SCAN");
             //
         }
@@ -717,15 +732,10 @@ namespace InstallGUI
         {
             if (!rbLight.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.hausbeleuchtung];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.hausbeleuchtung];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            currDecoder = decoderliste[(int)decoders_native.hausbeleuchtung];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
@@ -737,15 +747,10 @@ namespace InstallGUI
         {
             if (!rbstepper.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.stepper];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.stepper];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            currDecoder = decoderliste[(int)decoders_native.stepper];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
@@ -757,15 +762,10 @@ namespace InstallGUI
         {
             if (!rbFormsignal.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.formsignal];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.formsignal];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            currDecoder = decoderliste[(int)decoders_native.formsignal];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
@@ -777,15 +777,10 @@ namespace InstallGUI
         {
             if (!rbgleisbesetztmelder.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.gleisbesetztmelder];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
@@ -797,15 +792,10 @@ namespace InstallGUI
         {
             if (!rbBridge.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.bridge];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.bridge];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            currDecoder = decoderliste[(int)decoders_native.bridge];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
@@ -817,15 +807,10 @@ namespace InstallGUI
         {
             if (!rbBooster.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.booster];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.booster];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            currDecoder = decoderliste[(int)decoders_native.booster];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = true;
@@ -837,16 +822,11 @@ namespace InstallGUI
         {
             if (!rbMaxi.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.maxi];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.maxi];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
             currDecoder = decoderliste[(int)decoders_native.maxi];
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            currDecoder = decoderliste[(int)decoders_native.maxi];
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
@@ -858,15 +838,10 @@ namespace InstallGUI
         {
             if (!tstDecoder.Checked)
                 return;
-            if (binFile.Checked)
-                currDecoder = decoderliste[(int)decoders_binFile.testdecoder];
-            else
-            {
-                currDecoder = decoderliste[(int)decoders_native.testdecoder];
-                string directoryPath = currDecoder.firmware_source;
-                checkpio(directoryPath, ref currDecoder);
-            }
-            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+            currDecoder = decoderliste[(int)decoders_native.testdecoder];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
@@ -882,14 +857,14 @@ namespace InstallGUI
             bool res = true;
             if (no_wifi)
             {
-                loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
+                loadFirmware(currDecoder.strprocessor, currDecoder, "Decoderfirmware", firmware.decoder, true);
                 return;
             }
             if (currDecoder.credentials == true)
             {
                 // load scanner firmware to decoder
                 if (loaded != firmware.scanner)
-                    res = loadFirmware(currDecoder.strprocessor, currDecoder.scanner_files, "Scanfirmware", firmware.scanner);
+                    res = loadFirmware(currDecoder.strprocessor, currDecoder, "Scanfirmware", firmware.scanner, false);
                 // prepare and send ssid via port
                 if (res && (ssidBox.Items.Count > 0))
                 {
@@ -907,7 +882,7 @@ namespace InstallGUI
                     MessageBox.Show("FEHLER!");
             }
             else
-                loadFirmware(currDecoder.strprocessor, currDecoder.firmware_source, "Decoderfirmware", firmware.decoder);
+                loadFirmware(currDecoder.strprocessor, currDecoder, "Decoderfirmware", firmware.decoder, true);
         }
 
         // ************************ HELP WINDOW **************************************************************
@@ -945,64 +920,58 @@ namespace InstallGUI
             }
         }
 
+        private void showSource(int cd)
+        {
+            currDecoder = decoderliste[(int)cd];
+            if (pio.Checked)
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
+            else
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_binFile;
+            reportBox.Refresh();
+        }
+
         private void binFile_CheckedChanged(object sender, EventArgs e)
         {
             if (!binFile.Checked)
                 return;
             if (rbLight.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.hausbeleuchtung];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.hausbeleuchtung);
                 return;
             }
             if (rbstepper.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.stepper];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.stepper);
                 return;
             }
             if (rbBridge.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.bridge];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.bridge);
                 return;
             }
             if (rbFormsignal.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.formsignal];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.formsignal);
                 return;
             }
             if (rbgleisbesetztmelder.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.gleisbesetztmelder];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.gleisbesetztmelder);
                 return;
             }
             if (rbBooster.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.booster];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.booster);
                 return;
             }
             if (rbMaxi.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.maxi];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.maxi);
                 return;
             }
             if (tstDecoder.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_binFile.testdecoder];
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
-                reportBox.Refresh();
+                showSource((int)decoders_native.testdecoder);
                 return;
             }
         }
@@ -1014,64 +983,64 @@ namespace InstallGUI
             if (rbLight.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.hausbeleuchtung];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
             if (rbstepper.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.stepper];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
             if (rbBridge.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.bridge];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
             if (rbFormsignal.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.formsignal];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
             if (rbgleisbesetztmelder.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
             if (rbBooster.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.booster];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
             if (rbMaxi.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.maxi];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
             if (tstDecoder.Checked)
             {
                 currDecoder = decoderliste[(int)decoders_native.testdecoder];
-                checkpio(currDecoder.firmware_source, ref currDecoder);
-                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source;
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();
                 return;
             }
