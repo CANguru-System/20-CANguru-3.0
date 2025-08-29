@@ -242,7 +242,10 @@ namespace InstallGUI
             string destination = "";
             if (txt == "Decoderfirmware")
             {
-                source = cd.firmware_source_pio;
+                if (pio.Checked)
+                    source = cd.firmware_source_pio;
+                else
+                    source = cd.firmware_source_binFile;
                 destination = cd.firmware_source_binFile;
             }
             else
