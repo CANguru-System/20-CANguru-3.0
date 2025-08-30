@@ -146,7 +146,20 @@ namespace InstallGUI
                     ssidBox.Items.Add(line);
                     ssidBox.SelectedIndex = 0;
                     bssid = true;
-                    //Read the third line of text: Password
+                    //Read the third line of text: binfiles/pio
+                    binFile.Checked = true;
+                    line = sr.ReadLine();
+                    if (line == "pio")
+                    {
+                        pio.Checked = true;
+                        binFile.Checked = false;
+                    }
+                    if (line == "binfiles")
+                    {
+                        pio.Checked = false;
+                        binFile.Checked = true;
+                    }
+                    //Read the fourth line of text: Password
                     line = sr.ReadLine();
                     password.Text = line;
                     hostBox.Text = "42";
@@ -170,11 +183,11 @@ namespace InstallGUI
                 comportsBox.Items.Add(line);
                 comportsBox.SelectedIndex = 0;
                 hostBox.Text = line.Substring(3);
+                binFile.Checked = true;
             }
             // Festlegen der Checked-Eigenschaft des Optionsfelds
             currDecoder = decoderliste[(int)decoders_native.gleisbesetztmelder];
             rbgleisbesetztmelder.Checked = true;
-            binFile.Checked = true;
             // 
             _serialPort = new SerialPort(comportsBox.SelectedItem.ToString(), 115200, Parity.None, 8, StopBits.One);
             _serialPort.Handshake = Handshake.None;
@@ -202,6 +215,12 @@ namespace InstallGUI
                     sw.Write("\n");
                     //Write out the ssid
                     sw.Write(ssids[0].Trim());
+                    sw.Write("\n");
+                    //Write out the binFiles/pio
+                    if (pio.Checked)
+                        sw.Write("pio");
+                    else
+                        sw.Write("binfiles");
                     sw.Write("\n");
                     //Write out the password
                     sw.Write(password.Text);
@@ -232,6 +251,47 @@ namespace InstallGUI
         }
 
         // ************************ HELPER LOAD FIRMWARE TO DECODER **************************************************************
+        private void copyBinFiles(string sDirectory, string dDirectory)
+        {
+            // Quell- und Zielpfade definieren
+            string searchPattern = "*.bin";
+            try
+            {
+                // Überprüfen, ob das Quellverzeichnis existiert
+                if (!Directory.Exists(sDirectory))
+                {
+                    MessageBox.Show("Das Quellverzeichnis existiert nicht: " + sDirectory);
+                    return;
+                }
+                if (!Directory.Exists(dDirectory))
+                {
+                    Directory.CreateDirectory(dDirectory);
+                }
+                // Dateien mit dem Muster suchen
+                string[] files = Directory.GetFiles(sDirectory, searchPattern);
+                if (files.Length == 0)
+                {
+                    MessageBox.Show($"Keine Dateien mit dem Muster '{searchPattern}' im Verzeichnis '{sDirectory}' gefunden.");
+                    return;
+                }
+                // Datei kopieren
+                foreach (string filePath in files)
+                {
+                    string fileName = System.IO.Path.GetFileName(filePath); // Nur den Dateinamen extrahieren
+                    string destinationPath = System.IO.Path.Combine(dDirectory, fileName);
+
+                    // Datei kopieren
+                    File.Copy(filePath, destinationPath, overwrite: true);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Fehlerbehandlung
+                MessageBox.Show("Fehler beim Kopieren der Datei " + ex.Message);
+            }
+            reportBox.AppendText(" und Dateien kopiert.");
+            reportBox.Refresh();
+        }
 
         bool loadFirmware(string cpu, decoderStruct cd, string txt, firmware fw, bool fCopy)
         {
@@ -249,7 +309,15 @@ namespace InstallGUI
                 destination = cd.firmware_source_binFile;
             }
             else
-                source = cd.scanner_files;
+            {
+                if (pio.Checked)
+                {
+                    copyBinFiles(cd.scanner_files, cd.firmware_source_binFile + @"\ScanFiles");
+                    source = cd.scanner_files;
+                }
+                if (binFile.Checked)
+                    source = cd.firmware_source_binFile + @"\ScanFiles";
+            }
             try
             {
                 if (_serialPort.IsOpen)
@@ -290,46 +358,7 @@ namespace InstallGUI
                 loaded = fw;
             }
             if (fCopy && pio.Checked)
-            {
-                // Quell- und Zielpfade definieren
-                string searchPattern = "*.bin";
-                try
-                {
-                    // Überprüfen, ob das Quellverzeichnis existiert
-                    if (!Directory.Exists(source))
-                    {
-                        MessageBox.Show("Das Quellverzeichnis existiert nicht: " + source);
-                        return (errNo == 0);
-                    }
-                    if (!Directory.Exists(destination))
-                    {
-                        Directory.CreateDirectory(destination);
-                    }
-                    // Dateien mit dem Muster suchen
-                    string[] files = Directory.GetFiles(source, searchPattern);
-                    if (files.Length == 0)
-                    {
-                        MessageBox.Show($"Keine Dateien mit dem Muster '{searchPattern}' im Verzeichnis '{source}' gefunden.");
-                        return (errNo == 0);
-                    }
-                    // Datei kopieren
-                    foreach (string filePath in files)
-                    {
-                        string fileName = System.IO.Path.GetFileName(filePath); // Nur den Dateinamen extrahieren
-                        string destinationPath = System.IO.Path.Combine(destination, fileName);
-
-                        // Datei kopieren
-                        File.Copy(filePath, destinationPath, overwrite: true);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Fehlerbehandlung
-                    MessageBox.Show("Fehler beim Kopieren der Datei " + ex.Message);
-                }
-                reportBox.Text = "Dateien kopiert.";
-                reportBox.Refresh();
-            }
+                copyBinFiles(source, destination);
             return (errNo == 0);
         }
 
@@ -544,8 +573,11 @@ namespace InstallGUI
 
         private void si_DataReceived(string data)
         {
-            processBox.AppendText(Environment.NewLine + data + Environment.NewLine);
-            processBox.Refresh();
+            if (pio.Checked)
+            {
+                processBox.AppendText(data + Environment.NewLine);
+                processBox.Refresh();
+            }
             if (data.IndexOf('&') == 0)
             {
                 count = data[1] - 0x30;
