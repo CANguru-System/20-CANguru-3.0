@@ -76,11 +76,11 @@ void setup()
 #define BLINKY_PIN 2
 #endif
   LED_begin(BLINKY_PIN);
-  command.reserve(maxstring);
+/*  command.reserve(maxstring);
   subCommand.reserve(maxstring);
   ssid.reserve(maxstring);
   password.reserve(maxstring);
-
+*/
   if (preferences.begin("CANguru", false))
   {
     log_i("Preferences wurde erfolgreich gestartet");
@@ -128,6 +128,8 @@ void connectionStatusMessage(wl_status_t st)
 
 void loop()
 {
+  char sourcebuffer[maxstring]; // Enough to hold 3 digits and a null terminator
+  char destbuffer[maxstring]; // Enough to hold 3 digits and a null terminator
   // put your main code here, to run repeatedly:
   if (Serial.available() > 0)
   {
@@ -141,7 +143,8 @@ void loop()
     }
     if (subCommand == "SSID")
     {
-      ssid = command.substring(4);
+      ssid = command.substring(4, command.length());
+      // Speichern des SSID in den Preferences
       preferences.putString("ssid", ssid);
       // Antwort an InstallGUI
       Serial.println("&1B");

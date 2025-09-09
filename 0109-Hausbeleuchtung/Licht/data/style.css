@@ -58,6 +58,14 @@ div.dropdown2 {
     left: 5px;
 }
 
+div.button {
+    position: absolute;
+    top: 200px;
+    height: 30px;
+    width: 770px;
+    left: 300px;
+}
+
 div.dropdownleft {
     left: 20px;
 }
@@ -86,33 +94,39 @@ div.ipnbr {
 }
 
 /* ///////////////////// */
-button.buttonstyle {
-    text-align: center;
+
+.custom-button {
+    background-color: #4CAF50;
+    /* Grün */
+    top: 370px;
+    color: white;
     border: none;
-    height: 30px;
-    position: relative;
-    top: 3px;
-    left: 5px;
-    border-radius: 8px;
-    color: var(--color);
-    background: transparent;
-    margin: 4px 4px;
+    padding: 10px 20px;
+    font-size: 16px;
     cursor: pointer;
+    position: absolute;
+    /* Ermöglicht die Positionierung mit top und left */
+}
+
+.custom-button:hover {
+    background-color: #45a049;
+    /* Etwas dunkleres Grün beim Hover */
 }
 
 #bSAVE {
     position: absolute;
-    font-size: 14px;
+    font-size: 184x;
     background-color: lightgreen;
-    left: 250px;
-    width: 260px;
-    top: 350px;
+    top: 250px;
     height: 30px;
+    width: 300;
+    left: 300px;
 }
+
+/* /////////Zeile in 10 //////////// */
 
 .line-with-text {
     position: absolute;
-    top: 225px;
     height: 30px;
     width: 770px;
     left: 5px;
@@ -136,4 +150,35 @@ button.buttonstyle {
 
 .line-with-text:not(:empty)::after {
     margin-left: 10px;
+}
+
+/* /////////Zeile in 225 //////////// */
+.lwt225 {
+    top: 225px;
+}
+
+/* /////////Zeile in 325 //////////// */
+.lwt325 {
+    top: 325px;
+}
+
+/* ///////// Radio Button //////////// */
+
+/* CSS für die Klasse */
+.custom-radio {
+    position: absolute;
+    /* Ermöglicht die Positionierung mit top und left */
+    transform: scale(1.5);
+    /* Vergrößert den Radio-Button */
+    margin-left: 10px;
+    /* Abstand zwischen Radio-Button und Text */
+}
+
+/* CSS für die Klasse */
+.custom-radio-label {
+    position: absolute;
+    /* Ermöglicht die Positionierung mit top und left */
+    top: 375px;
+    font-family: Arial;
+    font-size: 18px;
 }

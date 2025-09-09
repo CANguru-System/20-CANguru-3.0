@@ -1,20 +1,28 @@
 #include <Arduino.h>
 
+// Import required libraries
 #include <Adafruit_NeoPixel.h>
 #include "preferences.h"
-
-// Import required libraries
 #include "WiFi.h"
 #include "ESPAsyncWebServer.h"
 #include "LittleFS.h"
 #include <ESPmDNS.h>
 #include "CANguruDefs.h"
 #include "OWN_LED.h"
+#include "effects.h"
 
-  uint8_t TestRoom = 0;
-  uint8_t TestNutzung = 5;
-  uint16_t TestbaseTime = 250; // delay between steps, in ms, based on speed
+const uint8_t LED_COUNT_NORM = 96; // number of LEDs in the strip
 
+const gpio_num_t LED_PIN_strip0 = GPIO_NUM_0;
+const gpio_num_t LED_PIN_strip1 = GPIO_NUM_1;
+const gpio_num_t LED_PIN_strip2 = GPIO_NUM_2;
+const gpio_num_t LED_PIN_strip3 = GPIO_NUM_3;
+const gpio_num_t LED_PIN_strip4 = GPIO_NUM_4;
+
+uint8_t curr_pin = LED_PIN_strip2;
+
+Adafruit_NeoPixel strip(LED_COUNT_NORM, curr_pin, NEO_RGB + NEO_KHZ800);
+uint8_t TestRoom = 0;
 
 const char *hostnameBel = "LICHT";
 char hostname[25]; // Enough to hold 3 digits and a null terminator
@@ -25,18 +33,9 @@ uint8_t nativeMACAddress[macLen];
 Preferences preferences_light;
 Preferences preferences_CANguru;
 
-// Replace with your network credentials
-
-const gpio_num_t LED_PIN_HOUSELIGHT0 = GPIO_NUM_0;
-const gpio_num_t LED_PIN_HOUSELIGHT1 = GPIO_NUM_1;
-const gpio_num_t LED_PIN_HOUSELIGHT2 = GPIO_NUM_2;
-const gpio_num_t LED_PIN_HOUSELIGHT3 = GPIO_NUM_3;
-const gpio_num_t LED_PIN_HOUSELIGHT4 = GPIO_NUM_4;
-
-#define LED_COUNT 24
 // limits für Raum
 const uint8_t raum_min = 0;
-const uint8_t raum_max = LED_COUNT - 1;
+const uint8_t raum_max = LED_COUNT_NORM - 1;
 const uint8_t raum_step = 1;
 const uint8_t raum_curr = 1;
 // limits für onTime
@@ -60,24 +59,21 @@ const uint16_t zeitfaktor_max = 50000;
 const uint16_t zeitfaktor_step = 500;
 const uint16_t zeitfaktor_curr = 5000;
 // limits für Nutzung
-const uint8_t nutzung_min = raum_min + 1;
-const uint8_t nutzung_max = raum_max + 1;
-const uint8_t nutzung_step = raum_step;
-const uint8_t nutzung_curr = nutzung_max;
-
-uint8_t curr_pin = LED_PIN_HOUSELIGHT2;
-
-Adafruit_NeoPixel houselight(LED_COUNT, curr_pin, NEO_RGB + NEO_KHZ800);
+const uint8_t nutzung_min = 4;
+const uint8_t nutzung_max = LED_COUNT_NORM - 1;
+const uint8_t nutzung_step = nutzung_min;
+const uint8_t nutzung_curr = 24;
 
 boolean LED_onoff;
 
-#define prefNameLight "HOUSELIGHT"
+#define prefNameLight "strip"
 #define setup_done 0x47
 #define setup_NOTdone 0xFF
 
 unsigned long lastTime_house; // timestamp in us of when the last step was taken
 unsigned long baseTime_house; // delay between steps, in us, based on speed
 uint8_t nutzung;
+uint8_t effectNbr = 0;
 
 enum statusType
 {
@@ -97,10 +93,17 @@ struct roomType
   uint16_t duration;
 };
 // rooms[Raum]
-roomType rooms[LED_COUNT];
+roomType rooms[LED_COUNT_NORM];
 
 uint8_t currRoom;
 
+enum showType
+{
+  house = 0,
+  effect,
+  test
+};
+showType showMode = house;
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 
@@ -160,7 +163,7 @@ void onRequest(AsyncWebServerRequest *request)
     // und nun hier auf dem ESP32C3 gespeichert
     // dieser Prozess wird auf der HTML-Seite durch Knopfdruck SPEICHERN ausgelöst
     Serial.println("URL: " + String(urlLine));
-    for (uint8_t p = 0; p < 6; p++)
+    for (uint8_t p = 0; p < 7; p++)
     {
       // beginne mit dem 2. Parameter (ohne /PARAM)
       val = getStringPartByNr(urlLine, '/', p + 2);
@@ -197,19 +200,17 @@ void onRequest(AsyncWebServerRequest *request)
         break;
       case 5:
         // Nutzungs-Wert (genutzte LED) V5 für alle Räume
-        // zunächst alles auf dunkel
-        for (uint8_t l = 0; l < nutzung; l++)
-        {
-          houselight.setPixelColor(l, rooms[l].colorOff);
-          houselight.show();
-        }
-
         nutzung = (uint16_t)val.toInt();
         preferences_light.putUShort("nutzung", nutzung);
         break;
+      case 6:
+        // Effekt-Wert
+        showMode = (showType)val.toInt();
+        preferences_light.putUShort("showMode", showMode);
+        break;
       }
       //      esp_restart();
-      rooms[currRoom].colorOn = houselight.Color(rooms[currRoom].brightness, rooms[currRoom].brightness, rooms[currRoom].brightness);
+      //      rooms[currRoom].colorOn = strip.Color(rooms[currRoom].brightness, rooms[currRoom].brightness, rooms[currRoom].brightness);
     }
   }
   if (urlLine.indexOf("/CHGRAUM") >= 0)
@@ -223,12 +224,12 @@ void onRequest(AsyncWebServerRequest *request)
     sprintf(buffer, "brightness%d", currRoom);
     rooms[currRoom].brightness = preferences_light.getUShort(buffer, false);
     // unchangeable values
-    rooms[currRoom].colorOn = houselight.Color(rooms[currRoom].brightness, rooms[currRoom].brightness, rooms[currRoom].brightness);
-    rooms[currRoom].colorOff = houselight.Color(0, 0, 0);
+    rooms[currRoom].colorOn = strip.Color(rooms[currRoom].brightness, rooms[currRoom].brightness, rooms[currRoom].brightness);
+    rooms[currRoom].colorOff = strip.Color(0, 0, 0);
     rooms[currRoom].status = lightOff;
     rooms[currRoom].goneTime = 0;
     rooms[currRoom].duration = rooms[currRoom].onTime + rooms[currRoom].offTime;
-    houselight.setPixelColor(currRoom, houselight.Color(0, 0, 0));
+    strip.setPixelColor(currRoom, strip.Color(0, 0, 0));
   }
 }
 
@@ -244,7 +245,8 @@ String IPNbr()
 String GetParams()
 {
   uint8_t roomnbr = currRoom;
-  String paramsString = String(rooms[roomnbr].onTime) + "/" + String(rooms[roomnbr].offTime) + "/" + String(rooms[roomnbr].brightness) + "/" + String(baseTime_house) + "/" + String(nutzung) + "/";
+  String paramsString = String(rooms[roomnbr].onTime) + "/" + String(rooms[roomnbr].offTime) + "/" + String(rooms[roomnbr].brightness) + "/" + String(baseTime_house) + "/" + String(nutzung) + "/" + String(showMode) + "/";
+  Serial.println("GetParams: " + paramsString);
   return paramsString;
 }
 
@@ -351,7 +353,8 @@ void setup()
 
   IPAddress ip = WiFi.localIP();
   // Print ESP32 Local IP Address
-  Serial.println("IP:" + String(ip));
+  Serial.print("IP: ");
+  Serial.println(ip);
 
   preferences_CANguru.end();
   // Route for root / web page
@@ -390,7 +393,7 @@ void setup()
   server.onNotFound(onRequest);
   server.begin();
 
-  houselight.begin();
+  strip.begin();
   // die preferences-Library wird gestartet
 
   if (preferences_light.begin(prefNameLight, false))
@@ -401,7 +404,7 @@ void setup()
   if (setup_todo != setup_done)
   {
     randomSeed(nativeMACAddress[0] + nativeMACAddress[1] + nativeMACAddress[2] + nativeMACAddress[3] + nativeMACAddress[4] + nativeMACAddress[5]);
-    for (uint8_t r = 0; r < houselight.numPixels(); r++)
+    for (uint8_t r = 0; r < strip.numPixels(); r++)
     {
       // changeable values
       // onTime
@@ -418,12 +421,12 @@ void setup()
       sprintf(buffer, "brightness%d", r);
       preferences_light.putUShort(buffer, rooms[r].brightness);
       // unchangeable values
-      rooms[r].colorOn = houselight.Color(rooms[r].brightness, rooms[r].brightness, rooms[r].brightness);
-      rooms[r].colorOff = houselight.Color(0, 0, 0);
+      rooms[r].colorOn = strip.Color(rooms[r].brightness, rooms[r].brightness, rooms[r].brightness);
+      rooms[r].colorOff = strip.Color(0, 0, 0);
       rooms[r].status = lightOff;
       rooms[r].goneTime = 0;
       rooms[r].duration = rooms[r].onTime + rooms[r].offTime;
-      houselight.setPixelColor(r, houselight.Color(0, 0, 0));
+      strip.setPixelColor(r, strip.Color(0, 0, 0));
     }
     baseTime_house = zeitfaktor_curr; // delay between steps, in us, based on speed
     preferences_light.putUShort("baseTime", baseTime_house);
@@ -431,82 +434,164 @@ void setup()
     preferences_light.putUShort("nutzung", nutzung);
     currRoom = raum_curr;
     preferences_light.putUShort("currRoom", currRoom);
+    showMode = house;
+    preferences_light.putUShort("showMode", showMode);
+
     // setup_done auf "TRUE" setzen
     preferences_light.putUChar("setup_done", setup_done);
   }
   else
   {
-    for (uint8_t r = 0; r < houselight.numPixels(); r++)
+    for (uint8_t r = 0; r < strip.numPixels(); r++)
     {
       // changeable values
+      // onTime
       sprintf(buffer, "onTime%d", r);
-      Serial.println("GET: " + String(buffer));
+      //  Serial.println("GET: " + String(buffer));
       rooms[r].onTime = preferences_light.getUShort(buffer, false);
+      // offTime
       sprintf(buffer, "offTime%d", r);
       rooms[r].offTime = preferences_light.getUShort(buffer, false);
+      // brightness
       sprintf(buffer, "brightness%d", r);
       rooms[r].brightness = preferences_light.getUShort(buffer, false);
       // unchangeable values
-      rooms[r].colorOn = houselight.Color(rooms[r].brightness, rooms[r].brightness, rooms[r].brightness);
-      rooms[r].colorOff = houselight.Color(0, 0, 0);
+      rooms[r].colorOn = strip.Color(rooms[r].brightness, rooms[r].brightness, rooms[r].brightness);
+      rooms[r].colorOff = strip.Color(0, 0, 0);
       rooms[r].status = lightOff;
       rooms[r].goneTime = 0;
       rooms[r].duration = rooms[r].onTime + rooms[r].offTime;
-      houselight.setPixelColor(r, houselight.Color(0, 0, 0));
+      strip.setPixelColor(r, strip.Color(0, 0, 0));
     }
     baseTime_house = preferences_light.getUShort("baseTime", baseTime_house);
     nutzung = preferences_light.getUShort("nutzung", nutzung);
     currRoom = preferences_light.getUShort("currRoom", 0);
+    showMode = (showType)preferences_light.getUShort("showMode", house);
   }
-  houselight.show();
+  strip.show();
   LED_onoff = true;
   LED_begin(GPIO_NUM_8);
 }
 
 void loop()
 {
-  // Hausbeleuchtung
-  if (millis() - lastTime_house >= TestbaseTime)
+  switch (showMode)
   {
-    lastTime_house = millis();
-    //
-    if (LED_onoff)
+  case house:
+    // Hausbeleuchtung
+    //    Serial.println("HAUS");
+    if (millis() - lastTime_house >= baseTime_house)
     {
-      LED_on();
-      houselight.setPixelColor(TestRoom, houselight.Color(32, 32, 32));
-    }
-    else
-    {
-      LED_off();
-      houselight.setPixelColor(TestRoom, houselight.Color(0, 0, 0));
-      TestRoom++;
-      if (TestRoom >= nutzung)
+      lastTime_house = millis();
+      // get the timeStamp of when you stepped:
+      for (uint8_t r = 0; r < nutzung; r++)
       {
-        TestRoom = 0;
+        rooms[r].goneTime++;
+        if (rooms[r].goneTime > rooms[r].duration)
+        {
+          rooms[r].goneTime = 0;
+          rooms[r].status = lightOff;
+        }
+        if (rooms[r].goneTime > rooms[r].offTime)
+        {
+          rooms[r].status = lightOn;
+        }
+        if (rooms[r].status == lightOn)
+          strip.setPixelColor(r, rooms[r].colorOn);
+        else
+          strip.setPixelColor(r, rooms[r].colorOff);
+        strip.show();
       }
     }
-    houselight.show();
-    LED_onoff = !LED_onoff;
-  }
-
-    //
-    // get the timeStamp of when you stepped:
-    /*    for (uint8_t r = 0; r < nutzung; r++)
+    break;
+  case effect:
+    //    Serial.println("Effekt");
+    switch (effectNbr)
+    {
+    case 0:
+//      Serial.println("colorWipe");
+      colorWipe(strip.Color(255, 0, 0), rooms[0].brightness); // Red
+      break;
+    case 1:
+      colorWipe(strip.Color(0, 255, 0), rooms[0].brightness); // Green
+      break;
+    case 2:
+      colorWipe(strip.Color(0, 0, 255), rooms[0].brightness); // Blue
+      break;
+    case 3:
+      colorWipe(strip.Color(0, 0, 0, 255), rooms[0].brightness); // White RGBW
+      break;
+    case 4:
+      // Send a theater pixel chase in...
+//      Serial.println("theaterChase White");
+      theaterChase(strip.Color(127, 127, 127), rooms[0].brightness); // White
+      break;
+    case 5:
+//      Serial.println("theaterChase Red");
+      theaterChase(strip.Color(127, 0, 0), rooms[0].brightness); // Red
+      break;
+    case 6:
+//      Serial.println("theaterChase Blue");
+      theaterChase(strip.Color(0, 0, 127), rooms[0].brightness); // Blue
+      break;
+    case 7:
+//      Serial.println("rainbow");
+      rainbow(20);
+      break;
+    case 8:
+//      Serial.println("rainbowCycle");
+      rainbowCycle(20);
+      break;
+    case 9:
+//      Serial.println("theaterChaseRainbow");
+      theaterChaseRainbow(rooms[0].brightness);
+      break;
+    case 10:
+//      Serial.println("whiteOverRainbow");
+      whiteOverRainbow(75, 5);
+      break;
+    case 11:
+//      Serial.println("pulseWhite");
+      pulseWhite(5);
+      break;
+    case 12:
+//      Serial.println("rainbowFade2White");
+      rainbowFade2White(3, 3, 1);
+      break;
+    }
+    effectNbr++;
+    if (effectNbr > 12)
+      effectNbr = 0;
+    break;
+  case test:
+    //    Serial.println("Test");
+    // TEST
+    if (millis() - lastTime_house >= baseTime_house / 2)
+    {
+      lastTime_house = millis();
+      //
+      if (LED_onoff)
+      {
+        LED_on();
+        strip.setPixelColor(TestRoom, strip.Color(32, 32, 32));
+      }
+      else
+      {
+        LED_off();
+        strip.setPixelColor(TestRoom, strip.Color(0, 0, 0));
+        TestRoom++;
+        if (TestRoom >= nutzung)
         {
-          rooms[r].goneTime++;
-          if (rooms[r].goneTime > rooms[r].duration)
-          {
-            rooms[r].goneTime = 0;
-            rooms[r].status = lightOff;
-          }
-          if (rooms[r].goneTime > rooms[r].offTime)
-          {
-            rooms[r].status = lightOn;
-          }
-          if (rooms[r].status == lightOn)
-            houselight.setPixelColor(r, rooms[r].colorOn);
-          else
-            houselight.setPixelColor(r, rooms[r].colorOff);
-          houselight.show();
-        }*/
+          TestRoom = 0;
+        }
+      }
+      strip.show();
+      LED_onoff = !LED_onoff;
+    }
+    break;
+
+  default:
+    break;
   }
+  //
+}

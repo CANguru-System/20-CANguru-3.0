@@ -479,7 +479,7 @@ namespace InstallGUI
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "CANguru-Installationsprogramm 1.2";
+            this.Text = "CANguru-Installationsprogramm 1.25";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

@@ -11,7 +11,7 @@
 <body>
     <h2>Hausbeleuchtung 1.00</h2>
     <div class="ipnbr" id="IPNbr">XXX</div>
-    <div class="box">
+    <div class="box" id="box">
         <!-- Raum relativ -->
         <div class="dropdown0 dropdownleft">
             <label class="selectstyle" for="Raum">Raum</label>
@@ -32,7 +32,7 @@
             <label class="selectstyle" for="brightness">Brightness</label>
             <select id="brightness"></select>
         </div>
-        <div class="line-with-text">für alle Räume</div>
+        <div class="line-with-text lwt225">für alle Räume</div>
         <!-- Zeitfaktor 500 - 50000 -->
         <div class="dropdown2 dropdownleft">
             <label class="selectstyle" for="zeitfaktor">Zeitfaktor</label>
@@ -43,18 +43,88 @@
             <label class="selectstyle" for="nutzung">genutzte LED</label>
             <select id="nutzung"></select>
         </div>
-        <div class="dropdown3 dropdownmiddle">
+        <div class="line-with-text lwt325">Effektauswahl</div>
+    </div>
+    <!--        <div class="button">
             <button class="buttonstyle" id="bSAVE">
                 S P E I C H E R N
             </button>
         </div>
-    </div>
+-->
 </body>
 
 <script>
 
-    /////////////////////////////////////////////////////////////////////////////////////
+    // Funktion, um einen Button dynamisch zu erstellen
+    function createButton(left) {
+        // Button-Element erstellen
+        const button = document.createElement('button');
 
+        // Textinhalt des Buttons setzen
+        button.textContent = 'S P E I C H E R N';
+
+        // CSS-Klasse hinzufügen
+        button.classList.add('custom-button');
+
+        // Position des Buttons festlegen (Abstand vom oberen und linken Rand)
+        button.style.left = left + 'px'; // Xpx vom linken Rand
+
+        // Event-Listener für Klick hinzufügen
+        button.addEventListener('click', () => {
+            var xhttpsetparams = new XMLHttpRequest();
+            var raum = parseInt(Raum.value);
+            var onT = parseInt(onTime.value);
+            var offT = parseInt(offTime.value);
+            var bright = parseInt(brightness.value);
+            var zeitf = parseInt(zeitfaktor.value);
+            var nutz = parseInt(nutzung.value);
+            if (nutz == 256)
+                nutz = 255; // damit 256 auch in der Liste erscheint
+            // Function to get the selected radio button value
+            const selectedRadio = document.querySelector('input[name="group1"]:checked');
+            var effect = selectedRadio.value;
+            var callSrv = "/SETPARAMS/" + String(raum) + "/" + String(onT) + "/" + String(offT) + "/" + String(bright) + "/" + String(zeitf) + "/" + String(nutz) + "/"+ String(effect) + "/";
+            xhttpsetparams.open("GET", callSrv, true);
+            xhttpsetparams.send();
+        });
+
+        // Select the container (box)
+        const container = document.getElementById('box');
+
+        // Button zum Body hinzufügen
+        container.appendChild(button);
+    }
+
+    // Funktion zum Erstellen eines Radio-Buttons
+    function createRadioButton(name, id, value, labelText, left) {
+        // Radio-Button erstellen
+        const radioButton = document.createElement('input');
+        radioButton.type = 'radio';
+        radioButton.name = name; // Name für Gruppierung
+        radioButton.id = id; // Wert des Buttons
+        radioButton.value = value; // Wert des Buttons
+        radioButton.className = 'custom-radio'; // CSS-Klasse hinzufügen
+
+        // Label für den Radio-Button erstellen
+        const label = document.createElement('label');
+        label.textContent = labelText; // Text für das Label
+        label.className = 'custom-radio-label'; // CSS-Klasse hinzufügen
+        label.style.left = left + "px";
+        label.appendChild(radioButton); // Radio-Button ins Label einfügen
+
+        return label; // Label zurückgeben (enthält den Radio-Button)
+    }
+
+    function setChecked(id) {
+        // Hole das Radio-Button-Element mit der ID "option2"
+        const radioButton = document.getElementById(id);
+
+        // Setze den Radio-Button auf "checked"
+        radioButton.checked = true;
+
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
 
     // fragt den ESP32C3 nach der IP-Adresse und zeigt sie auf der HTML-Seite an
     var myIPTimer;
@@ -72,6 +142,7 @@
 
     // fragt den ESP32C3 nach den aktuellen Parametern und zeigt sie auf der HTML-Seite an
     var myParamsTimer;
+    var myGETParamsTimer;
     var call4Params = function () {
         var xhttpParams = new XMLHttpRequest();
         xhttpParams.onreadystatechange = function () {
@@ -87,7 +158,7 @@
                 param3.value = parseInt(array_reponseParams[3]);
                 const param4 = document.getElementById('nutzung');
                 param4.value = parseInt(array_reponseParams[4]);
-                clearInterval(myParamsTimer);
+                clearInterval(myGETParamsTimer);
             }
         };
         xhttpParams.open("GET", "/GETPARAMS/", true);
@@ -107,6 +178,8 @@
                 var array_reponseParams = xhttpParams.responseText.split("/"); // min, max, step, val
                 min = parseInt(array_reponseParams[0]);
                 max = parseInt(array_reponseParams[1]);
+                if (max == 255)
+                    max = 256;  // damit 256 auch in der Liste erscheint
                 step = parseInt(array_reponseParams[2]);
                 val = parseInt(array_reponseParams[3]);
                 clearInterval(myParamsTimer);
@@ -129,19 +202,6 @@
 
     }
 
-    // Laden der IP-Adresse
-    myIPTimer = setInterval(call4IP, 200);
-
-    // Füllen der drpdown-Liste
-    setNumberValue('Raum');
-    setNumberValue('onTime');
-    setNumberValue('offTime');
-    setNumberValue('brightness');
-    setNumberValue('zeitfaktor');
-    setNumberValue('nutzung');
-
-    // Laden der Paramter Raum, onTime. offtime, brightness, zeitfaktor
-    myParamsTimer = setInterval(call4Params, 200);
 
     // nach Ändern der Raumnummer wird diese an den ESP32C3 gesendet und dieser sendet die
     // zu dieser Raumnummer gehörenden Werte, und diese werden auf der HTML-Seite angezeigt
@@ -155,25 +215,28 @@
         myParamsTimer = setInterval(call4Params, 200);
     });
 
-    /////////////////////////////////////////////////////////////////////////////////////
-    // Hier erfolgt die Verknüpfung der Knöpfe mit den einzelnen Prozeduren 
-    /////////// Buttons
-    // bSAVE-Button
-    /////////////////////////////////////////////////////////////////////////////////////
-    // überträgt alle Werte auf den ESP32C3
-    // 
-    document.getElementById('bSAVE').addEventListener('click', () => {
-        var xhttpsetparams = new XMLHttpRequest();
-        var raum = parseInt(Raum.value);
-        var onT = parseInt(onTime.value);
-        var offT = parseInt(offTime.value);
-        var bright = parseInt(brightness.value);
-        var zeitf = parseInt(zeitfaktor.value);
-        var nutz = parseInt(nutzung.value);
-        var callSrv = "/SETPARAMS/" + String(raum) + "/" + String(onT) + "/" + String(offT) + "/" + String(bright) + "/" + String(zeitf) + "/" + String(nutz) + "/";
-        xhttpsetparams.open("GET", callSrv, true);
-        xhttpsetparams.send();
-    });
+    // Container für die Radio-Buttons auswählen
+    const container = document.getElementById('box');
+    // Radio-Buttons erstellen und zum Container hinzufügen
+    container.appendChild(createRadioButton('group1', 'option1', 0, 'Hausbeleuchtung', 20));
+    container.appendChild(createRadioButton('group1', 'option2', 1, 'Effekte', 220));
+    container.appendChild(createRadioButton('group1', 'option3', 2, 'Test', 420));
+    setChecked('option1');
+    // Call the function to create the button
+    createButton(600);
+    // Laden der IP-Adresse
+    myIPTimer = setInterval(call4IP, 200);
+
+    // Füllen der drpdown-Liste
+    setNumberValue('Raum');
+    setNumberValue('onTime');
+    setNumberValue('offTime');
+    setNumberValue('brightness');
+    setNumberValue('zeitfaktor');
+    setNumberValue('nutzung');
+
+    // Laden der Paramter Raum, onTime. offtime, brightness, zeitfaktor
+    myGETParamsTimer = setInterval(call4Params, 200);
 
 </script>
 

@@ -596,7 +596,7 @@ namespace InstallGUI
                         ssidBox.Items.Add(data.Trim());
                         break;
                     case 'B':
-                        if (!data.Equals(ssidBox.SelectedItem.ToString()))
+                        if (!data.Equals(trimSSID(ssidBox.SelectedItem.ToString())))
                             MessageBox.Show("Fehler beim Speichern der SSID: " + data, "Error!");
                         break;
                     case 'C':
@@ -674,7 +674,11 @@ namespace InstallGUI
             // Clear the listbox
             ssidBox.Items.Clear();
             if (loadFirmware(currDecoder.strprocessor, currDecoder, "Scanfirmware", firmware.scanner, false))
+            {
+                Thread.Sleep(500);
                 bssid = write2Port("SCAN");
+            }
+
             //
         }
 
@@ -885,6 +889,15 @@ namespace InstallGUI
         }
 
         // ************************ UPLOAD DECODER-FIRMWARE **************************************************************
+        private string trimSSID(string ssid)
+        {
+            if (ssid.IndexOf('(') != -1)
+            {
+                string[] ssids = ssid.Split('(');
+                ssid = ssids[0].Trim();
+            }
+            return ssid;
+        }
 
         private void uploadBtn_Click(object sender, EventArgs e)
         {
@@ -900,17 +913,11 @@ namespace InstallGUI
                 // load scanner firmware to decoder
                 if (loaded != firmware.scanner)
                     res = loadFirmware(currDecoder.strprocessor, currDecoder, "Scanfirmware", firmware.scanner, false);
+                Thread.Sleep(500);
                 // prepare and send ssid via port
                 if (res && (ssidBox.Items.Count > 0))
                 {
-                    String ssid = ssidBox.SelectedItem.ToString();
-                    if (ssidBox.SelectedItem.ToString().IndexOf('(') != -1)
-                    {
-                        string[] ssids = ssid.Split('(');
-                        command = "SSID" + ssids[0].Trim();
-                    }
-                    else
-                        command = "SSID" + ssid;
+                    command = "SSID" + trimSSID(ssidBox.SelectedItem.ToString());
                     bssid = write2Port(command);
                 }
                 else
