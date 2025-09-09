@@ -157,6 +157,7 @@ void onRequest(AsyncWebServerRequest *request)
   String urlLine = request->url();
   String val;
   char buffer[25]; // Enough to hold 3 digits and a null terminator
+  uint8_t showModeOld;
   if (urlLine.indexOf("/SETPARAMS") >= 0)
   {
     // die aktuellen Werte aus der HTML-Seite werden von dort hierhin übertragen
@@ -205,7 +206,13 @@ void onRequest(AsyncWebServerRequest *request)
         break;
       case 6:
         // Effekt-Wert
+        showModeOld = showMode;
         showMode = (showType)val.toInt();
+        if (showMode != showModeOld)
+        {
+          strip.clear(); // wenn der Modus sich ändert, alle LEDs aus
+          strip.show();
+        }
         preferences_light.putUShort("showMode", showMode);
         break;
       }

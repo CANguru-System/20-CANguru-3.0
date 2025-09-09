@@ -78,8 +78,8 @@
             var bright = parseInt(brightness.value);
             var zeitf = parseInt(zeitfaktor.value);
             var nutz = parseInt(nutzung.value);
-            if (nutz == 256)
-                nutz = 255; // damit 256 auch in der Liste erscheint
+            if (nutz == 96)
+                nutz = 95; // damit 96 auch in der Liste erscheint
             // Function to get the selected radio button value
             const selectedRadio = document.querySelector('input[name="group1"]:checked');
             var effect = selectedRadio.value;
@@ -178,8 +178,9 @@
                 var array_reponseParams = xhttpParams.responseText.split("/"); // min, max, step, val
                 min = parseInt(array_reponseParams[0]);
                 max = parseInt(array_reponseParams[1]);
-                if (max == 255)
-                    max = 256;  // damit 256 auch in der Liste erscheint
+                if (max == 95)
+                    max = 96;  // damit 96 auch in der Liste erscheint
+                // im ESP32C3 wird ab 0 gerechnet
                 step = parseInt(array_reponseParams[2]);
                 val = parseInt(array_reponseParams[3]);
                 clearInterval(myParamsTimer);
