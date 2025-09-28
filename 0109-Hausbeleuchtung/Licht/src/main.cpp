@@ -20,6 +20,7 @@ const gpio_num_t LED_PIN_strip3 = GPIO_NUM_3;
 const gpio_num_t LED_PIN_strip4 = GPIO_NUM_4;
 
 uint8_t curr_pin = LED_PIN_strip2;
+bool ident;
 
 Adafruit_NeoPixel strip(LED_COUNT_NORM, curr_pin, NEO_RGB + NEO_KHZ800);
 uint8_t TestRoom = 0;
@@ -101,9 +102,11 @@ enum showType
 {
   house = 0,
   effect,
-  test
+  test,
+  do_clearing
 };
 showType showMode = house;
+showType showModeTmp;
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 
@@ -113,6 +116,14 @@ String processor(const String &var)
   return String();
 }
 
+/**
+ * The function `random` generates a random integer within a specified range.
+ *
+ * @param MaxZahl MaxZahl is the maximum value that the random number should not exceed.
+ *
+ * @return The function `random` returns a random integer value within the range of 1 to `MaxZahl`,
+ * where `MaxZahl` is the maximum value specified as an argument to the function.
+ */
 int16_t random(int MaxZahl)
 {
   float zufall;
@@ -124,6 +135,23 @@ int16_t random(int MaxZahl)
 
 // Teilt einen String mit Hilfe des Separators in seine Bestandteile auf
 // und gibt den index-Teil zurück
+/**
+ * The function `getStringPartByNr` extracts a specific part of a string based on a given separator and
+ * index.
+ *
+ * @param data The `data` parameter is the string from which you want to extract a specific part based
+ * on the separator and index provided.
+ * @param separator The `separator` parameter in the `getStringPartByNr` function is the character that
+ * is used to separate different parts of the input `data` string. The function aims to extract a
+ * specific part of the string based on the index provided, using the separator to identify different
+ * parts.
+ * @param index The `index` parameter in the `getStringPartByNr` function represents the position of
+ * the data part you want to extract from the input string. It is used to specify which part of the
+ * string, separated by the given separator character, you are interested in retrieving.
+ *
+ * @return The function is intended to return a specific part of a string based on a given separator
+ * and index. However, there are some issues in the implementation that need to be corrected.
+ */
 String getStringPartByNr(String data, char separator, int index)
 {
   int stringData = 0;   // variable to count data part nr
@@ -152,18 +180,31 @@ String getStringPartByNr(String data, char separator, int index)
   return dataPart;
 }
 
+/**
+ * The function `onRequest` processes incoming requests to set parameters or change room settings in an
+ * ESP32C3 device based on the URL received.
+ *
+ * @param request The `onRequest` function you provided is a part of a web server implementation on an
+ * ESP32C3 microcontroller. This function handles incoming HTTP requests and processes the parameters
+ * sent in the URL to update certain settings related to lighting control in different rooms.
+ */
 void onRequest(AsyncWebServerRequest *request)
 {
   String urlLine = request->url();
   String val;
   char buffer[25]; // Enough to hold 3 digits and a null terminator
-  uint8_t showModeOld;
+  showType showModeOld;
+  Serial.println("URL: " + String(urlLine));
+  if (urlLine.indexOf("/IDENT") >= 0)
+  {
+    request->send_P(200, "text/plain", "ok");
+    ident = true;
+  }
   if (urlLine.indexOf("/SETPARAMS") >= 0)
   {
     // die aktuellen Werte aus der HTML-Seite werden von dort hierhin übertragen
     // und nun hier auf dem ESP32C3 gespeichert
     // dieser Prozess wird auf der HTML-Seite durch Knopfdruck SPEICHERN ausgelöst
-    Serial.println("URL: " + String(urlLine));
     for (uint8_t p = 0; p < 7; p++)
     {
       // beginne mit dem 2. Parameter (ohne /PARAM)
@@ -207,11 +248,12 @@ void onRequest(AsyncWebServerRequest *request)
       case 6:
         // Effekt-Wert
         showModeOld = showMode;
-        showMode = (showType)val.toInt();
-        if (showMode != showModeOld)
+        showModeTmp = (showType)val.toInt();
+        if (showModeTmp != showModeOld)
         {
-          strip.clear(); // wenn der Modus sich ändert, alle LEDs aus
-          strip.show();
+          Serial.println("showmode: " + String(showModeOld) + " -> " + String(showMode));
+        showMode = do_clearing; // set to pause first to avoid issues during mode change
+          // wenn der Modus sich ändert, alle LEDs aus
         }
         preferences_light.putUShort("showMode", showMode);
         break;
@@ -222,7 +264,7 @@ void onRequest(AsyncWebServerRequest *request)
   }
   if (urlLine.indexOf("/CHGRAUM") >= 0)
   {
-    // die aktuelle Raumnummer hat gewechselt
+    // die aktuelle Raumnummer hat gewechselt, alle Werte dieses Raumes werden geladen
     currRoom = getStringPartByNr(urlLine, '/', 2).toInt(); // Raum
     sprintf(buffer, "onTime%d", currRoom);
     rooms[currRoom].onTime = preferences_light.getUShort(buffer, false);
@@ -243,6 +285,11 @@ void onRequest(AsyncWebServerRequest *request)
 // Diese Funktion wird von der Browseranwendung direkt zu Beginn aufgeruen und
 // gibt zurück, die Gesamtzeit eines Temperaturverlaufes, sowie die PWM-Werte der
 // einzelnen Phasen.
+/**
+ * The function IPNbr() returns the local IP address as a string in C++.
+ *
+ * @return The function IPNbr() returns the local IP address of the device as a string.
+ */
 String IPNbr()
 {
   String ipString = WiFi.localIP().toString().c_str();
@@ -251,6 +298,7 @@ String IPNbr()
 
 String GetParams()
 {
+  // sendet Informationen über die Räume an Browserseite
   uint8_t roomnbr = currRoom;
   String paramsString = String(rooms[roomnbr].onTime) + "/" + String(rooms[roomnbr].offTime) + "/" + String(rooms[roomnbr].brightness) + "/" + String(baseTime_house) + "/" + String(nutzung) + "/" + String(showMode) + "/";
   Serial.println("GetParams: " + paramsString);
@@ -259,37 +307,37 @@ String GetParams()
 
 String RaumLimits()
 {
-  String paramsString = String(raum_min) + "/" + String(raum_max) + "/" + String(raum_step) + "/" + String(raum_curr);
+  String paramsString = String(raum_min) + "/" + String(raum_max) + "/" + String(raum_step) + "/" + String(currRoom);
   return paramsString;
 }
 
 String onTimeLimits()
 {
-  String paramsString = String(onTime_min) + "/" + String(onTime_max) + "/" + String(onTime_step) + "/" + String(onTime_curr);
+  String paramsString = String(onTime_min) + "/" + String(onTime_max) + "/" + String(onTime_step) + "/" + String(rooms[currRoom].onTime);
   return paramsString;
 }
 
 String offTimeLimits()
 {
-  String paramsString = String(offTime_min) + "/" + String(offTime_max) + "/" + String(offTime_step) + "/" + String(offTime_curr);
+  String paramsString = String(offTime_min) + "/" + String(offTime_max) + "/" + String(offTime_step) + "/" + String(rooms[currRoom].offTime);
   return paramsString;
 }
 
 String brightnessLimits()
 {
-  String paramsString = String(brightness_min) + "/" + String(brightness_max) + "/" + String(brightness_step) + "/" + String(brightness_curr);
+  String paramsString = String(brightness_min) + "/" + String(brightness_max) + "/" + String(brightness_step) + "/" + String(rooms[currRoom].brightness);
   return paramsString;
 }
 
 String zeitfaktorLimits()
 {
-  String paramsString = String(zeitfaktor_min) + "/" + String(zeitfaktor_max) + "/" + String(zeitfaktor_step) + "/" + String(zeitfaktor_curr);
+  String paramsString = String(zeitfaktor_min) + "/" + String(zeitfaktor_max) + "/" + String(zeitfaktor_step) + "/" + String(baseTime_house);
   return paramsString;
 }
 
 String nutzungLimits()
 {
-  String paramsString = String(nutzung_min) + "/" + String(nutzung_max) + "/" + String(nutzung_step) + "/" + String(nutzung_curr);
+  String paramsString = String(nutzung_min) + "/" + String(nutzung_max) + "/" + String(nutzung_step) + "/" + String(nutzung);
   return paramsString;
 }
 
@@ -357,7 +405,7 @@ void setup()
       delay(500); // stop
   }
   Serial.println("mDNS gestartet. ");
-
+  ident = false;
   IPAddress ip = WiFi.localIP();
   // Print ESP32 Local IP Address
   Serial.print("IP: ");
@@ -475,7 +523,7 @@ void setup()
     currRoom = preferences_light.getUShort("currRoom", 0);
     showMode = (showType)preferences_light.getUShort("showMode", house);
   }
-  strip.show();
+  ownshow();
   LED_onoff = true;
   LED_begin(GPIO_NUM_8);
 }
@@ -507,7 +555,7 @@ void loop()
           strip.setPixelColor(r, rooms[r].colorOn);
         else
           strip.setPixelColor(r, rooms[r].colorOff);
-        strip.show();
+        ownshow();
       }
     }
     break;
@@ -516,7 +564,7 @@ void loop()
     switch (effectNbr)
     {
     case 0:
-//      Serial.println("colorWipe");
+      //      Serial.println("colorWipe");
       colorWipe(strip.Color(255, 0, 0), rooms[0].brightness); // Red
       break;
     case 1:
@@ -530,39 +578,39 @@ void loop()
       break;
     case 4:
       // Send a theater pixel chase in...
-//      Serial.println("theaterChase White");
+      //      Serial.println("theaterChase White");
       theaterChase(strip.Color(127, 127, 127), rooms[0].brightness); // White
       break;
     case 5:
-//      Serial.println("theaterChase Red");
+      //      Serial.println("theaterChase Red");
       theaterChase(strip.Color(127, 0, 0), rooms[0].brightness); // Red
       break;
     case 6:
-//      Serial.println("theaterChase Blue");
+      //      Serial.println("theaterChase Blue");
       theaterChase(strip.Color(0, 0, 127), rooms[0].brightness); // Blue
       break;
     case 7:
-//      Serial.println("rainbow");
+      //      Serial.println("rainbow");
       rainbow(20);
       break;
     case 8:
-//      Serial.println("rainbowCycle");
+      //      Serial.println("rainbowCycle");
       rainbowCycle(20);
       break;
     case 9:
-//      Serial.println("theaterChaseRainbow");
+      //      Serial.println("theaterChaseRainbow");
       theaterChaseRainbow(rooms[0].brightness);
       break;
     case 10:
-//      Serial.println("whiteOverRainbow");
+      //      Serial.println("whiteOverRainbow");
       whiteOverRainbow(75, 5);
       break;
     case 11:
-//      Serial.println("pulseWhite");
-      pulseWhite(5);
+      //      Serial.println("pulseWhite");
+      pulseWhite(5, 0, 255);
       break;
     case 12:
-//      Serial.println("rainbowFade2White");
+      //      Serial.println("rainbowFade2White");
       rainbowFade2White(3, 3, 1);
       break;
     }
@@ -592,9 +640,15 @@ void loop()
           TestRoom = 0;
         }
       }
-      strip.show();
+      ownshow();
       LED_onoff = !LED_onoff;
     }
+    break;
+  case do_clearing:
+  // do nothing
+          own_clear();
+          showMode = showModeTmp;
+  //  yield();
     break;
 
   default:

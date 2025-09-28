@@ -1,19 +1,40 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Security.Policy;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace AsyncPingApp
 {
     public partial class Form1 : Form
     {
         // ************************ GLOBAL VARIABLES **************************************************************
+        //
 
-        string lightFile = "licht.txt";
+        public class LightXXListStruct
+        {
+            public string lightXX { get; set; }
+            public string ip { get; set; }
+            public LightXXListStruct(string light, string ipadr)
+            {
+                lightXX = light;
+                ip = ipadr;
+            }
+        }
+
+        string lightFile = "licht.json";
+        // Create a dynamic array (List)
+        List<LightXXListStruct> LightXXList = new List<LightXXListStruct>();
 
         public Form1()
         {
@@ -23,24 +44,25 @@ namespace AsyncPingApp
             {
                 try
                 {
-                    // Einlesen der Daten aus der Datei
-                    using (StreamReader reader = new StreamReader(lightFile))
+                    // JSON-Datei einlesen
+                    string jsonContent = File.ReadAllText(lightFile);
+                    //
+                    // JSON in Liste von Objekten deserialisieren
+                    LightXXList = JsonConvert.DeserializeObject<List<LightXXListStruct>>(jsonContent);
+                    // Ausgabe der Daten
+                    foreach (var oneLight in LightXXList)
                     {
-                        string line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            listBoxResults.Items.Add(line);
-                        }
+                        listBoxResults.Items.Add(oneLight.lightXX + " - " + oneLight.ip);
                     }
-                    txtIP.Text = "Gespeicherte Licht-Adressen eingelesen.";
+                    listBoxResults.SelectedIndex = listBoxResults.Items.Count - 1;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception: " + ex.Message);
+                    txtIP.Text = "Exception: " + ex.Message;
                 }
                 finally
                 {
-                    Console.WriteLine("Executing finally block.");
+                    txtIP.Text = "Gespeicherte Licht-Adressen eingelesen.";
                 }
             }
             // DoubleClick - Ereignis abonnieren
@@ -57,6 +79,7 @@ namespace AsyncPingApp
             string[] adrParts1 = lastAdr.Split('.');
             int lastAddress = int.Parse(adrParts1[3]); ;
             listBoxResults.Items.Clear();
+            LightXXList.Clear();
 
             for (int adr = firstAddress; adr < lastAddress; adr++)
             {
@@ -67,15 +90,11 @@ namespace AsyncPingApp
             // Überprüfen, ob die ListBox Einträge enthält
             if (listBoxResults.Items.Count > 0)
             {
-                // Speichern der Daten in die Datei
-                using (StreamWriter writer = new StreamWriter(lightFile))
-                {
-                    foreach (string item in listBoxResults.Items)
-                    {
-                        // Zugriff auf jeden Eintrag
-                        writer.WriteLine(item);
-                    }
-                }
+                // Liste serialisieren und in die Datei schreiben
+
+                string json = JsonConvert.SerializeObject(LightXXList);
+                File.WriteAllText(lightFile, json);
+
                 txtIP.Text += "Licht-Adressen gespeichert.";
                 // Den Index des letzten Eintrags auswählen
                 listBoxResults.SelectedIndex = listBoxResults.Items.Count - 1;
@@ -100,6 +119,7 @@ namespace AsyncPingApp
                             //    url += "/" + reply.Address.ToString();
                             listBoxResults.Items.Add(url);
                             listBoxResults.TopIndex = listBoxResults.Items.Count - 1;
+                            LightXXList.Add(new LightXXListStruct(url, ipAddress));
                         }
                     }
                     txtIP.Text = ipAddress + " - " + reply.Status;
@@ -142,7 +162,11 @@ namespace AsyncPingApp
         {
             if (listBoxResults.SelectedItem != null)
             {
-                Start_HTML( listBoxResults.SelectedItem.ToString());
+                // Den Index des ausgewählten Eintrags abrufen
+                int selectedIndex = listBoxResults.SelectedIndex;
+                LightXXListStruct onelight = LightXXList[selectedIndex]; // Zugriff auf das 2. Element (Index 1)
+                // Aktion ausführen
+                Start_HTML(onelight.lightXX);
             }
         }
 
@@ -152,8 +176,43 @@ namespace AsyncPingApp
             ListBox listBoxResults = sender as ListBox;
             if (listBoxResults?.SelectedItem != null)
             {
+                // Den Index des ausgewählten Eintrags abrufen
+                int selectedIndex = listBoxResults.SelectedIndex;
+                LightXXListStruct onelight = LightXXList[selectedIndex]; // Zugriff auf das 2. Element (Index 1)
                 // Aktion ausführen
-                Start_HTML(listBoxResults.SelectedItem.ToString());
+                Start_HTML(onelight.lightXX);
+            }
+        }
+
+        private async void idbtn_Click(object sender, EventArgs e)
+        {
+            if (listBoxResults.SelectedItem != null)
+            {
+                // Den Index des ausgewählten Eintrags abrufen
+                int selectedIndex = listBoxResults.SelectedIndex;
+                LightXXListStruct onelight = LightXXList[selectedIndex]; // Zugriff auf das X. Element (Index X-1)
+                // Aktion ausführen
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri($"http://{onelight.ip}:{80}/");
+                    StringContent content = new StringContent("/IDENT", Encoding.UTF8, "text/plain");
+                    try
+                    {
+                        HttpResponseMessage response = await client.PostAsync("IDENT", content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            txtIP.Text = "Nachricht erfolgreich gesendet!";
+                        }
+                        else
+                        {
+                            txtIP.Text = "Fehler: {response.StatusCode}";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        txtIP.Text = "Fehler: {ex.Message}";
+                    }
+                }
             }
         }
     }

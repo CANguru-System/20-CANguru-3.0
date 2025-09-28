@@ -3,8 +3,46 @@
 #include "effects.h"
 
 extern Adafruit_NeoPixel strip;
+extern bool ident;
+
+void own_clear()
+{
+  for (int led = 0; led < LED_COUNT_NORM; led++)
+  {
+    strip.setPixelColor(led, strip.Color(0, 0, 0)); // Schwarz (aus)
+    strip.show();
+  }
+}
+
+void ownshow()
+{
+  strip.show();
+  if (ident)
+  {
+    ident = false;
+    for (uint8_t i = 0; i < 3; i++)
+    {
+      pulseWhite(1, 0, 32);
+      own_clear();
+      delay(500);
+    }
+  }
+}
+
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
+/**
+ * The function `Wheel` takes a byte input `WheelPos` and returns a color value based on a rainbow
+ * color wheel algorithm.
+ *
+ * @param WheelPos The `WheelPos` parameter is a byte value representing the position of a color wheel.
+ * The function `Wheel` takes this position as input and calculates the corresponding RGB color value
+ * based on the position on the color wheel.
+ *
+ * @return The `Wheel` function takes a `byte` parameter `WheelPos`, performs some calculations based
+ * on its value, and returns an RGB color value using the `strip.Color` function. The specific color
+ * returned depends on the value of `WheelPos` according to the conditional statements in the function.
+ */
 uint32_t Wheel(byte WheelPos)
 {
   WheelPos = 255 - WheelPos;
@@ -27,7 +65,7 @@ void colorWipe(uint32_t c, uint8_t wait)
   for (uint16_t i = 0; i < strip.numPixels(); i++)
   {
     strip.setPixelColor(i, c);
-    strip.show();
+    ownshow();
     delay(wait);
   }
 }
@@ -42,7 +80,7 @@ void rainbow(uint8_t wait)
     {
       strip.setPixelColor(i, Wheel((i + j) & 255));
     }
-    strip.show();
+    ownshow();
     delay(wait);
   }
 }
@@ -58,7 +96,7 @@ void rainbowCycle(uint8_t wait)
     {
       strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
     }
-    strip.show();
+    ownshow();
     delay(wait);
   }
 }
@@ -74,7 +112,7 @@ void theaterChase(uint32_t c, uint8_t wait)
       {
         strip.setPixelColor(i + q, c); // turn every third pixel on
       }
-      strip.show();
+      ownshow();
 
       delay(wait);
 
@@ -97,7 +135,7 @@ void theaterChaseRainbow(uint8_t wait)
       {
         strip.setPixelColor(i + q, Wheel((i + j) % 255)); // turn every third pixel on
       }
-      strip.show();
+      ownshow();
 
       delay(wait);
 
@@ -139,7 +177,7 @@ void whiteOverRainbow(int whiteSpeed, int whiteLength)
       }
     }
 
-    strip.show(); // Update strip with new contents
+    ownshow(); // Update strip with new contents
     // There's no delay here, it just runs full-tilt until the timer and
     // counter combination below runs out.
 
@@ -162,20 +200,21 @@ void whiteOverRainbow(int whiteSpeed, int whiteLength)
   }
 }
 
-void pulseWhite(uint8_t wait)
+void pulseWhite(uint8_t wait, uint8_t start, uint8_t end)
 {
-  for (int j = 0; j < 256; j++)
+  const uint8_t c = 32;
+  for (int j = start; j < end; j++)
   { // Ramp up from 0 to 255
     // Fill entire strip with white at gamma-corrected brightness level 'j':
-    strip.fill(strip.Color(255, 255, 255, strip.gamma8(j)));
-    strip.show();
+    strip.fill(strip.Color(c, c, c, strip.gamma8(j)));
+    ownshow();
     delay(wait);
   }
 
-  for (int j = 255; j >= 0; j--)
+  for (int j = end; j >= start; j--)
   { // Ramp down from 255 to 0
-    strip.fill(strip.Color(255, 255, 255, strip.gamma8(j)));
-    strip.show();
+    strip.fill(strip.Color(c, c, c, strip.gamma8(j)));
+    ownshow();
     delay(wait);
   }
 }
@@ -208,7 +247,7 @@ void rainbowFade2White(int wait, int rainbowLoops, int whiteLoops)
                                                           255 * fadeVal / fadeMax)));
     }
 
-    strip.show();
+    ownshow();
     delay(wait);
 
     if (firstPixelHue < 65536)
@@ -233,13 +272,13 @@ void rainbowFade2White(int wait, int rainbowLoops, int whiteLoops)
     { // Ramp up 0 to 255
       // Fill entire strip with white at gamma-corrected brightness level 'j':
       strip.fill(strip.Color(255, 255, 255, strip.gamma8(j)));
-      strip.show();
+      ownshow();
     }
     delay(1000); // Pause 1 second
     for (int j = 255; j >= 0; j--)
     { // Ramp down 255 to 0
       strip.fill(strip.Color(255, 255, 255, strip.gamma8(j)));
-      strip.show();
+      ownshow();
     }
   }
 

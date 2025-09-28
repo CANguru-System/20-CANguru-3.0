@@ -359,6 +359,7 @@ namespace InstallGUI
             }
             if (fCopy && pio.Checked)
                 copyBinFiles(source, destination);
+            Thread.Sleep(1000);
             return (errNo == 0);
         }
 
@@ -675,7 +676,7 @@ namespace InstallGUI
             ssidBox.Items.Clear();
             if (loadFirmware(currDecoder.strprocessor, currDecoder, "Scanfirmware", firmware.scanner, false))
             {
-                Thread.Sleep(500);
+                reportBox.AppendText(" - Warte auf SSIDs");
                 bssid = write2Port("SCAN");
             }
 
@@ -913,7 +914,6 @@ namespace InstallGUI
                 // load scanner firmware to decoder
                 if (loaded != firmware.scanner)
                     res = loadFirmware(currDecoder.strprocessor, currDecoder, "Scanfirmware", firmware.scanner, false);
-                Thread.Sleep(500);
                 // prepare and send ssid via port
                 if (res && (ssidBox.Items.Count > 0))
                 {

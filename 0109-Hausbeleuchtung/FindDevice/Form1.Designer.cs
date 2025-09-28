@@ -39,6 +39,7 @@
             this.IPAdr1 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.idbtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBoxResults
@@ -53,7 +54,7 @@
             // 
             // btnScan
             // 
-            this.btnScan.Location = new System.Drawing.Point(335, 391);
+            this.btnScan.Location = new System.Drawing.Point(335, 411);
             this.btnScan.Name = "btnScan";
             this.btnScan.Size = new System.Drawing.Size(100, 50);
             this.btnScan.TabIndex = 1;
@@ -64,14 +65,15 @@
             // txtIP
             // 
             this.txtIP.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIP.Location = new System.Drawing.Point(36, 402);
+            this.txtIP.Location = new System.Drawing.Point(36, 391);
+            this.txtIP.Multiline = true;
             this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(250, 26);
+            this.txtIP.Size = new System.Drawing.Size(250, 60);
             this.txtIP.TabIndex = 2;
             // 
             // btnExit
             // 
-            this.btnExit.Location = new System.Drawing.Point(335, 456);
+            this.btnExit.Location = new System.Drawing.Point(335, 470);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(100, 50);
             this.btnExit.TabIndex = 3;
@@ -91,7 +93,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(37, 456);
+            this.btnStart.Location = new System.Drawing.Point(40, 470);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(100, 50);
             this.btnStart.TabIndex = 5;
@@ -102,7 +104,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(33, 373);
+            this.label2.Location = new System.Drawing.Point(33, 362);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(253, 20);
             this.label2.TabIndex = 6;
@@ -144,9 +146,20 @@
             this.label4.TabIndex = 10;
             this.label4.Text = "bis Adresse";
             // 
+            // idbtn
+            // 
+            this.idbtn.Location = new System.Drawing.Point(170, 470);
+            this.idbtn.Name = "idbtn";
+            this.idbtn.Size = new System.Drawing.Size(100, 50);
+            this.idbtn.TabIndex = 11;
+            this.idbtn.Text = "Ident";
+            this.idbtn.UseVisualStyleBackColor = true;
+            this.idbtn.Click += new System.EventHandler(this.idbtn_Click);
+            // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(477, 555);
+            this.ClientSize = new System.Drawing.Size(477, 544);
+            this.Controls.Add(this.idbtn);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.IPAdr1);
@@ -180,6 +193,7 @@
         private System.Windows.Forms.TextBox IPAdr1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button idbtn;
     }
 }
 
