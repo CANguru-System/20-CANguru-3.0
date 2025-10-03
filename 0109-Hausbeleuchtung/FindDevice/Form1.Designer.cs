@@ -173,7 +173,7 @@
             this.Controls.Add(this.listBoxResults);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "Form1";
-            this.Text = "Licht-Scanner";
+            this.Text = "Licht-Scanner 1.0";
             this.ResumeLayout(false);
             this.PerformLayout();
 

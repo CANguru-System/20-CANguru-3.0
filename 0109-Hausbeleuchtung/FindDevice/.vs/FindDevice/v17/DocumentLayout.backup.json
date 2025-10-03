@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CB6E30C1-7F20-4F28-9EDB-618EF35A1D15}|FindDevice.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\0109-hausbeleuchtung\\finddevice\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB6E30C1-7F20-4F28-9EDB-618EF35A1D15}|FindDevice.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CB6E30C1-7F20-4F28-9EDB-618EF35A1D15}|FindDevice.csproj|C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{CB6E30C1-7F20-4F28-9EDB-618EF35A1D15}|FindDevice.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB6E30C1-7F20-4F28-9EDB-618EF35A1D15}|FindDevice.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\0109-hausbeleuchtung\\finddevice\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB6E30C1-7F20-4F28-9EDB-618EF35A1D15}|FindDevice.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,25 +30,25 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\Form1.cs",
-              "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAALUAAAAAAAAAAADgv9QAAAA7AAAAAAAAAA==",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\Form1.cs*",
+              "RelativeToolTip": "Form1.cs*",
+              "ViewState": "AgIAALoAAAAAAAAAAAA6wNQAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-11T17:07:04.336Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Form1.cs [Entwurf]",
               "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\Form1.cs [Entwurf]",
-              "RelativeToolTip": "Form1.cs [Entwurf]",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0109-Hausbeleuchtung\\FindDevice\\Form1.cs [Entwurf]*",
+              "RelativeToolTip": "Form1.cs [Entwurf]*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-11T17:06:27.774Z",
               "EditorCaption": " [Entwurf]"

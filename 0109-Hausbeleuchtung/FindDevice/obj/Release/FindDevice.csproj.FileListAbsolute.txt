@@ -8,6 +8,5 @@ C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\FindDevice\obj\Release\FindDevice.csproj.CoreCompileInputs.cache
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\FindDevice\obj\Release\FindDevice.exe
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\FindDevice\obj\Release\FindDevice.pdb
-C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\FindDevice\obj\Release\FindDevice.exe.config
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\FindDevice\bin\Release\Newtonsoft.Json.dll
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0109-Hausbeleuchtung\FindDevice\obj\Release\FindDevice.csproj.Up2Date

@@ -448,6 +448,8 @@ void setup()
   server.onNotFound(onRequest);
   server.begin();
 
+  MDNS.addService("http", "tcp", 80);
+
   strip.begin();
   // die preferences-Library wird gestartet
 
