@@ -35,7 +35,8 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-23T09:57:44.303Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Bookmark",
@@ -53,7 +54,7 @@
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0105-CANguru-Install-All\\InstallGUI\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AgIAAFIBAAAAAAAAAAASwGkBAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAFwDAAAAAAAAAAAewH0DAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-17T09:43:47.654Z",
               "EditorCaption": ""
@@ -67,7 +68,8 @@
               "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0105-CANguru-Install-All\\InstallGUI\\Form1.cs [Entwurf]",
               "RelativeToolTip": "Form1.cs [Entwurf]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-17T09:43:48.102Z"
+              "WhenOpened": "2024-04-17T09:43:48.102Z",
+              "EditorCaption": " [Entwurf]"
             }
           ]
         }

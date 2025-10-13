@@ -1,69 +1,26 @@
-#include <Arduino.h>
 
 // Import required libraries
 #include <Adafruit_NeoPixel.h>
-#include "preferences.h"
-#include "WiFi.h"
-#include "ESPAsyncWebServer.h"
-#include "LittleFS.h"
+#include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <LittleFS.h>
+#include <Preferences.h>
 #include <ESPmDNS.h>
+#include <ArduinoJson.h>
 #include "CANguruDefs.h"
 #include "OWN_LED.h"
 #include "effects.h"
 
-const uint8_t LED_COUNT_NORM = 96; // number of LEDs in the strip
+const uint8_t LED_COUNT_NORM = 24; // number of LEDs in the strip
 
-const gpio_num_t LED_PIN_strip0 = GPIO_NUM_0;
-const gpio_num_t LED_PIN_strip1 = GPIO_NUM_1;
-const gpio_num_t LED_PIN_strip2 = GPIO_NUM_2;
-const gpio_num_t LED_PIN_strip3 = GPIO_NUM_3;
-const gpio_num_t LED_PIN_strip4 = GPIO_NUM_4;
+AsyncWebServer server(80);
 
-uint8_t curr_pin = LED_PIN_strip2;
-bool ident;
-
-Adafruit_NeoPixel strip(LED_COUNT_NORM, curr_pin, NEO_RGB + NEO_KHZ800);
-uint8_t TestRoom = 0;
-
-const char *hostnameBel = "LICHT";
-char hostname[25]; // Enough to hold 3 digits and a null terminator
-
-const uint8_t macLen = 6;
-uint8_t nativeMACAddress[macLen];
+String LittleFSDateiname = "/cfg_";
+String LittleFSDateinameExtra = "/extra_global.json";
 
 Preferences preferences_light;
 Preferences preferences_CANguru;
-
-// limits für Raum
-const uint8_t raum_min = 0;
-const uint8_t raum_max = LED_COUNT_NORM - 1;
-const uint8_t raum_step = 1;
-const uint8_t raum_curr = 1;
-// limits für onTime
-const uint8_t onTime_min = 1;
-const uint8_t onTime_max = 25;
-const uint8_t onTime_step = 1;
-const uint8_t onTime_curr = 10;
-// limits für offTime
-const uint8_t offTime_min = 1;
-const uint8_t offTime_max = 25;
-const uint8_t offTime_step = 1;
-const uint8_t offTime_curr = 10;
-// limits für Brightness
-const uint8_t brightness_min = 0;
-const uint8_t brightness_max = 255;
-const uint8_t brightness_step = 4;
-const uint8_t brightness_curr = 32;
-// limits für Zeitfaktor
-const uint16_t zeitfaktor_min = 500;
-const uint16_t zeitfaktor_max = 50000;
-const uint16_t zeitfaktor_step = 500;
-const uint16_t zeitfaktor_curr = 5000;
-// limits für Nutzung
-const uint8_t nutzung_min = 4;
-const uint8_t nutzung_max = LED_COUNT_NORM - 1;
-const uint8_t nutzung_step = nutzung_min;
-const uint8_t nutzung_curr = 24;
 
 boolean LED_onoff;
 
@@ -86,15 +43,17 @@ struct roomType
 {
   uint16_t onTime;
   uint16_t offTime;
-  uint32_t colorOn;
-  uint32_t colorOff;
-  uint8_t brightness;
   statusType status;
   uint16_t goneTime;
   uint16_t duration;
 };
-// rooms[Raum]
-roomType rooms[LED_COUNT_NORM];
+roomType Raum[LED_COUNT_NORM]; // Index 1–96
+
+uint32_t colorOn;
+uint32_t colorOff;
+uint8_t brightness;
+
+uint8_t waiteffect = 32;
 
 uint8_t currRoom;
 
@@ -105,16 +64,27 @@ enum showType
   test,
   do_clearing
 };
-showType showMode = house;
+showType showMode;
 showType showModeTmp;
-// Create AsyncWebServer object on port 80
-AsyncWebServer server(80);
+String showModeString;
 
-// Replaces placeholder with LED state value
-String processor(const String &var)
-{
-  return String();
-}
+const uint8_t macLen = 6;
+uint8_t nativeMACAddress[macLen];
+
+const gpio_num_t LED_PIN_strip0 = GPIO_NUM_0;
+const gpio_num_t LED_PIN_strip1 = GPIO_NUM_1;
+const gpio_num_t LED_PIN_strip2 = GPIO_NUM_2;
+const gpio_num_t LED_PIN_strip3 = GPIO_NUM_3;
+const gpio_num_t LED_PIN_strip4 = GPIO_NUM_4;
+
+uint8_t curr_pin = LED_PIN_strip2;
+bool ident;
+
+Adafruit_NeoPixel strip(LED_COUNT_NORM, curr_pin, NEO_RGB + NEO_KHZ800);
+uint8_t TestRoom = 0;
+
+const char *hostnameBel = "LICHT";
+char hostname[25]; // Enough to hold 3 digits and a null terminator
 
 /**
  * The function `random` generates a random integer within a specified range.
@@ -131,214 +101,141 @@ int16_t random(int MaxZahl)
   return ((int16_t)zufall);
 }
 
-//////////////////////////////////////////
-
-// Teilt einen String mit Hilfe des Separators in seine Bestandteile auf
-// und gibt den index-Teil zurück
-/**
- * The function `getStringPartByNr` extracts a specific part of a string based on a given separator and
- * index.
- *
- * @param data The `data` parameter is the string from which you want to extract a specific part based
- * on the separator and index provided.
- * @param separator The `separator` parameter in the `getStringPartByNr` function is the character that
- * is used to separate different parts of the input `data` string. The function aims to extract a
- * specific part of the string based on the index provided, using the separator to identify different
- * parts.
- * @param index The `index` parameter in the `getStringPartByNr` function represents the position of
- * the data part you want to extract from the input string. It is used to specify which part of the
- * string, separated by the given separator character, you are interested in retrieving.
- *
- * @return The function is intended to return a specific part of a string based on a given separator
- * and index. However, there are some issues in the implementation that need to be corrected.
- */
-String getStringPartByNr(String data, char separator, int index)
+void speichereInitialKonfigurationen()
 {
-  int stringData = 0;   // variable to count data part nr
-  String dataPart = ""; // variable to hole the return text
-
-  for (int i = 0; i < data.length() - 1; i++)
-  { // Walk through the text one letter at a time
-    if (data[i] == separator)
+  // Globale Zusatzwerte einmalig speichern
+  if (!LittleFS.exists(LittleFSDateinameExtra))
+  {
+    File file = LittleFS.open(LittleFSDateinameExtra, "w");
+    if (file)
     {
-      // Count the number of times separator character appears in the text
-      stringData++;
+      DynamicJsonDocument extra(128);
+    //  JsonDocument extra;
+      extra["d4"] = "32";
+      extra["d5"] = "32";
+      extra["d6"] = "32";
+      extra["d7"] = "500";
+      extra["d8"] = "24";
+      extra["modus"] = "Mode 1"; // Standardwert für Radiobutton
+      serializeJson(extra, file);
+      file.close();
+      Serial.println("Globale Zusatzwerte gespeichert: /extra_global.json");
     }
-    else if (stringData == index)
+    else
     {
-      // get the text when separator is the rignt one
-      dataPart.concat(data[i]);
-    }
-    else if (stringData > index)
-    {
-      // return text and stop if the next separator appears - to save CPU-time
-      return dataPart;
-      break;
+      Serial.println("Fehler beim Schreiben der globalen Zusatzwerte");
     }
   }
-  // return text if this is the last part
-  return dataPart;
-}
 
-/**
- * The function `onRequest` processes incoming requests to set parameters or change room settings in an
- * ESP32C3 device based on the URL received.
- *
- * @param request The `onRequest` function you provided is a part of a web server implementation on an
- * ESP32C3 microcontroller. This function handles incoming HTTP requests and processes the parameters
- * sent in the URL to update certain settings related to lighting control in different rooms.
- */
-void onRequest(AsyncWebServerRequest *request)
-{
-  String urlLine = request->url();
-  String val;
-  char buffer[25]; // Enough to hold 3 digits and a null terminator
-  showType showModeOld;
-  Serial.println("URL: " + String(urlLine));
-  if (urlLine.indexOf("/IDENT") >= 0)
+  // Hauptkonfigurationen für alle Indizes
+  for (int i = 1; i <= LED_COUNT_NORM; i++)
   {
-    request->send_P(200, "text/plain", "ok");
-    ident = true;
-  }
-  if (urlLine.indexOf("/SETPARAMS") >= 0)
-  {
-    // die aktuellen Werte aus der HTML-Seite werden von dort hierhin übertragen
-    // und nun hier auf dem ESP32C3 gespeichert
-    // dieser Prozess wird auf der HTML-Seite durch Knopfdruck SPEICHERN ausgelöst
-    for (uint8_t p = 0; p < 7; p++)
+    String index = String(i);
+    String cfgDatei = LittleFSDateiname + index + ".json";
+
+    if (!LittleFS.exists(cfgDatei))
     {
-      // beginne mit dem 2. Parameter (ohne /PARAM)
-      val = getStringPartByNr(urlLine, '/', p + 2);
-      switch (p)
+      File file = LittleFS.open(cfgDatei, "w");
+      if (file)
       {
-      case 0:
-        // aktueller Raum
-        currRoom = (uint8_t)val.toInt();
-        preferences_light.putUShort("currRoom", currRoom);
-        break;
-      case 1:
-        // onTime-Wert v1 für die Raumnummer aus v0
-        rooms[currRoom].onTime = (uint8_t)val.toInt();
-        sprintf(buffer, "onTime%d", currRoom);
-        preferences_light.putUShort(buffer, rooms[currRoom].onTime);
-        break;
-      case 2:
-        // offTime-Wert v2 für die Raumnummer aus v0
-        rooms[currRoom].offTime = (uint8_t)val.toInt();
-        sprintf(buffer, "offTime%d", currRoom);
-        preferences_light.putUShort(buffer, rooms[currRoom].offTime);
-        //      EEPROM.writeByte(eepromAdrParameter2, reflowPWM);
-        break;
-      case 3:
-        // brightness-Wert V3 für den Raum aus v0
-        rooms[currRoom].brightness = (uint8_t)val.toInt();
-        sprintf(buffer, "brightness%d", currRoom);
-        preferences_light.putUShort(buffer, rooms[currRoom].brightness);
-        break;
-      case 4:
-        // Zeitfaktor-Wert V4 für alle Räume
-        baseTime_house = (uint16_t)val.toInt();
-        preferences_light.putUShort("baseTime", baseTime_house);
-        break;
-      case 5:
-        // Nutzungs-Wert (genutzte LED) V5 für alle Räume
-        nutzung = (uint16_t)val.toInt();
-        preferences_light.putUShort("nutzung", nutzung);
-        break;
-      case 6:
-        // Effekt-Wert
-        showModeOld = showMode;
-        showModeTmp = (showType)val.toInt();
-        if (showModeTmp != showModeOld)
-        {
-          Serial.println("showmode: " + String(showModeOld) + " -> " + String(showMode));
-        showMode = do_clearing; // set to pause first to avoid issues during mode change
-          // wenn der Modus sich ändert, alle LEDs aus
-        }
-        preferences_light.putUShort("showMode", showMode);
-        break;
+        DynamicJsonDocument cfg(256);
+        char buffer[20];
+        sprintf(buffer, "%d", random(10) + i);
+        cfg["d2"] = buffer;
+        sprintf(buffer, "%d", random(5) + i);
+        cfg["d3"] = buffer;
+        serializeJson(cfg, file);
+        file.close();
+        Serial.println("Hauptkonfiguration gespeichert: " + cfgDatei);
       }
-      //      esp_restart();
-      //      rooms[currRoom].colorOn = strip.Color(rooms[currRoom].brightness, rooms[currRoom].brightness, rooms[currRoom].brightness);
+      else
+      {
+        Serial.println("Fehler beim Schreiben: " + cfgDatei);
+      }
     }
+    else
+    {
+      Serial.println("Hauptkonfiguration existiert bereits: " + cfgDatei);
+    }
+    delay(300);
   }
-  if (urlLine.indexOf("/CHGRAUM") >= 0)
+}
+
+void ladeRaumArray()
+{
+  for (int i = 0; i < LED_COUNT_NORM; i++)
   {
-    // die aktuelle Raumnummer hat gewechselt, alle Werte dieses Raumes werden geladen
-    currRoom = getStringPartByNr(urlLine, '/', 2).toInt(); // Raum
-    sprintf(buffer, "onTime%d", currRoom);
-    rooms[currRoom].onTime = preferences_light.getUShort(buffer, false);
-    sprintf(buffer, "offTime%d", currRoom);
-    rooms[currRoom].offTime = preferences_light.getUShort(buffer, false);
-    sprintf(buffer, "brightness%d", currRoom);
-    rooms[currRoom].brightness = preferences_light.getUShort(buffer, false);
-    // unchangeable values
-    rooms[currRoom].colorOn = strip.Color(rooms[currRoom].brightness, rooms[currRoom].brightness, rooms[currRoom].brightness);
-    rooms[currRoom].colorOff = strip.Color(0, 0, 0);
-    rooms[currRoom].status = lightOff;
-    rooms[currRoom].goneTime = 0;
-    rooms[currRoom].duration = rooms[currRoom].onTime + rooms[currRoom].offTime;
-    strip.setPixelColor(currRoom, strip.Color(0, 0, 0));
+    String index = String(i);
+    String pfad = "/cfg_" + index + ".json";
+
+    File file = LittleFS.open(pfad, "r");
+    if (!file)
+    {
+      Serial.println("Fehlt: " + pfad);
+      continue;
+    }
+
+    DynamicJsonDocument doc(256);
+    DeserializationError error = deserializeJson(doc, file);
+    file.close();
+
+    if (error)
+    {
+      Serial.println("Fehler beim Parsen: " + pfad);
+      continue;
+    }
+
+    Raum[i].onTime = doc["d2"].as<uint16_t>();
+    Raum[i].offTime = doc["d3"].as<uint16_t>();
   }
 }
 
-// Diese Funktion wird von der Browseranwendung direkt zu Beginn aufgeruen und
-// gibt zurück, die Gesamtzeit eines Temperaturverlaufes, sowie die PWM-Werte der
-// einzelnen Phasen.
-/**
- * The function IPNbr() returns the local IP address as a string in C++.
- *
- * @return The function IPNbr() returns the local IP address of the device as a string.
- */
-String IPNbr()
+void ladeHausKonfiguration()
 {
-  String ipString = WiFi.localIP().toString().c_str();
-  return ipString;
-}
+  File file = LittleFS.open("/extra_global.json", "r");
+  if (!file)
+  {
+    Serial.println("Datei /extra_global.json nicht gefunden");
+    return;
+  }
 
-String GetParams()
-{
-  // sendet Informationen über die Räume an Browserseite
-  uint8_t roomnbr = currRoom;
-  String paramsString = String(rooms[roomnbr].onTime) + "/" + String(rooms[roomnbr].offTime) + "/" + String(rooms[roomnbr].brightness) + "/" + String(baseTime_house) + "/" + String(nutzung) + "/" + String(showMode) + "/";
-  Serial.println("GetParams: " + paramsString);
-  return paramsString;
-}
+  DynamicJsonDocument doc(256);
+  DeserializationError error = deserializeJson(doc, file);
+  file.close();
 
-String RaumLimits()
-{
-  String paramsString = String(raum_min) + "/" + String(raum_max) + "/" + String(raum_step) + "/" + String(currRoom);
-  return paramsString;
-}
+  if (error)
+  {
+    Serial.println("Fehler beim Parsen der Zusatzkonfiguration");
+    return;
+  }
 
-String onTimeLimits()
-{
-  String paramsString = String(onTime_min) + "/" + String(onTime_max) + "/" + String(onTime_step) + "/" + String(rooms[currRoom].onTime);
-  return paramsString;
-}
-
-String offTimeLimits()
-{
-  String paramsString = String(offTime_min) + "/" + String(offTime_max) + "/" + String(offTime_step) + "/" + String(rooms[currRoom].offTime);
-  return paramsString;
-}
-
-String brightnessLimits()
-{
-  String paramsString = String(brightness_min) + "/" + String(brightness_max) + "/" + String(brightness_step) + "/" + String(rooms[currRoom].brightness);
-  return paramsString;
-}
-
-String zeitfaktorLimits()
-{
-  String paramsString = String(zeitfaktor_min) + "/" + String(zeitfaktor_max) + "/" + String(zeitfaktor_step) + "/" + String(baseTime_house);
-  return paramsString;
-}
-
-String nutzungLimits()
-{
-  String paramsString = String(nutzung_min) + "/" + String(nutzung_max) + "/" + String(nutzung_step) + "/" + String(nutzung);
-  return paramsString;
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+  if (doc.containsKey("d5"))
+    r = doc["d5"].as<uint8_t>();
+  if (doc.containsKey("d4"))
+    g = doc["d4"].as<uint8_t>();
+  if (doc.containsKey("d6"))
+    b = doc["d6"].as<uint8_t>();
+  colorOn = strip.Color(r, g, b);
+  colorOff = strip.Color(0, 0, 0);
+  if (doc.containsKey("d7"))
+    baseTime_house = doc["d7"];
+  if (doc.containsKey("d8"))
+    nutzung = doc["d8"].as<uint8_t>();
+  if (doc.containsKey("modus"))
+  {
+    showModeString = doc["modus"].as<String>();
+    if (showModeString == "Mode 1")
+      showMode = house;
+    else if (showModeString == "Mode 2")
+      showMode = effect;
+    else if (showModeString == "Mode 3")
+      showMode = test;
+    else
+      showMode = house; // Default
+  }
 }
 
 // startet WLAN im AP-Mode, damit meldet sich der Decoder beim Master
@@ -359,7 +256,7 @@ void setup()
 {
   char buffer[25]; // Enough to hold 3 digits and a null terminator
   Serial.begin(bdrMonitor);
-  ///
+
   Serial.println("\r\n\r\nCANguru - Hausbeleuchtung");
   log_i("\r\n\r\nCANguru - Hausbeleuchtung");
   log_i("\n on %s", ARDUINO_BOARD);
@@ -369,10 +266,10 @@ void setup()
   //  log_w("WARNING");
   //  log_d("INFO");
 
-  // Initialize LittleFS
-  if (!LittleFS.begin(true))
+  // Dateisystem starten
+  if (!LittleFS.begin())
   {
-    Serial.println("An Error has occurred while mounting LittleFS");
+    Serial.println("LittleFS konnte nicht gestartet werden");
     return;
   }
 
@@ -382,6 +279,7 @@ void setup()
     log_d("Preferences_CANguruerfolgreich gestartet");
   }
 
+  // WLAN verbinden
   String ssid;
   ssid = preferences_CANguru.getString("ssid", "No SSID");
   String password;
@@ -398,60 +296,133 @@ void setup()
     Serial.println("Connecting to WiFi..");
   }
 
+  Serial.println("\nVerbunden! IP: " + WiFi.localIP().toString());
+
   if (!MDNS.begin(hostname))
   { // will be available under esp32.local
     Serial.println("Fehler beim Start von mDNS");
     while (1)
       delay(500); // stop
   }
-  Serial.println("mDNS gestartet. ");
+  Serial.println("mDNS gestartet: " + String(hostname) + ".local");
   ident = false;
   IPAddress ip = WiFi.localIP();
-  // Print ESP32 Local IP Address
-  Serial.print("IP: ");
-  Serial.println(ip);
-
   preferences_CANguru.end();
-  // Route for root / web page
+
+  // -----------------------------------------------------------------> HTML-Seite ausliefern
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(LittleFS, "/index.html", String(), false, processor); });
+            { request->send(LittleFS, "/index.html", "text/html"); });
 
-  // Route to load style.css file
-  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(LittleFS, "/style.css", "text/css"); });
+  // -----------------------------------------------------------------> IP-Adresse ermitteln und an die HTML-Seite schickenn
+  server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+  String ip = WiFi.localIP().toString();
+  request->send(200, "text/plain", ip); });
 
-  server.on("/IPNBR", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", IPNbr().c_str()); });
+  // -----------------------------------------------------------------> Feste Werte laden und aan die HTML-Seite liefern
+  server.on("/konfig", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+  String index = request->getParam("index")->value();
+  File file = LittleFS.open(LittleFSDateiname + index + ".json", "r");
+  if (!file) {
+    request->send(404, "application/json", "{}");
+    return;
+  }
+  String json = file.readString();
+  file.close();
+  Serial.println("--> Laden - konfig: " + json);
+  request->send(200, "application/json", json); });
 
-  server.on("/GETPARAMS", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", GetParams().c_str()); });
+  // -----------------------------------------------------------------> Zusatzwerte laden und aan die HTML-Seite liefern
+  server.on("/extra", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+  File file = LittleFS.open(LittleFSDateinameExtra, "r");
+  if (!file) {
+    request->send(404, "application/json", "{}");
+    return;
+  }
+  String json = file.readString();
+  file.close();
+  Serial.println("--> Laden - extra: " + json);
+  request->send(200, "application/json", json); });
 
-  server.on("/Raum", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", RaumLimits().c_str()); });
+  // -----------------------------------------------------------------> Neue Konfiguration für Feld 1 bis 6 empfangen und speichern
+  server.on("/speichern", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+            {
+  String body = String((char*)data).substring(0, len);
+  DynamicJsonDocument doc(512);
+  if (deserializeJson(doc, body)) {
+    request->send(400, "text/plain", "Ungültiges JSON");
+    return;
+  }
 
-  server.on("/onTime", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", onTimeLimits().c_str()); });
+  String KonfigurationsIndexString = doc["d1"].as<String>();
+  uint8_t KonfigurationsIndexint = doc["d1"].as<uint8_t>()-1;
+  doc.remove("d1");
 
-  server.on("/offTime", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", offTimeLimits().c_str()); });
+  File file = LittleFS.open(LittleFSDateiname + KonfigurationsIndexString + ".json", "w");
+  if (!file) {
+    request->send(500, "text/plain", "Fehler beim Schreiben");
+    return;
+  }
+    Raum[KonfigurationsIndexint].onTime = doc["d2"].as<uint16_t>();
+    Raum[KonfigurationsIndexint].offTime = doc["d3"].as<uint16_t>();
 
-  server.on("/brightness", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", brightnessLimits().c_str()); });
+  serializeJson(doc, file);
+  file.close();
+  Serial.println("--> Speichern - konfig: " + doc.as<String>());
+  request->send(200, "text/plain", "Hauptkonfiguration gespeichert"); });
 
-  server.on("/zeitfaktor", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", zeitfaktorLimits().c_str()); });
+  // -----------------------------------------------------------------> Neue Konfiguration für Feld 7 und 8 empfangen und speichern
+  server.on("/speichern_extra", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
+            {
+  String body = String((char*)data).substring(0, len);
+  DynamicJsonDocument doc(256);
+  if (deserializeJson(doc, body)) {
+    request->send(400, "text/plain", "Ungültiges JSON");
+    return;
+  }
 
-  server.on("/nutzung", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send_P(200, "text/plain", nutzungLimits().c_str()); });
+  File file = LittleFS.open(LittleFSDateinameExtra, "w");
+  if (!file) {
+    request->send(500, "text/plain", "Fehler beim Schreiben");
+    return;
+  }
+uint8_t r;
+uint8_t g;
+uint8_t b;
+  if (doc.containsKey("d5")) r = doc["d5"].as<uint8_t>();
+  if (doc.containsKey("d4")) g = doc["d4"].as<uint8_t>();
+  if (doc.containsKey("d6")) b = doc["d6"].as<uint8_t>();
+  colorOn = strip.Color(r, g, b);
+  colorOff = strip.Color(0, 0, 0);
+  if (doc.containsKey("d7")) baseTime_house = doc["d7"];
+  if (doc.containsKey("d8")) nutzung = doc["d8"].as<uint8_t>();
 
-  // Start server
-  server.onNotFound(onRequest);
+  // alten Modus zwischenspeichern   
+  String showModeStringOld = showModeString;
+  if (doc.containsKey("modus")) showModeString = doc["modus"].as<String>();
+  if (showModeString != showModeStringOld)
+    {
+      Serial.println("showmode: " + showModeStringOld + " -> " + showModeString);
+      // alten Modus zwischenspeichern
+      if (showModeString == "Mode 1") showModeTmp = house;
+      else if (showModeString == "Mode 2") showModeTmp = effect;
+      else if (showModeString == "Mode 3") showModeTmp = test;
+      else showModeTmp = house; // Default 
+      showMode = do_clearing; // set to pause first to avoid issues during mode change
+                              // wenn der Modus sich ändert, alle LEDs aus
+    }
+
+  serializeJson(doc, file);
+  file.close();
+  Serial.println("--> Speichern - extra: " + doc.as<String>());
+  request->send(200, "text/plain", "Globale Zusatzwerte gespeichert"); });
+
+  // -----------------------------------------------------------------> Ende der HTML-Prozeduren
   server.begin();
 
   MDNS.addService("http", "tcp", 80);
-
-  strip.begin();
-  // die preferences-Library wird gestartet
 
   if (preferences_light.begin(prefNameLight, false))
   {
@@ -461,69 +432,18 @@ void setup()
   if (setup_todo != setup_done)
   {
     randomSeed(nativeMACAddress[0] + nativeMACAddress[1] + nativeMACAddress[2] + nativeMACAddress[3] + nativeMACAddress[4] + nativeMACAddress[5]);
-    for (uint8_t r = 0; r < strip.numPixels(); r++)
-    {
-      // changeable values
-      // onTime
-      rooms[r].onTime = random(10) + r;
-      sprintf(buffer, "onTime%d", r);
-      Serial.println("PUT: " + String(buffer));
-      preferences_light.putUShort(buffer, rooms[r].onTime);
-      // offTime
-      rooms[r].offTime = random(5) + 2 * r;
-      sprintf(buffer, "offTime%d", r);
-      preferences_light.putUShort(buffer, rooms[r].offTime);
-      // brightness
-      rooms[r].brightness = brightness_curr;
-      sprintf(buffer, "brightness%d", r);
-      preferences_light.putUShort(buffer, rooms[r].brightness);
-      // unchangeable values
-      rooms[r].colorOn = strip.Color(rooms[r].brightness, rooms[r].brightness, rooms[r].brightness);
-      rooms[r].colorOff = strip.Color(0, 0, 0);
-      rooms[r].status = lightOff;
-      rooms[r].goneTime = 0;
-      rooms[r].duration = rooms[r].onTime + rooms[r].offTime;
-      strip.setPixelColor(r, strip.Color(0, 0, 0));
-    }
-    baseTime_house = zeitfaktor_curr; // delay between steps, in us, based on speed
-    preferences_light.putUShort("baseTime", baseTime_house);
-    nutzung = nutzung_curr; // delay between steps, in us, based on speed
-    preferences_light.putUShort("nutzung", nutzung);
-    currRoom = raum_curr;
-    preferences_light.putUShort("currRoom", currRoom);
-    showMode = house;
-    preferences_light.putUShort("showMode", showMode);
-
+    speichereInitialKonfigurationen(); // Nur beim ersten Start!
     // setup_done auf "TRUE" setzen
-    preferences_light.putUChar("setup_done", setup_done);
+    //      preferences_light.putUChar("setup_done", setup_done);
   }
-  else
+  ladeRaumArray();
+  ladeHausKonfiguration();
+  for (uint8_t r = 0; r < strip.numPixels(); r++)
   {
-    for (uint8_t r = 0; r < strip.numPixels(); r++)
-    {
-      // changeable values
-      // onTime
-      sprintf(buffer, "onTime%d", r);
-      //  Serial.println("GET: " + String(buffer));
-      rooms[r].onTime = preferences_light.getUShort(buffer, false);
-      // offTime
-      sprintf(buffer, "offTime%d", r);
-      rooms[r].offTime = preferences_light.getUShort(buffer, false);
-      // brightness
-      sprintf(buffer, "brightness%d", r);
-      rooms[r].brightness = preferences_light.getUShort(buffer, false);
-      // unchangeable values
-      rooms[r].colorOn = strip.Color(rooms[r].brightness, rooms[r].brightness, rooms[r].brightness);
-      rooms[r].colorOff = strip.Color(0, 0, 0);
-      rooms[r].status = lightOff;
-      rooms[r].goneTime = 0;
-      rooms[r].duration = rooms[r].onTime + rooms[r].offTime;
-      strip.setPixelColor(r, strip.Color(0, 0, 0));
-    }
-    baseTime_house = preferences_light.getUShort("baseTime", baseTime_house);
-    nutzung = preferences_light.getUShort("nutzung", nutzung);
-    currRoom = preferences_light.getUShort("currRoom", 0);
-    showMode = (showType)preferences_light.getUShort("showMode", house);
+    Raum[r].status = lightOff;
+    Raum[r].goneTime = 0;
+    Raum[r].duration = Raum[r].onTime + Raum[r].offTime;
+    strip.setPixelColor(r, colorOff);
   }
   ownshow();
   LED_onoff = true;
@@ -543,20 +463,20 @@ void loop()
       // get the timeStamp of when you stepped:
       for (uint8_t r = 0; r < nutzung; r++)
       {
-        rooms[r].goneTime++;
-        if (rooms[r].goneTime > rooms[r].duration)
+        Raum[r].goneTime++;
+        if (Raum[r].goneTime > Raum[r].duration)
         {
-          rooms[r].goneTime = 0;
-          rooms[r].status = lightOff;
+          Raum[r].goneTime = 0;
+          Raum[r].status = lightOff;
         }
-        if (rooms[r].goneTime > rooms[r].offTime)
+        if (Raum[r].goneTime > Raum[r].offTime)
         {
-          rooms[r].status = lightOn;
+          Raum[r].status = lightOn;
         }
-        if (rooms[r].status == lightOn)
-          strip.setPixelColor(r, rooms[r].colorOn);
+        if (Raum[r].status == lightOn)
+          strip.setPixelColor(r, colorOn);
         else
-          strip.setPixelColor(r, rooms[r].colorOff);
+          strip.setPixelColor(r, colorOff);
         ownshow();
       }
     }
@@ -567,29 +487,29 @@ void loop()
     {
     case 0:
       //      Serial.println("colorWipe");
-      colorWipe(strip.Color(255, 0, 0), rooms[0].brightness); // Red
+      colorWipe(strip.Color(255, 0, 0), waiteffect); // Red
       break;
     case 1:
-      colorWipe(strip.Color(0, 255, 0), rooms[0].brightness); // Green
+      colorWipe(strip.Color(0, 255, 0), waiteffect); // Green
       break;
     case 2:
-      colorWipe(strip.Color(0, 0, 255), rooms[0].brightness); // Blue
+      colorWipe(strip.Color(0, 0, 255), waiteffect); // Blue
       break;
     case 3:
-      colorWipe(strip.Color(0, 0, 0, 255), rooms[0].brightness); // White RGBW
+      colorWipe(strip.Color(0, 0, 0, 255), waiteffect); // White RGBW
       break;
     case 4:
       // Send a theater pixel chase in...
       //      Serial.println("theaterChase White");
-      theaterChase(strip.Color(127, 127, 127), rooms[0].brightness); // White
+      theaterChase(strip.Color(127, 127, 127), waiteffect); // White
       break;
     case 5:
       //      Serial.println("theaterChase Red");
-      theaterChase(strip.Color(127, 0, 0), rooms[0].brightness); // Red
+      theaterChase(strip.Color(127, 0, 0), waiteffect); // Red
       break;
     case 6:
       //      Serial.println("theaterChase Blue");
-      theaterChase(strip.Color(0, 0, 127), rooms[0].brightness); // Blue
+      theaterChase(strip.Color(0, 0, 127), waiteffect); // Blue
       break;
     case 7:
       //      Serial.println("rainbow");
@@ -601,7 +521,7 @@ void loop()
       break;
     case 9:
       //      Serial.println("theaterChaseRainbow");
-      theaterChaseRainbow(rooms[0].brightness);
+      theaterChaseRainbow(waiteffect);
       break;
     case 10:
       //      Serial.println("whiteOverRainbow");
@@ -630,15 +550,20 @@ void loop()
       if (LED_onoff)
       {
         LED_on();
-        strip.setPixelColor(TestRoom, strip.Color(32, 32, 32));
+        strip.setPixelColor(TestRoom, colorOn);
       }
       else
       {
         LED_off();
-        strip.setPixelColor(TestRoom, strip.Color(0, 0, 0));
         TestRoom++;
         if (TestRoom >= nutzung)
         {
+          delay(baseTime_house * 4);
+          for (uint8_t l = 0; l < nutzung; l++)
+          {
+            strip.setPixelColor(l, colorOff);
+          }
+          ownshow();
           TestRoom = 0;
         }
       }
@@ -647,10 +572,10 @@ void loop()
     }
     break;
   case do_clearing:
-  // do nothing
-          own_clear();
-          showMode = showModeTmp;
-  //  yield();
+    // do nothing
+    own_clear();
+    showMode = showModeTmp;
+    //  yield();
     break;
 
   default:

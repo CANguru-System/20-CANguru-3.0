@@ -885,8 +885,8 @@ namespace InstallGUI
             reportBox.Refresh();
             loaded = firmware.none;
             no_wifi = false;
-            mklittlefs.Enabled = false;
-            hostBox.Enabled = false;
+            mklittlefs.Enabled = true;
+            hostBox.Enabled = true;
         }
 
         // ************************ UPLOAD DECODER-FIRMWARE **************************************************************

@@ -28,8 +28,8 @@ select {
 div.box {
     position: relative;
     height: 400px;
-    width: 815px;
-    left: 25%;
+    width: 1000px;
+    left: 10%;
     padding: 10px;
     border: 3px solid lightgrey;
 }
@@ -70,8 +70,12 @@ div.dropdownleft {
     left: 20px;
 }
 
+div.dropdownmiddle {
+    left: 300px;
+}
+
 div.dropdownright {
-    left: 370px;
+    left: 580px;
 }
 
 div.ipnbr {
