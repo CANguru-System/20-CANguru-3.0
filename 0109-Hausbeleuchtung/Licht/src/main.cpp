@@ -12,7 +12,7 @@
 #include "OWN_LED.h"
 #include "effects.h"
 
-const uint8_t LED_COUNT_NORM = 24; // number of LEDs in the strip
+const uint8_t LED_COUNT_NORM = 96; // number of LEDs in the strip
 
 AsyncWebServer server(80);
 
@@ -110,7 +110,7 @@ void speichereInitialKonfigurationen()
     if (file)
     {
       DynamicJsonDocument extra(128);
-    //  JsonDocument extra;
+      //  JsonDocument extra;
       extra["d4"] = "32";
       extra["d5"] = "32";
       extra["d6"] = "32";
@@ -310,8 +310,12 @@ void setup()
   preferences_CANguru.end();
 
   // -----------------------------------------------------------------> HTML-Seite ausliefern
+
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(LittleFS, "/index.html", "text/html"); });
+
+  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(LittleFS, "/style.css", "application/javascript"); });
 
   // -----------------------------------------------------------------> IP-Adresse ermitteln und an die HTML-Seite schickenn
   server.on("/ip", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -367,6 +371,8 @@ void setup()
   }
     Raum[KonfigurationsIndexint].onTime = doc["d2"].as<uint16_t>();
     Raum[KonfigurationsIndexint].offTime = doc["d3"].as<uint16_t>();
+    Raum[KonfigurationsIndexint].goneTime = 0;
+    Raum[KonfigurationsIndexint].duration = Raum[KonfigurationsIndexint].onTime + Raum[KonfigurationsIndexint].offTime;
 
   serializeJson(doc, file);
   file.close();
@@ -434,7 +440,7 @@ uint8_t b;
     randomSeed(nativeMACAddress[0] + nativeMACAddress[1] + nativeMACAddress[2] + nativeMACAddress[3] + nativeMACAddress[4] + nativeMACAddress[5]);
     speichereInitialKonfigurationen(); // Nur beim ersten Start!
     // setup_done auf "TRUE" setzen
-    //      preferences_light.putUChar("setup_done", setup_done);
+    preferences_light.putUChar("setup_done", setup_done);
   }
   ladeRaumArray();
   ladeHausKonfiguration();
