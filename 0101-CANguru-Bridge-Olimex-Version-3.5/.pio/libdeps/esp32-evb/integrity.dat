@@ -1,6 +1,6 @@
 nkaaf/List@^3.0.1
-https://github.com/adafruit/Adafruit_BusIO.git
 https://github.com/adafruit/Adafruit-GFX-Library.git
-https://github.com/adafruit/Adafruit_STMPE610.git
 https://github.com/me-no-dev/ESPAsyncWebServer.git
 https://github.com/CANguru-System/20-CANguru-3.0.git
+https://github.com/adafruit/Adafruit_STMPE610.git
+https://github.com/adafruit/Adafruit_BusIO.git

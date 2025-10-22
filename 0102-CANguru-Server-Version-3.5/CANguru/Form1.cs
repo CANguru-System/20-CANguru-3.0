@@ -131,6 +131,8 @@ namespace CANguruX
 
         static bool verbose = true;
         static bool watchdog = true;
+        byte[] WATCHDOG = { 0x00, 0x52, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
         static byte lastCMD = 0;
 
         bool CV_change = false;
@@ -244,19 +246,24 @@ namespace CANguruX
                         btnVerbose.Text = "Verbose";
                         verbose = false;
                     }
-                    if (!byte.TryParse(ini.GetKeyValue("Watchdog", "watchdog"), out v))
+                    byte w = 0;
+                    if (!byte.TryParse(ini.GetKeyValue("Watchdog", "watchdog"), out w))
                         watchdog = true;
                     else
-                        watchdog = v == 1;
+                        watchdog = w == 1;
                     if (watchdog)
                     {
                         watchdogBtn.Text = "Watchdog EIN";
+                        WATCHDOG[0x05] = 0x01;
                     }
                     else
                     {
                         watchdogBtn.Text = "Watchdog AUS";
                         watchdog = false;
+                        WATCHDOG[0x05] = 0x00;
                     }
+                    CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+                    CANClient.Send(WATCHDOG, Cnames.lngFrame);
                     switchVoltage(Voltage);
                     //
                     int cnt;
@@ -2441,14 +2448,18 @@ namespace CANguruX
         {
             if (watchdog)
             {
+                WATCHDOG[0x05] = 0x00;
                 watchdogBtn.Text = "Watchdog AUS";
                 watchdog = false;
             }
             else
             {
+                WATCHDOG[0x05] = 0x01;
                 watchdogBtn.Text = "Watchdog EIN";
                 watchdog = true;
             }
+            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+            CANClient.Send(WATCHDOG, Cnames.lngFrame);
         }
     }
 }
