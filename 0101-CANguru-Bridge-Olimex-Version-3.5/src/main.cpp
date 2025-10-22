@@ -829,6 +829,14 @@ void proc_fromServer2CANandClnt()
       proc2Clnts(UDPbuffer, fromGW2Clnt);
       break;
     case Watchdog:
+    if (UDPbuffer[0x05] == 0x01)
+      {
+        watchdogEnabled = true;
+      }
+    if (UDPbuffer[0x05] == 0x00)
+      {
+        watchdogEnabled = false;
+      }
       break;
     case ReadConfig:
     case WriteConfig:
