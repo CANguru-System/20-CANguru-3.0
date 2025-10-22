@@ -36,12 +36,14 @@
             this.progressBarPing = new System.Windows.Forms.ProgressBar();
             this.TelnetComm = new System.Windows.Forms.TextBox();
             this.groupInput = new System.Windows.Forms.GroupBox();
+            this.cntDecoders = new System.Windows.Forms.NumericUpDown();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.timeBox = new System.Windows.Forms.TextBox();
             this.tbConnectAdr = new System.Windows.Forms.TextBox();
             this.groupAction = new System.Windows.Forms.GroupBox();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.MFX = new System.Windows.Forms.TabPage();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.writeName = new System.Windows.Forms.Button();
@@ -94,12 +96,12 @@
             this.btnGetData = new System.Windows.Forms.Button();
             this.btnSetData = new System.Windows.Forms.Button();
             this.btnVerbose = new System.Windows.Forms.Button();
-            this.cntDecoders = new System.Windows.Forms.NumericUpDown();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.watchdogBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.Telnet.SuspendLayout();
             this.groupCommand.SuspendLayout();
             this.groupInput.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cntDecoders)).BeginInit();
             this.groupBox5.SuspendLayout();
             this.groupAction.SuspendLayout();
             this.MFX.SuspendLayout();
@@ -115,12 +117,11 @@
             this.Configuration.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDecNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDelay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cntDecoders)).BeginInit();
             this.SuspendLayout();
             // 
             // beenden
             // 
-            this.beenden.Location = new System.Drawing.Point(384, 548);
+            this.beenden.Location = new System.Drawing.Point(377, 547);
             this.beenden.Name = "beenden";
             this.beenden.Size = new System.Drawing.Size(90, 25);
             this.beenden.TabIndex = 5;
@@ -200,6 +201,13 @@
             this.groupInput.TabStop = false;
             this.groupInput.Text = "Connect Information";
             // 
+            // cntDecoders
+            // 
+            this.cntDecoders.Location = new System.Drawing.Point(252, 47);
+            this.cntDecoders.Name = "cntDecoders";
+            this.cntDecoders.Size = new System.Drawing.Size(91, 20);
+            this.cntDecoders.TabIndex = 8;
+            // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.timeBox);
@@ -263,6 +271,15 @@
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "CANguru-Bridge Address";
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Location = new System.Drawing.Point(246, 20);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(100, 57);
+            this.groupBox8.TabIndex = 9;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Anzahl Dekoder";
             // 
             // MFX
             // 
@@ -724,9 +741,9 @@
             // 
             // btnVolt
             // 
-            this.btnVolt.Location = new System.Drawing.Point(29, 550);
+            this.btnVolt.Location = new System.Drawing.Point(14, 547);
             this.btnVolt.Name = "btnVolt";
-            this.btnVolt.Size = new System.Drawing.Size(134, 23);
+            this.btnVolt.Size = new System.Drawing.Size(110, 25);
             this.btnVolt.TabIndex = 20;
             this.btnVolt.Text = "Gleisspannung AUS";
             this.btnVolt.UseVisualStyleBackColor = true;
@@ -784,48 +801,44 @@
             // 
             // btnVerbose
             // 
-            this.btnVerbose.Location = new System.Drawing.Point(202, 549);
+            this.btnVerbose.Location = new System.Drawing.Point(135, 547);
             this.btnVerbose.Name = "btnVerbose";
-            this.btnVerbose.Size = new System.Drawing.Size(134, 23);
+            this.btnVerbose.Size = new System.Drawing.Size(110, 25);
             this.btnVerbose.TabIndex = 21;
             this.btnVerbose.Text = "btnVerbose";
             this.btnVerbose.UseVisualStyleBackColor = true;
             this.btnVerbose.Click += new System.EventHandler(this.btnVerbose_Click);
             // 
-            // cntDecoders
+            // watchdogBtn
             // 
-            this.cntDecoders.Location = new System.Drawing.Point(252, 47);
-            this.cntDecoders.Name = "cntDecoders";
-            this.cntDecoders.Size = new System.Drawing.Size(91, 20);
-            this.cntDecoders.TabIndex = 8;
-            // 
-            // groupBox8
-            // 
-            this.groupBox8.Location = new System.Drawing.Point(246, 20);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(100, 57);
-            this.groupBox8.TabIndex = 9;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Anzahl Dekoder";
+            this.watchdogBtn.Location = new System.Drawing.Point(256, 547);
+            this.watchdogBtn.Name = "watchdogBtn";
+            this.watchdogBtn.Size = new System.Drawing.Size(110, 25);
+            this.watchdogBtn.TabIndex = 22;
+            this.watchdogBtn.Text = "Watchdog AUS";
+            this.watchdogBtn.UseVisualStyleBackColor = true;
+            this.watchdogBtn.Click += new System.EventHandler(this.watchdogBtn_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(493, 579);
+            this.Controls.Add(this.watchdogBtn);
             this.Controls.Add(this.btnVerbose);
             this.Controls.Add(this.btnVolt);
             this.Controls.Add(this.beenden);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "CANguru-Server 3.50";
+            this.Text = "CANguru-Server 3.55";
             this.tabControl1.ResumeLayout(false);
             this.Telnet.ResumeLayout(false);
             this.groupCommand.ResumeLayout(false);
             this.groupCommand.PerformLayout();
             this.groupInput.ResumeLayout(false);
             this.groupInput.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cntDecoders)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupAction.ResumeLayout(false);
@@ -848,7 +861,6 @@
             this.Configuration.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDecNumber)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDnDelay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.cntDecoders)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -921,6 +933,7 @@
         private System.Windows.Forms.Button fileSaveButton;
         private System.Windows.Forms.NumericUpDown cntDecoders;
         private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.Button watchdogBtn;
     }
 }
 

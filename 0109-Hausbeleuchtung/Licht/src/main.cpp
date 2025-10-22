@@ -140,9 +140,9 @@ void speichereInitialKonfigurationen()
       {
         DynamicJsonDocument cfg(256);
         char buffer[20];
-        sprintf(buffer, "%d", random(10) + i);
+        sprintf(buffer, "%d", random(12));
         cfg["d2"] = buffer;
-        sprintf(buffer, "%d", random(5) + i);
+        sprintf(buffer, "%d", random(24));
         cfg["d3"] = buffer;
         serializeJson(cfg, file);
         file.close();
@@ -437,7 +437,8 @@ uint8_t b;
   uint8_t setup_todo = preferences_light.getUChar("setup_done", 0xFF);
   if (setup_todo != setup_done)
   {
-    randomSeed(nativeMACAddress[0] + nativeMACAddress[1] + nativeMACAddress[2] + nativeMACAddress[3] + nativeMACAddress[4] + nativeMACAddress[5]);
+    randomSeed(analogRead(0));
+//    randomSeed(nativeMACAddress[0] + nativeMACAddress[1] + nativeMACAddress[2] + nativeMACAddress[3] + nativeMACAddress[4] + nativeMACAddress[5]);
     speichereInitialKonfigurationen(); // Nur beim ersten Start!
     // setup_done auf "TRUE" setzen
     preferences_light.putUChar("setup_done", setup_done);

@@ -130,6 +130,7 @@ namespace CANguruX
         static bool is_connected;
 
         static bool verbose = true;
+        static bool watchdog = true;
         static byte lastCMD = 0;
 
         bool CV_change = false;
@@ -242,6 +243,19 @@ namespace CANguruX
                     {
                         btnVerbose.Text = "Verbose";
                         verbose = false;
+                    }
+                    if (!byte.TryParse(ini.GetKeyValue("Watchdog", "watchdog"), out v))
+                        watchdog = true;
+                    else
+                        watchdog = v == 1;
+                    if (watchdog)
+                    {
+                        watchdogBtn.Text = "Watchdog EIN";
+                    }
+                    else
+                    {
+                        watchdogBtn.Text = "Watchdog AUS";
+                        watchdog = false;
                     }
                     switchVoltage(Voltage);
                     //
@@ -1576,6 +1590,10 @@ namespace CANguruX
             if (verbose)
                 v = "1";
             ini.AddSection("Verbose").AddKey("verbose").Value = v;
+            string w = "0";
+            if (watchdog)
+                w = "1";
+            ini.AddSection("Watchdog").AddKey("watchdog").Value = w;
             //
             tabControl1.SelectTab(2);
             int decs = CANElemente.Items.Count;
@@ -2417,6 +2435,20 @@ namespace CANguruX
             CANguruLFDescriptionNbr = 0;
             listFile = true;
             getConfigData(CANguruLFDecoderNbr, CANguruLFDescriptionNbr);
+        }
+
+        private void watchdogBtn_Click(object sender, EventArgs e)
+        {
+            if (watchdog)
+            {
+                watchdogBtn.Text = "Watchdog AUS";
+                watchdog = false;
+            }
+            else
+            {
+                watchdogBtn.Text = "Watchdog EIN";
+                watchdog = true;
+            }
         }
     }
 }

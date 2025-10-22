@@ -828,6 +828,8 @@ void proc_fromServer2CANandClnt()
     case CONFIG_Status:
       proc2Clnts(UDPbuffer, fromGW2Clnt);
       break;
+    case Watchdog:
+      break;
     case ReadConfig:
     case WriteConfig:
       proc2CAN(UDPbuffer, fromGW2CAN);

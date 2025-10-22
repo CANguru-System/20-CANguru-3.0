@@ -21,6 +21,8 @@ enum statustype
   undef
 };
 
+bool watchdogEnabled;
+
 statustype lastStatus;
 statustype currStatus;
 
@@ -179,6 +181,8 @@ void stillAliveBlinkSetup()
   tckr.attach_ms(tckrTime, timer1s); // each sec
   // lastStatus kann 3 Zustände haben und entscheidet, ob die Statausanzeige blinkt (an oder aus) oder ganz aus  (undef) ist
   lastStatus = undef;
+  // erstmaliges Aktivieren des Watchdog-Blinkens
+  watchdogEnabled = false;
 }
 
 // hiermit wird die Aufforderung zum Blinken an die Decoder verschickt
@@ -196,24 +200,36 @@ void stillAliveBlinking()
   uint8_t M_ERROR[] = {0x00, lostDecoder, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   if (currStatus != lastStatus)
   {
-    if (getAlive(slv) == isAlive)
+    if (watchdogEnabled == true)
     {
+      if (getAlive(slv) == isAlive)
+      {
+        lastStatus = currStatus;
+        M_BLINK[0x05] = currStatus;
+        M_BLINK[0x06] = slv;
+        sendTheData(slv, M_BLINK, CAN_FRAME_SIZE);
+        setAlive(slv, isLost);
+      }
+      else
+      {
+        if (getAlive(slv) == isLost)
+        {
+          // FEHLER: Slave hat sich nicht gemeldet!
+          setAlive(slv, ErrorMsgSent);
+          M_ERROR[0x05] = slv;
+          log_i("Decoder lost #%d", slv);
+          sendToServer(M_ERROR, MSGfromBridge);
+        }
+      }
+    }
+    else
+    {
+      // no watchdog enabled
       lastStatus = currStatus;
       M_BLINK[0x05] = currStatus;
       M_BLINK[0x06] = slv;
       sendTheData(slv, M_BLINK, CAN_FRAME_SIZE);
       setAlive(slv, isLost);
-    }
-    else
-    {
-      if (getAlive(slv) == isLost)
-      {
-        // FEHLER: Slave hat sich nicht gemeldet!
-        setAlive(slv, ErrorMsgSent);
-        M_ERROR[0x05] = slv;
-        log_i("Decoder lost #%d", slv);
-        sendToServer(M_ERROR, MSGfromBridge);
-      }
     }
     slv++;
     if (slv >= get_slaveCnt())
