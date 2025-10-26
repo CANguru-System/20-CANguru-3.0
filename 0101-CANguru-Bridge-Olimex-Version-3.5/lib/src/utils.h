@@ -181,7 +181,6 @@ void stillAliveBlinkSetup()
   tckr.attach_ms(tckrTime, timer1s); // each sec
   // lastStatus kann 3 Zustände haben und entscheidet, ob die Statausanzeige blinkt (an oder aus) oder ganz aus  (undef) ist
   lastStatus = undef;
-  watchdogEnabled = false;
   // erstmaliges Aktivieren des Watchdog-Blinkens
 }
 

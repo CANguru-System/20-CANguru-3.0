@@ -348,7 +348,7 @@ void sendToServer(uint8_t *buffer, CMD dest)
   uint16_t packetSize = 0;
   uint8_t cmd = buffer[1];
   buffer[0] = dest;
-  log_i("printMSG: %d", cmd);
+  log_i("printMSG: %#X", cmd);
   UDPToServer.beginPacket(ipGateway, localPortToServer);
   UDPToServer.write(buffer, CAN_FRAME_SIZE);
   UDPToServer.endPacket();
@@ -526,11 +526,10 @@ bool loadCS2LocFile(uint8_t f)
   log_i("LittleFS read: %s", charArray);
   return true;
 }
-
 void onRequest(AsyncWebServerRequest *request)
 {
   for (uint8_t p = 0; p < maxPackets; p++)
-    if (arrayURL[p] == "")
+    if ((arrayURL[p] == "") && (request->url() != ""))
     {
       arrayURL[p] = request->url();
       arrayRequest[p] = request;
@@ -556,7 +555,8 @@ void analyseHTTP()
       cntURLUsed--;
       arrayURL[p] = "";
       request = arrayRequest[p];
-      urlfound = true;
+      if (request != nullptr)
+        urlfound = true;
       break;
     }
   if (urlfound == false)
@@ -583,19 +583,27 @@ void analyseHTTP()
     switch (fNmbr)
     {
     case 0:
-      fName = "/" + lokofileName;
+      fName = lokofileName;
       break;
     case 1:
-      fName = "/" + geraetfileName;
+      fName = geraetfileName;
       break;
     }
-    telnetClient.printTelnet(true, "Sendet per HTTP: " + request->url());
-    request->send(LittleFS, fName, "text/html");
+    if (currentLine != "")
+    {
+      // Die Referenz ist gültig, du kannst darauf zugreifen
+      telnetClient.printTelnet(true, "Sendet per HTTP: " + currentLine);
+      request->send(LittleFS, "/" + fName, "text/html");
+    }
     return;
   }
   // Handle Unknown Request
-  request->send(404, "text/plain", "Not found: " + currentLine);
-  telnetClient.printTelnet(true, "Not found: " + currentLine, indent);
+  if (currentLine != "")
+  {
+    // Die Referenz ist gültig, du kannst darauf zugreifen
+    request->send(404, "text/plain", "Not found: " + currentLine);
+    telnetClient.printTelnet(true, "Not found: " + currentLine, indent);
+  }
 }
 
 uint8_t getLocID()
@@ -829,13 +837,15 @@ void proc_fromServer2CANandClnt()
       proc2Clnts(UDPbuffer, fromGW2Clnt);
       break;
     case Watchdog:
-    if (UDPbuffer[0x05] == 0x01)
+      if (UDPbuffer[0x05] == 0x01)
       {
         watchdogEnabled = true;
+        log_i("\n watchdog on");
       }
-    if (UDPbuffer[0x05] == 0x00)
+      if (UDPbuffer[0x05] == 0x00)
       {
         watchdogEnabled = false;
+        log_i("\n watchdog off");
       }
       break;
     case ReadConfig:
@@ -1033,6 +1043,7 @@ void setup()
   scanningFinished = false;
   allLoksAreReported = false;
   GleisboxFound = false;
+  watchdogEnabled = true;
   setallSlavesAreReadyToZero();
   // start the telnetClient
   telnetClient.telnetInit();
@@ -1153,11 +1164,13 @@ void loop()
     proc_fromCAN2WDPandServer();
     // erstes PING soll schnell kommen
     secs = wait_for_ping;
-    if (GleisboxFound) {
+    if (GleisboxFound)
+    {
       displayLCD("Gleisbox found!");
       canguruStatus = startScanning;
     }
-    else {
+    else
+    {
       log_i("Keine Gleisbox");
       displayLCD(" -- No Gleisbox!");
       displayLCD(" -- System STOPPED! --");
@@ -1210,7 +1223,7 @@ void loop()
     if (getallSlavesAreReady() >= (get_slaveCnt()))
     {
       canguruStatus = systemIsRunning;
-  log_i("systemIsRunning");
+      log_i("systemIsRunning");
     }
     break;
   case systemIsRunning:

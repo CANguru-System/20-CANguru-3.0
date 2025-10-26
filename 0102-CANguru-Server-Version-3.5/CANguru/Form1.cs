@@ -131,7 +131,7 @@ namespace CANguruX
 
         static bool verbose = true;
         static bool watchdog = true;
-        byte[] WATCHDOG = { 0x00, 0x52, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+        byte[] WATCHDOG = { 0x00, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
         static byte lastCMD = 0;
 
@@ -247,9 +247,7 @@ namespace CANguruX
                         verbose = false;
                     }
                     byte w = 0;
-                    if (!byte.TryParse(ini.GetKeyValue("Watchdog", "watchdog"), out w))
-                        watchdog = true;
-                    else
+                    if (byte.TryParse(ini.GetKeyValue("Watchdog", "watchdog"), out w))
                         watchdog = w == 1;
                     if (watchdog)
                     {
@@ -262,8 +260,6 @@ namespace CANguruX
                         watchdog = false;
                         WATCHDOG[0x05] = 0x00;
                     }
-                    CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-                    CANClient.Send(WATCHDOG, Cnames.lngFrame);
                     switchVoltage(Voltage);
                     //
                     int cnt;
@@ -1741,6 +1737,9 @@ namespace CANguruX
                     CANguruDescriptionNbr = 0;
                     break;
                 case 1000:
+                    // Status watchdog an Bridge
+                    CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+                    CANClient.Send(WATCHDOG, Cnames.lngFrame);
                     a1milliTimer.Enabled = false;
                     receivePINGInfos = false;
                     getConfigData(CANguruDecoderNbr, CANguruDescriptionNbr);
