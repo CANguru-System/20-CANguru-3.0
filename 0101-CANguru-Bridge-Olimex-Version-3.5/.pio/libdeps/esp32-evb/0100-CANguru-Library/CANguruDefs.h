@@ -173,6 +173,9 @@ const int16_t maxadr = 0xFF;
 const uint8_t uid_num = 4;
 const uint8_t num_accessory = 4;
 
+//  Liest die IP-Adresse ein, die vorher auf den Chip geschrieben wurde
+IPAddress readIP(Preferences& pref);
+
 // Funktion stellt sicher, dass keine unerlaubten 8-Bit-Werte geladen werden können
 uint8_t readValfromEEPROM(uint16_t adr, uint8_t val, uint8_t min, uint8_t max);
 uint8_t readValfromPreferences(Preferences& preferences, const char* key, uint8_t val, uint8_t min, uint8_t max);

@@ -194,10 +194,7 @@ void setup()
   }
   // ab hier werden die Anweisungen bei jedem Start durchlaufen
   // IP-Adresse
-  uint32_t ip = preferences.getUInt("IP0", 0); // Default = 0.0.0.0
-  IPAddress IPAdr(ip);
-  IP = IPAdr;
-  log_d("Gespeicherte IP-Adresse: %d.%d.%d.%d", IP[0], IP[1], IP[2], IP[3]);
+  IP = readIP(preferences);
 
   // Flags
   got1CANmsg = false;

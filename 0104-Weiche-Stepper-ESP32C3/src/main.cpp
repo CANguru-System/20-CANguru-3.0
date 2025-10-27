@@ -184,12 +184,7 @@ void setup()
   }
   // ab hier werden die Anweisungen bei jedem Start durchlaufen
   // IP-Adresse
-  char ip[4]; // prepare a buffer for the data
-  preferences.getBytes("IP0", ip, 4);
-  for (uint8_t i = 0; i < 4; i++)
-  {
-    IP[i] = ip[i];
-  }
+  IP = readIP(preferences);
 
   // Flags
   got1CANmsg = false;

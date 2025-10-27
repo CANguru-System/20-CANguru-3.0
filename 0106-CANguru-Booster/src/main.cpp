@@ -181,23 +181,8 @@ void setup()
   }
   // ab hier werden die Anweisungen bei jedem Start durchlaufen
   // IP-Adresse
-  char ip[4]; // prepare a buffer for the data
-  if (preferences.isKey("IP0"))
-  {
-    if (preferences.getBytes("IP0", ip, 4) == 4)
-      for (uint8_t i = 0; i < 4; i++)
-      {
-        IP[i] = ip[i];
-      }
-  }
-  else
-  {
-    log_i("IP0 nicht gefunden! Bitte zunaechst Installationsroutine aufrufen!");
-    while (true)
-      {
-        // Hier bleibt das Programm stehen
-      }
-  }
+  IP = readIP(preferences);
+
   // Flags
   got1CANmsg = false;
   SYS_CMD_Request = false;
