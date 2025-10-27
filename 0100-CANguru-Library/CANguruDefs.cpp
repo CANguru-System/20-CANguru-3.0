@@ -13,7 +13,7 @@ IPAddress readIP(Preferences& pref)
   if (pref.isKey("IP0"))
     log_d("IP-ADDRESS OK");
   uint32_t ip = pref.getUInt("IP0", 0); // Default = 0.0.0.0
-  IPAddress IPAdXXr(ip);
+  IPAddress IPAdr(ip);
   log_d("Gespeicherte IP-Adresse: %d.%d.%d.%d", IPAdr[0], IPAdr[1], IPAdr[2], IPAdr[3]);
   return IPAdr;
 }
