@@ -145,6 +145,7 @@
 #define ConfigData_R 0x41
 #define MfxProc 0x50
 #define MfxProc_R 0x51
+#define Watchdog 0x52
 #define LoadCS2Data 0x56
 #define LoadCS2Data_R LoadCS2Data + 0x01            // 0x57
 #define GETCONFIG_RESPONSE LoadCS2Data_R + 0x01     // 0x58

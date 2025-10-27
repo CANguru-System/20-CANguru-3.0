@@ -930,7 +930,7 @@ namespace CANguruX
                             //                            ChangeMyText(this.TelnetComm, doMsg4TctWindow(cmd, content));
                             if (cmd == CMD.MSGfromBridge && content[1] == 8) // lost decoder
                             {
-                                string message = doMsg4TctWindow(cmd, content);
+                                string message = doMsg4TctWindow(cmd, content) + "\r\nProgramm beenden?";
                                 string caption = "Beenden";
                                 MessageBoxButtons buttons = MessageBoxButtons.YesNo;
                                 DialogResult result = MessageBox.Show(this, message, caption, buttons);
@@ -1399,7 +1399,7 @@ namespace CANguruX
                                         // 00 65 UU UU 08 IP IP IP IP 00 00 00 00
                                         if (content[2] == CANguruPINGArr[c, 2] && content[3] == CANguruPINGArr[c, 3])
                                         {
-                                            // IP-Address auf null
+                                            // IP-Address einlesen
                                             for (byte i = 1; i < 5; i++)
                                                 CANguruPINGArr[c, Cnames.lngFrame + i] = content[4 + i];
                                             break;
@@ -2084,18 +2084,23 @@ namespace CANguruX
             getConfigData(CANguruDecoderNbr, CANguruDescriptionNbr);
         }
 
+        string makeIPAddress(int ci)
+        {
+            showConfigData((byte)ci);
+            string IPAddress;
+            IPAddress = String.Format("{0:D03}", CANguruPINGArr[ci, 0x0E]) + ".";
+            IPAddress += String.Format("{0:D03}", CANguruPINGArr[ci, 0x0F]) + ".";
+            IPAddress += String.Format("{0:D03}", CANguruPINGArr[ci, 0x10]) + ".";
+            IPAddress += String.Format("{0:D03}", CANguruPINGArr[ci, 0x11]);
+            return IPAddress;
+        }
+
         private void CANElemente_SelectedIndexChanged(object sender, EventArgs e)
         {
             int curItem = CANElemente.SelectedIndex;
             if (curItem >= 0)
             {
-                showConfigData((byte)curItem);
-                string IPAddress;
-                IPAddress = String.Format("{0:D03}", CANguruPINGArr[curItem, 0x0E]) + ".";
-                IPAddress += String.Format("{0:D03}", CANguruPINGArr[curItem, 0x0F]) + ".";
-                IPAddress += String.Format("{0:D03}", CANguruPINGArr[curItem, 0x10]) + ".";
-                IPAddress += String.Format("{0:D03}", CANguruPINGArr[curItem, 0x11]);
-                this.deviceIP.Invoke(new MethodInvoker(() => this.deviceIP.Text = IPAddress));
+                this.deviceIP.Invoke(new MethodInvoker(() => this.deviceIP.Text = makeIPAddress(curItem)));
             }
         }
 

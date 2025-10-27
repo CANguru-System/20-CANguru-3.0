@@ -122,7 +122,7 @@ void setup()
 
   if (preferences.begin(prefName, false))
   {
-    log_d("Preferences erfolgreich gestartet");
+    log_d("Preferences %s erfolgreich gestartet\r\n", prefName);
   }
 
   uint8_t setup_todo = preferences.getUChar("setup_done", 0xFF);
@@ -194,12 +194,10 @@ void setup()
   }
   // ab hier werden die Anweisungen bei jedem Start durchlaufen
   // IP-Adresse
-  char ip[4]; // prepare a buffer for the data
-  preferences.getBytes("IP0", ip, 4);
-  for (uint8_t i = 0; i < 4; i++)
-  {
-    IP[i] = ip[i];
-  }
+  uint32_t ip = preferences.getUInt("IP0", 0); // Default = 0.0.0.0
+  IPAddress IPAdr(ip);
+  IP = IPAdr;
+  log_d("Gespeicherte IP-Adresse: %d.%d.%d.%d", IP[0], IP[1], IP[2], IP[3]);
 
   // Flags
   got1CANmsg = false;

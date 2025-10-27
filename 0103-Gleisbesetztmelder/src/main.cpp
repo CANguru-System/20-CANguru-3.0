@@ -264,31 +264,7 @@ void setup()
   }
   // ab hier werden die Anweisungen bei jedem Start durchlaufen
   // IP-Adresse
-  char ip[4]; // prepare a buffer for the data
-  if (preferences.isKey("ssid"))
-    log_d("SSID OK");
-  if (preferences.isKey("password"))
-    log_d("PASSWORD OK");
-  if (preferences.isKey("IP0"))
-    log_d("IP-ADDRESS OK");
-  if (preferences.isKey("IP0"))
-  {
-    if (preferences.getBytes("IP0", ip, 4) == 4)
-      for (uint8_t i = 0; i < 4; i++)
-      {
-        IP[i] = ip[i];
-    log_d("IP-ADDRESS %d", IP[i]);
-      }
-  }
-  else
-  {
-    log_d("IP0 nicht gefunden! Bitte zunaechst Installationsroutine aufrufen!");
-    while (true)
-    {
-      // Hier bleibt das Programm stehen
-    }
-  }
-
+  IP = readIP(preferences);
   // Flags
   got1CANmsg = false;
   SYS_CMD_Request = false;
@@ -320,7 +296,7 @@ void receiveKanalData()
   {
     // speichert die neue Adresse
     char key[20];
-    sprintf(key, "%s%d", c_i, opFrame[data5] - 1); 
+    sprintf(key, "%s%d", c_i, opFrame[data5] - 1);
     preferences.putUChar(key, channel_index[opFrame[data5] - 1]);
     log_d("receiveKanalData: %d ", channel_index[opFrame[data5] - 1]);
   }

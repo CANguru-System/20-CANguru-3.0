@@ -3,6 +3,21 @@
 #include "Preferences.h"
 #include "CANguruDefs.h"
 
+//  Liest die IP-Adresse ein, die vorher auf den Chip geschrieben wurde
+IPAddress readIP(Preferences& pref)
+{
+  if (pref.isKey("ssid"))
+    log_d("SSID OK");
+  if (pref.isKey("password"))
+    log_d("PASSWORD OK");
+  if (pref.isKey("IP0"))
+    log_d("IP-ADDRESS OK");
+  uint32_t ip = pref.getUInt("IP0", 0); // Default = 0.0.0.0
+  IPAddress IPAdXXr(ip);
+  log_d("Gespeicherte IP-Adresse: %d.%d.%d.%d", IPAdr[0], IPAdr[1], IPAdr[2], IPAdr[3]);
+  return IPAdr;
+}
+
 // Funktion stellt sicher, dass keine unerlaubten 8-Bit-Werte geladen werden können
 uint8_t readValfromPreferences(Preferences& preferences, const char* key, uint8_t val, uint8_t min, uint8_t max)
 {

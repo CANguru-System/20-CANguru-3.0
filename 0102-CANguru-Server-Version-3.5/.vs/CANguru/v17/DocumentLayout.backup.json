@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "CANguru\\Form1.cs",
               "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0102-CANguru-Server-Version-3.5\\CANguru\\Form1.cs",
               "RelativeToolTip": "CANguru\\Form1.cs",
-              "ViewState": "AgIAAKsGAACAMzMzM3MowM4GAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAIMDAABAmpmZmZkmwKQDAABWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-26T09:07:25.789Z",
               "EditorCaption": ""
@@ -53,10 +53,9 @@
               "RelativeDocumentMoniker": "CANguru\\Form1.Designer.cs",
               "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0102-CANguru-Server-Version-3.5\\CANguru\\Form1.Designer.cs",
               "RelativeToolTip": "CANguru\\Form1.Designer.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHUDAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAGoDAAAAAAAAAAASwIEDAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T15:00:38.397Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-26T15:00:38.397Z"
             },
             {
               "$type": "Document",
@@ -67,8 +66,7 @@
               "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\0102-CANguru-Server-Version-3.5\\CANguru\\Form1.cs [Entwurf]",
               "RelativeToolTip": "CANguru\\Form1.cs [Entwurf]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-26T09:07:14.084Z",
-              "EditorCaption": " [Entwurf]"
+              "WhenOpened": "2025-06-26T09:07:14.084Z"
             }
           ]
         }

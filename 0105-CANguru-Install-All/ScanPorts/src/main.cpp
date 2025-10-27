@@ -76,11 +76,11 @@ void setup()
 #define BLINKY_PIN 2
 #endif
   LED_begin(BLINKY_PIN);
-/*  command.reserve(maxstring);
-  subCommand.reserve(maxstring);
-  ssid.reserve(maxstring);
-  password.reserve(maxstring);
-*/
+  /*  command.reserve(maxstring);
+    subCommand.reserve(maxstring);
+    ssid.reserve(maxstring);
+    password.reserve(maxstring);
+  */
   if (preferences.begin("CANguru", false))
   {
     log_i("Preferences wurde erfolgreich gestartet");
@@ -129,7 +129,7 @@ void connectionStatusMessage(wl_status_t st)
 void loop()
 {
   char sourcebuffer[maxstring]; // Enough to hold 3 digits and a null terminator
-  char destbuffer[maxstring]; // Enough to hold 3 digits and a null terminator
+  char destbuffer[maxstring];   // Enough to hold 3 digits and a null terminator
   // put your main code here, to run repeatedly:
   if (Serial.available() > 0)
   {
@@ -185,19 +185,11 @@ void loop()
       {
         IP = WiFi.localIP();
       }
-      char ip[4]; // prepare a buffer for the data
-      /*      for (uint8_t i = 0; i < 4; i++)
-            {
-              ip[i] = IP[i];
-              if (i < 3)
-                printf("%d.", IP[i]);
-              else
-                printf("%d\r\n", IP[i]);
-            }*/
-      preferences.putBytes("IP0", ip, 4);
+      uint32_t ipRaw = (uint32_t)IP;     // IP in 32-Bit-Zahl umwandeln
+      preferences.putUInt("IP0", ipRaw); // Speichern
       // Antwort an InstallGUI
       Serial.println("&1D");
-      Serial.println(IP.toString());
+      Serial.println(IP);
       delay(10);
       command = "";
     }
