@@ -1,8 +1,9 @@
 Liste der installierten CANguru-Decoder:
-1 CANguru-Decoder gefunden.
+2 CANguru-Decoder gefunden.
 
 Decoder #1: CANguru Besetzt-Melder-D715
-	IP-Adresse: 004.002.064.063
+	IP-Adresse: 192.168.178.183
+	Kanal: 01: 1 
 	Kanal: 01: 1 
 	Kanal: 02: 2 
 	Kanal: 03: 3 
@@ -18,4 +19,7 @@ Decoder #1: CANguru Besetzt-Melder-D715
 	Kanal: 13: 13 
 	Kanal: 14: 14 
 	Kanal: 15: 15 
-	Kanal: 16: 16 
+Decoder #2: Kanal: 1450091966-D715
+	IP-Adresse: 192.168.178.141
+	al: 26478 
+	Moduladresse: 1 2

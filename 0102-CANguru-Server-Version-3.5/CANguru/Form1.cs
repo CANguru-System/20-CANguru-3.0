@@ -19,6 +19,16 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
 
+// Phase 0: der Server startet und initialisiert sich; noch kein Kontakt zur Bridge
+// Phase 1: der Knopf Connect wird gedrückt und der Server ruft die Bridge auf, sich zu melden.
+// Phase 2: die Verbindung ist hergestellt, die Bridge scannt die Decoder und ruft anschließend alle Decoder mit 0x30  auf, sich zu melden;
+// die Decoder antworten mit dem Code 0x31, der in der Prozedur fromCAN2UDP() ausgewertet wird; dort werden die UIDs in dem Array CANguruPINGArr
+// gespeichert und die Variable CANguruArrFilled wird um eins hochgezählt; damit steht am Ende in CANguruArrFilled die Anzahl der Decoder.
+// Phase 3: Anschließend ruft der Server mit einem Timer und der Prozedur getConfigData sowie dem Kode 3A die Decoder auf, Konfigurationsdaten
+// zu senden, der Empfang geschieht in fromCAN2UDP() unter 0x3B; anschließend werden die IP-Adressem mit 0x64 abgefragt und wieder in fromCAN2UDP()
+// unter 0x65 empfangen und in CANguruPINGArr gespeichert.
+
+
 namespace CANguruX
 {
     public partial class Form1 : Form
@@ -72,9 +82,6 @@ namespace CANguruX
         //
         private static System.Timers.Timer gettingConnectionTimer;
         Int16 elapsedmillis4Connection;
-        //
-        //        private static System.Timers.Timer trying2Connct2BridgeTimer;
-        //
         //
         private static System.Timers.Timer showResetValuesTimer;
         Int16 elapsedmillis4showResetValues;
@@ -193,10 +200,6 @@ namespace CANguruX
             compress.bcompress = false;
             CANguruArr = new byte[Cnames.maxConfigLines, Cnames.lngFrame]; // [maxConfigLines+1][Cnames.lngFrame]
             CANguruPINGArr = new byte[Cnames.maxCANgurus, Cnames.lngFrame + 1 + 4]; // 4 für die IP-Adresse
-                                                                                    // [maxCANgurus][maxConfigLines+1][Cnames.lngFrame]
-                                                                                    //
-                                                                                    // (common section's keys will overwrite)
-                                                                                    // initialize the delegate here
             UpdateProgressPingBarMethod = new UpdateProgressPingBarDelegate(UpdateProgressPingBar);
             UpdateProgressMFXBarMethod = new UpdateProgressMFXBarDelegate(UpdateProgressMFXBar);
             this.progressBarPing.Visible = false;
@@ -263,7 +266,7 @@ namespace CANguruX
                     switchVoltage(Voltage);
                     //
                     int cnt;
-                    //
+                    // liest die Liste der Decoder aus der letzten Sitzung ein: Name / IP-Adresse
                     decoders = new List<string>();
                     if (int.TryParse(ini.GetKeyValue("Decoder", "DecoderCnt"), out cnt))
                     {
@@ -299,13 +302,6 @@ namespace CANguruX
                 timeTimer.Start();
                 startTime = DateTime.Now;
                 // Create a timer with a ten second interval.
-                // the timer tries to connct to the CANguruBridge
-                /*                trying2Connct2BridgeTimer = new System.Timers.Timer(5000);
-                                // Hook up the Elapsed event for the timer. 
-                                trying2Connct2BridgeTimer.Elapsed += trying2Connct2Bridge;
-                                trying2Connct2BridgeTimer.AutoReset = true;
-                                // and start the timer
-                                trying2Connct2BridgeTimer.Start();*/
                 this.Load += Form1_Load;
             }
             catch (Exception e)
@@ -399,6 +395,7 @@ namespace CANguruX
             return CANguruArr[0, pos + 5];
         }
 
+        // Phase 3
         string read1ConfigChannel_DescriptionBlock(ref byte CgArrIndex, ref byte[] content)
         {
             if (CANguruDecoderNbr < CANguruArrFilled)
@@ -426,6 +423,7 @@ namespace CANguruX
             return "";
         }
 
+        // Phase 3
         void readChoiceBlock(ref byte CgArrIndex)
         {
             int numberofLEDProgs = getIndicatorValue(2);
@@ -486,6 +484,7 @@ namespace CANguruX
             }
         }
 
+        // Phase 3
         void readValueBlock(ref byte CgArrIndex)
         {
             byte maxIndex = CANguruPINGArr[CANguruDecoderNbr, Cnames.lngFrame];
@@ -557,6 +556,7 @@ namespace CANguruX
             }
         }
 
+        // Phase 3
         void read1ConfigChannel_DescriptionBlock4ListFile(ref byte CgArrIndex, ref byte[] content)
         {
             byte line = 2;
@@ -573,6 +573,7 @@ namespace CANguruX
             outputlistFile.WriteLine("Decoder #" + cnt.ToString() + ": " + entry);
         }
 
+        // Phase 3
         void readChoiceBlock4ListFile(ref byte CgArrIndex)
         {
             int numberofLEDProgs = getIndicatorValue(2);
@@ -593,6 +594,7 @@ namespace CANguruX
             outputlistFile.WriteLine("\t" + cntrlLabelText + ": " + choice);
         }
 
+        // Phase 3
         void readValueBlock4ListFile(ref byte CgArrIndex)
         {
             byte line = 1;
@@ -609,6 +611,7 @@ namespace CANguruX
             outputlistFile.WriteLine("\t" + param + ": " + val + " " + unit);
         }
 
+        // Phase 3
         void read1ConfigChannel_ValueBlock(ref byte CgArrIndex)
         {
             int ptr = getIndicatorValue(1);
@@ -618,6 +621,7 @@ namespace CANguruX
                 readValueBlock(ref CgArrIndex);
         }
 
+        // Anzeigeprozedur
         static String getDirectionText(CMD cmd)
         {
             // toCAN, toClnt, toUDP, toTCP, fromCAN, fromClnt, fromUDP, fromTCP, 
@@ -662,6 +666,7 @@ namespace CANguruX
             return source_dest[(int)cmd];
         }
 
+        // Anzeigeprozedur
         static string MSGFromTheBridge(byte msg)
         {
             String[] messages = {
@@ -680,6 +685,7 @@ namespace CANguruX
             return messages[msg];
         }
 
+        // Anzeigeprozedur
         string doMsg4TctWindow(CMD src, byte[] content)
         {
             String str;
@@ -883,6 +889,9 @@ namespace CANguruX
             CANClient.Send(LOK_BUFFERCNT, Cnames.lngFrame);
         }
 
+        // Hauptauswertefunktion
+        // Der Server stellt Anfrage an die Bridge, die eventuell von dort an die Decoder weitergeleitet werden;
+        // alle Antworten werden dann hier ausgewertet.
         private void fromCAN2UDP()
         {
             byte[] tmpbyte6 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -913,13 +922,17 @@ namespace CANguruX
                             }
                         }
                         if ((cmd == CMD.MSGfromBridge) && content[1] == 4)
+                        {
+                            if (decoders.Count > 0)
                             {
-                                if (decoders.Count > 0)
                                 foreach (string decoder in decoders)
                                 {
                                     string message = String.Concat("Decoder nicht gefunden:", decoder, "!");
                                     ChangeMyText(this.TelnetComm, message);
                                 }
+                            }
+                            else
+                                ChangeMyText(this.TelnetComm, "Alle Decoder der letzten Sitzung gefunden!");
                         }
                         // wenn content[4] größer 8 oder cmd == MSGfromBridge ist, dann wird der content nur dargestellt, aber nicht bearbeitet
                         if ((content[4] > 8) || (cmd == CMD.MSGfromBridge))
@@ -1118,12 +1131,7 @@ namespace CANguruX
                                             {
                                                 read1ConfigChannel_DescriptionBlock4ListFile(ref CANguruLFDescriptionNbr, ref content);
                                                 //
-                                                string IPAddress;
-                                                IPAddress = String.Format("{0:D03}", CANguruPINGArr[CANguruLFDecoderNbr, 0x0E]) + ".";
-                                                IPAddress += String.Format("{0:D03}", CANguruPINGArr[CANguruLFDecoderNbr, 0x0F]) + ".";
-                                                IPAddress += String.Format("{0:D03}", CANguruPINGArr[CANguruLFDecoderNbr, 0x10]) + ".";
-                                                IPAddress += String.Format("{0:D03}", CANguruPINGArr[CANguruLFDecoderNbr, 0x11]);
-                                                outputlistFile.WriteLine("\tIP-Adresse: " + IPAddress);
+                                                outputlistFile.WriteLine("\tIP-Adresse: " + makeIPAddress(CANguruLFDecoderNbr, true));
                                                 //
                                                 // Anzahl der folgenden Messwerte aus Zeile 2, Position 6
                                                 CANguruPINGArr[CANguruLFDecoderNbr, Cnames.lngFrame] = CANguruArr[0, 0x06];
@@ -1177,18 +1185,12 @@ namespace CANguruX
                                             if (CANguruDescriptionNbr == 0)
                                             {
                                                 string descrbtn = read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
-                                            //    descrbtn += " Adr: " + contenttmp[0x0C].ToString();
                                                 ChangeMyText(this.TelnetComm, "Decoder angemeldet: " + descrbtn + " Adr: " + contenttmp[0x0C].ToString());
-                                                if (decoders.Contains(descrbtn) == true)
-                                                {
-                                                    decoders.Remove(descrbtn);
-                                                }
                                                 // Vorbereitung für Fehlermeldungen
                                                 // Sammeln der Infos
                                                 // Name + UID
                                                 allDecoders.Add(descrbtn);
                                             }
-                                            //read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
                                             if (CANguruDescriptionNbr > 0)
                                                 read1ConfigChannel_ValueBlock(ref CANguruDescriptionNbr);
                                         }
@@ -1394,6 +1396,8 @@ namespace CANguruX
                                     compress.bcompress = false;
                                     break;
                                 case 0x65:
+                                    // get IP-Address
+                                    String ip = "0.0.0.0";
                                     for (byte c = 0; c < CANguruArrFilled; c++)
                                     {
                                         // 00 65 UU UU 08 IP IP IP IP 00 00 00 00
@@ -1402,13 +1406,15 @@ namespace CANguruX
                                             // IP-Address einlesen
                                             for (byte i = 1; i < 5; i++)
                                                 CANguruPINGArr[c, Cnames.lngFrame + i] = content[4 + i];
-                                            break;
+                                            // Decoder aus der Liste der letzten Sitzung entfernen
+                                            // Wenn diese Liste später leer ist, wurden alle Decoder gefunden.
+                                            ip = makeIPAddress(c, false);
+                                            decoders.Remove(ip);
                                         }
                                     }
                                     break;
                                 case 0x89:
                                     gettingConnectionTimer.Stop();
-                                    //                                    trying2Connct2BridgeTimer.Stop();
                                     this.buttonConnect.Invoke(new MethodInvoker(() => this.buttonConnect.Text = "Connected!"));
                                     Cnames.IP_CAN = remoteIPEndPoint.Address.ToString();
                                     this.tbConnectAdr.Invoke(new MethodInvoker(() => this.tbConnectAdr.Text = Cnames.IP_CAN));
@@ -1579,7 +1585,6 @@ namespace CANguruX
         private void proc_beenden()
         {
             // Aufräumen
-            //                trying2Connct2BridgeTimer.Stop();
             timeTimer.Stop();
             ini.RemoveAllSections();
             ini.AddSection("IP-address").AddKey("IPCAN").Value = Cnames.IP_CAN;
@@ -1605,7 +1610,7 @@ namespace CANguruX
             for (byte d = 0; d < decs; d++)
             {
                 CANElemente.SetSelected(d, true);
-                ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = CANElemente.Text;
+                ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = makeIPAddress(d, true);
             }
             //CANguruLFDecoderNbr CANguruDecoderNbr
             //Save the INI
@@ -1693,6 +1698,8 @@ namespace CANguruX
             }
         }
 
+        // ruft zunächst die Decoder auf, Konfigurationsdaten zu senden, der Empfang geschieht in fromCAN2UDP() unter 0x3B;
+        // anschließend werden die IP-Adresse abgefragt und wieder in fromCAN2UDP() unter 0x65 empfangen
         void getConfigData(byte canguru, byte index)
         {
             byte[] GET_IP = { 0x00, 0x64, 0x03, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -1777,15 +1784,8 @@ namespace CANguruX
             return true;
         }
 
-        private void trying2Connct2Bridge(Object source, ElapsedEventArgs e)
-        {
-            this.buttonConnect.Invoke(new MethodInvoker(() => this.buttonConnect.Text = "Connecting ..."));
-            cntGleisbild = ConfigStream.read_track_file();
-            if (!checkFiles())
-                return;
-            SetgettingConnectionTimer();
-        }
-
+        // Phase 1
+        // sendet den Kode 0x88 an die Bridge , die dann mit 0x89 antwortet
         private void gettingConnection(Object source, ElapsedEventArgs e)
         {
             byte[] M_SEND_IP = { 0x00, 0x88, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -1812,6 +1812,8 @@ namespace CANguruX
             }
         }
 
+        // Phase 1
+        // setzt den Timer, der die Bridge aufruft
         private void SetgettingConnectionTimer()
         {
             // Create a timer with a 25 milli interval.
@@ -1823,6 +1825,7 @@ namespace CANguruX
             this.buttonConnect.Invoke(new MethodInvoker(() => this.buttonConnect.Enabled = false));
         }
 
+        // Phase 1: ruft die Bridge auf
         // fragt die selektierte Host- oder Gatewayadresse ab und sendet das
         // CAN-Frame M_SEND_IP in dieses Netzwerk; die CANguru-Bridge meldet sich dann anschließeend;
         // diese Antwort wird in fromCAN2UDP() unter 0x89 empfangen und ausgewertet
@@ -2084,9 +2087,10 @@ namespace CANguruX
             getConfigData(CANguruDecoderNbr, CANguruDescriptionNbr);
         }
 
-        string makeIPAddress(int ci)
+        string makeIPAddress(int ci, bool sCD)
         {
-            showConfigData((byte)ci);
+            if (sCD)
+                showConfigData((byte)ci);
             string IPAddress;
             IPAddress = String.Format("{0:D03}", CANguruPINGArr[ci, 0x0E]) + ".";
             IPAddress += String.Format("{0:D03}", CANguruPINGArr[ci, 0x0F]) + ".";
@@ -2100,7 +2104,7 @@ namespace CANguruX
             int curItem = CANElemente.SelectedIndex;
             if (curItem >= 0)
             {
-                this.deviceIP.Invoke(new MethodInvoker(() => this.deviceIP.Text = makeIPAddress(curItem)));
+                this.deviceIP.Invoke(new MethodInvoker(() => this.deviceIP.Text = makeIPAddress(curItem, true)));
             }
         }
 

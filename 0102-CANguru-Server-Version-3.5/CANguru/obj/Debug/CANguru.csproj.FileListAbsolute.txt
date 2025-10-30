@@ -132,3 +132,4 @@ C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-V
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.csproj.GenerateResource.cache
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.csproj.CoreCompileInputs.cache
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.csproj.Up2Date
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.exe.config
