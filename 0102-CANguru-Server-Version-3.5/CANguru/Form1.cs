@@ -88,14 +88,28 @@ namespace CANguruX
         //
         private static System.Timers.Timer timeTimer;
         DateTime startTime;        //
-        // gleisbild
-        int cntGleisbild = 0;
         //
         bool receivePINGInfos;
         byte[,] CANguruArr;
         byte[,] CANguruPINGArr;
-        List<string> decoders;
-        List<string> allDecoders;
+        public class oneDecoder
+        {
+            public string name { get; set; }
+            public string UID { get; set; }
+            public string ipAdr { get; set; }
+            public bool lost { get; set; }
+
+            public oneDecoder(string name_, string uid, string ip, bool islost)
+            {
+                name = name_;
+                ipAdr = ip;
+                UID = uid;
+                lost = islost;
+            }
+        }
+
+        byte lastDecoders;
+        List<oneDecoder> allDecoders;
         struct configStruct
         {
             public Label indicatorLabel;
@@ -197,7 +211,6 @@ namespace CANguruX
             this.tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
             this.tabControl1.DrawItem += new DrawItemEventHandler(DisableTab_DrawItem);
             is_connected = false;
-            compress.bcompress = false;
             CANguruArr = new byte[Cnames.maxConfigLines, Cnames.lngFrame]; // [maxConfigLines+1][Cnames.lngFrame]
             CANguruPINGArr = new byte[Cnames.maxCANgurus, Cnames.lngFrame + 1 + 4]; // 4 für die IP-Adresse
             UpdateProgressPingBarMethod = new UpdateProgressPingBarDelegate(UpdateProgressPingBar);
@@ -213,7 +226,8 @@ namespace CANguruX
                 // CANClient sendet nach UDP (WDP)
                 CANClient = new UdpClient();
                 ConfigStream = new CConfigStream(names);
-                allDecoders = new List<string>();
+                allDecoders = new List<oneDecoder>();
+                lastDecoders = 0;
                 // Determine whether the directory exists.
                 string iniStr = string.Concat(Cnames.path, Cnames.ininame);
                 bool fexists = File.Exists(iniStr);
@@ -266,13 +280,17 @@ namespace CANguruX
                     switchVoltage(Voltage);
                     //
                     int cnt;
-                    // liest die Liste der Decoder aus der letzten Sitzung ein: Name / IP-Adresse
-                    decoders = new List<string>();
+                    // liest die Liste der Decoder aus der letzten Sitzung ein: IP-Adresse
                     if (int.TryParse(ini.GetKeyValue("Decoder", "DecoderCnt"), out cnt))
                     {
                         for (int d = 0; d < cnt; d++)
                         {
-                            decoders.Add(ini.GetKeyValue("Decoder", String.Concat("Decoder", String.Format("{0:D03}", d))));
+                            // zunächst werden die Decoder aus der letzten Sitzung als verloren angenommen
+                            string[] teile = ini.GetKeyValue("Decoder", String.Concat("Decoder", String.Format("{0:D03}", d))).Split(Cnames.delimiter); // Trennt an jedem /
+                            // teile[0]: ip
+                            // teile[1]: name
+                            allDecoders.Add(new oneDecoder(teile[1], "", teile[0], true));
+                            lastDecoders++;
                         }
                     }
                     int cntDec;
@@ -410,7 +428,7 @@ namespace CANguruX
                 CANguruPINGArr[CANguruDecoderNbr, Cnames.lngFrame] = CANguruArr[0, 0x06];
                 // der Hashwert zur Unterscheidung aus der
                 // aktuellen Zeile Position 2 und 3
-                entry += "-" + String.Format("{0:X02}", content[0x02]);
+                entry += Cnames.delimiter + String.Format("{0:X02}", content[0x02]);
                 entry += String.Format("{0:X02}", content[0x03]);
                 // in Listbox eintragen
                 this.CANElemente.Invoke(new MethodInvoker(() => CANElemente.Items.Add(entry)));
@@ -703,7 +721,7 @@ namespace CANguruX
                 // zeigt verlorene Dekoder an
                 if (currCMD == 0x08)
                 {
-                    str += allDecoders.ElementAt(content[5]);
+                    str += allDecoders.ElementAt(content[5]).name;
                 }
                 return str;
             }
@@ -923,16 +941,21 @@ namespace CANguruX
                         }
                         if ((cmd == CMD.MSGfromBridge) && content[1] == 4)
                         {
-                            if (decoders.Count > 0)
+                            if (allDecoders.Count > 0)
                             {
-                                foreach (string decoder in decoders)
+                                bool notLost = true;
+                                foreach (oneDecoder decoder in allDecoders)
                                 {
-                                    string message = String.Concat("Decoder nicht gefunden:", decoder, "!");
-                                    ChangeMyText(this.TelnetComm, message);
+                                    if (decoder.lost)
+                                    {
+                                        string message = String.Concat("Decoder nicht gefunden:", decoder.ipAdr + Cnames.delimiter + decoder.name, "!");
+                                        ChangeMyText(this.TelnetComm, message);
+                                        notLost = false;
+                                    }
                                 }
+                                if (notLost)
+                                    ChangeMyText(this.TelnetComm, "Alle Decoder der letzten Sitzung gefunden!");
                             }
-                            else
-                                ChangeMyText(this.TelnetComm, "Alle Decoder der letzten Sitzung gefunden!");
                         }
                         // wenn content[4] größer 8 oder cmd == MSGfromBridge ist, dann wird der content nur dargestellt, aber nicht bearbeitet
                         if ((content[4] > 8) || (cmd == CMD.MSGfromBridge))
@@ -967,8 +990,6 @@ namespace CANguruX
                                     CANClient.Send(RECEIVED_MSG, Cnames.lngFrame);
                                 });
                                 t.Wait();
-
-                                //   Task.Delay(50).Wait();
                             }
                             // Das Programm reagiert auf die Erkennung 
                             switch (content[1])
@@ -1184,12 +1205,13 @@ namespace CANguruX
                                         {
                                             if (CANguruDescriptionNbr == 0)
                                             {
-                                                string descrbtn = read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
-                                                ChangeMyText(this.TelnetComm, "Decoder angemeldet: " + descrbtn + " Adr: " + contenttmp[0x0C].ToString());
+                                                string Name_UID = read1ConfigChannel_DescriptionBlock(ref CANguruDescriptionNbr, ref content);
+                                                ChangeMyText(this.TelnetComm, "Decoder angemeldet: " + Name_UID + " Adr: " + contenttmp[0x0C].ToString());
                                                 // Vorbereitung für Fehlermeldungen
                                                 // Sammeln der Infos
                                                 // Name + UID
-                                                allDecoders.Add(descrbtn);
+                                                string[] teile = Name_UID.Split(Cnames.delimiter); // Trennt an jedem -
+                                                allDecoders.Add(new oneDecoder(teile[0], teile[1], "", true));
                                             }
                                             if (CANguruDescriptionNbr > 0)
                                                 read1ConfigChannel_ValueBlock(ref CANguruDescriptionNbr);
@@ -1247,60 +1269,11 @@ namespace CANguruX
                                         byte[] arrshortname = new byte[Cnames.shortnameLng2transfer]; // plus 1 Zeichen wg. /0 am Ende NEIN!
                                         Array.Copy(content, 5, arrshortname, 0, Cnames.shortnameLng2transfer);
                                         string shortname = System.Text.Encoding.Default.GetString(arrshortname);
-                                        byte str = 0;
                                         string fileName = "";
-                                        if (shortname.Contains("-"))
-                                        {
-                                            if (cntGleisbild > 0)
-                                            {
-                                                int page_number;
-                                                fileName = @"\gleisbilder/";
-                                                page_number = Convert.ToInt32(shortname.Substring(shortname.IndexOf("-") + 1), 10);
-                                                if (page_number <= cntGleisbild)
-                                                {
-                                                    if (ConfigStream.page_name[page_number].Length > 0)
-                                                    {
-                                                        fileName += ConfigStream.page_name[page_number] + ".cs2";
-                                                        ffound = true;
-                                                    }
-                                                }
-                                            }
-                                        }
                                         if (!ffound)
                                         {
-                                            if (shortname.Contains("+"))
-                                            {
-                                                if (cntGleisbild > 0)
-                                                {
-                                                    int page_number;
-                                                    page_number = Convert.ToInt32(shortname.Substring(shortname.IndexOf("+") + 1), 10);
-                                                    if (page_number <= cntGleisbild)
-                                                    {
-                                                        if (ConfigStream.page_name[page_number].Length > 0)
-                                                        {
-                                                            fileName = ConfigStream.page_name[page_number] + ".cs2";
-                                                            byte[] arrayFN = Encoding.ASCII.GetBytes(fileName);
-                                                            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-                                                            CANClient.Send(arrayFN, fileName.Length);
-                                                        }
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (!ffound)
-                                        {
-                                            for (str = 0; str < Cnames.cntCS2Files; str++)
-                                            {
-                                                char[] cs2File = Cnames.cs2Files[str, 0].ToCharArray(0, 4);
-                                                if ((arrshortname[0] == cs2File[0]) && (arrshortname[1] == cs2File[1]) && (arrshortname[2] == cs2File[2]) && (arrshortname[3] == cs2File[3]))
-                                                {
-                                                    // Langname gefunden, gibt es die zugehörige Datei auch?
-                                                    fileName = Cnames.cs2Files[str, 1];
-                                                    ffound = File.Exists(string.Concat(Cnames.path, fileName));
-                                                    break;
-                                                }
-                                            }
+                                            fileName = Cnames.cs2name;
+                                            ffound = File.Exists(string.Concat(Cnames.path, fileName));
                                         }
                                         if (ffound == true)
                                         {
@@ -1308,48 +1281,10 @@ namespace CANguruX
                                             byte[] tmpbyte4 = new byte[4];
                                             Int16 crc;
                                             // Anzahl der Zeichen übermitteln
-                                            if (compress.bcompress)
-                                            {
-                                                compress compress = new CANguruX.compress();
-                                                compress.compressTheData(string.Concat(Cnames.path, fileName));
-                                                int compressCnt = compress.getDeflatedSize();
-                                                if (compressCnt == 0)
-                                                {
-                                                    // byte 9 und 10 ist der crc-Wert
-                                                    // crc ist für uncompressed immer null
-                                                    Array.Copy(tmpbyte6, 0, GETCONFIG_RESPONSE, 5, 6);
-                                                    CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-                                                    //#define GETCONFIG_RESPONSE LoadCS2Data_R + 0x01     // 0x58
-                                                    CANClient.Send(GETCONFIG_RESPONSE, GETCONFIG_RESPONSE.Length);
-                                                    ChangeMyText(this.TelnetComm, "Datei zu groß: " + fileName);
-                                                    break;
-                                                }
-                                                compressCnt += 4;
-                                                // auf runde 8 auffüllen
-                                                if (compressCnt % 8 != 0)
-                                                {
-                                                    compressCnt += 8 - (compressCnt % 8);
-                                                }
-                                                Array.Resize(ref compress.outBuffer, compressCnt);
-                                                tmpbyte4 = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(compress.getDeflatedSize() + 4));
-                                                // CRC erzeugen und eintragen
-                                                InitialCrcValue initVal = InitialCrcValue.NonZero1;
-                                                Crc16Ccitt Crc16Ccitt = new CANguruX.Crc16Ccitt(initVal);
-                                                crc = (Int16)Crc16Ccitt.ComputeChecksum(compress.outBuffer);
-                                            }
-                                            else
-                                            {
-                                                /*    if (!emptyLokListIsGenerated)
-                                                    {
-                                                        ConfigStream.generateEmptyLokList();
-                                                        emptyLokListIsGenerated = true;
-                                                    }
-                                                */
-                                                ConfigStream.setbufferIndex(0);
-                                                ConfigStream.readLocomotive(Cnames.path, fileName);
-                                                tmpbyte4 = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(ConfigStream.getbufferIndex()));
-                                                crc = 0;
-                                            }
+                                            ConfigStream.setbufferIndex(0);
+                                            ConfigStream.readLocomotive(Cnames.path, fileName);
+                                            tmpbyte4 = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(ConfigStream.getbufferIndex()));
+                                            crc = 0;
                                             crc = IPAddress.HostToNetworkOrder(crc);
                                             tmpbyte2 = BitConverter.GetBytes(crc);
                                             // byte 5 bis 8 ist die Anzahl der zu übertragenden bytes
@@ -1377,23 +1312,8 @@ namespace CANguruX
                                 case 0x57: // ConfigData_R: compressed & uncompressed
                                     if (content[4] == 0x08)
                                     {
-                                        if (compress.bcompress)
-                                        {
-                                            compress.sendBufferCompressed(content, CANClient);
-                                        }
-                                        else
-                                        {
-                                            ConfigStream.sendBufferUncompressed(content, CANClient);
-                                        }
+                                        ConfigStream.sendBufferUncompressed(content, CANClient);
                                     }
-                                    break;
-                                //#define DoCompress GETCONFIG_RESPONSE + 0x02        // 0x5A
-                                case 0x5A: // DoCompress
-                                    compress.bcompress = true;
-                                    break;
-                                //#define DoNotCompress DoCompress + 0x01             // 0x5B
-                                case 0x5B: // DoNotCompress
-                                    compress.bcompress = false;
                                     break;
                                 case 0x65:
                                     // get IP-Address
@@ -1409,7 +1329,32 @@ namespace CANguruX
                                             // Decoder aus der Liste der letzten Sitzung entfernen
                                             // Wenn diese Liste später leer ist, wurden alle Decoder gefunden.
                                             ip = makeIPAddress(c, false);
-                                            decoders.Remove(ip);
+                                            allDecoders.ElementAt(c + lastDecoders).ipAdr = ip;
+
+
+                                            // Dictionary: Schlüssel = Wert, Inhalt = Liste der Indizes
+                                            Dictionary<string, List<int>> indexMap = new Dictionary<string, List<int>>();
+
+                                            for (int i = 0; i < allDecoders.Count; i++)
+                                            {
+                                                string ip_ = allDecoders[i].ipAdr;
+                                                if (!indexMap.ContainsKey(ip_))
+                                                    indexMap[ip_] = new List<int>();
+
+                                                indexMap[ip_].Add(i);
+                                            }
+
+                                            // das sind die Doppeleinträge; also die, die
+                                            // aus der Liste der Vorgängersitzung und die aktuell eingelesenen;
+                                            // die sind also nicht verloren
+                                            foreach (var pair in indexMap)
+                                            {
+                                                foreach (int index in pair.Value)
+                                                {
+                                                    if (pair.Value.Count > 1) // optional, da du weißt: max. 2
+                                                        allDecoders[index].lost = false;
+                                                }
+                                            }
                                         }
                                     }
                                     break;
@@ -1607,12 +1552,21 @@ namespace CANguruX
             int decs = CANElemente.Items.Count;
             ini.AddSection("Decoder").AddKey("DecoderCnt").Value = decs.ToString();
             ini.AddSection("Decoder").AddKey("expectedDecoders").Value = cntDecoders.Value.ToString();
-            for (byte d = 0; d < decs; d++)
+            byte index = 0;
+            for (byte d = 0; d < allDecoders.Count; d++)
             {
-                CANElemente.SetSelected(d, true);
-                ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = makeIPAddress(d, true);
+                if ((allDecoders.Count - lastDecoders) == 0)
+                    break;
+                CANElemente.SetSelected(index, true);
+                // teile[0]: ip
+                // teile[1]: name
+                if (allDecoders[d].UID != "")
+                {
+                    ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", index))).Value = allDecoders[d].ipAdr + Cnames.delimiter + allDecoders[d].name;
+                    index++;
+                    //                ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = makeIPAddress(d, false);
+                }
             }
-            //CANguruLFDecoderNbr CANguruDecoderNbr
             //Save the INI
             ini.Save(string.Concat(Cnames.path, Cnames.ininame));
             voltStop(btnVolt);
@@ -1765,25 +1719,6 @@ namespace CANguruX
             elapsedmillis = 0;
         }
 
-        bool checkFiles()
-        {
-            string message = "Die Datei fehlt: ";
-            string caption = "Fehler";
-            for (byte f = 0; f < Cnames.cntCS2Files; f++)
-            {
-                string m_filename = string.Concat(Cnames.path, Cnames.cs2Files[f, 1]);
-                if (Cnames.cs2Files[f, 2] == "1")
-                    if (!File.Exists(m_filename))
-                    {
-                        message += m_filename;
-                        MessageBoxButtons buttons = MessageBoxButtons.OK;
-                        MessageBox.Show(this, message, caption, buttons);
-                        return false;
-                    }
-            }
-            return true;
-        }
-
         // Phase 1
         // sendet den Kode 0x88 an die Bridge , die dann mit 0x89 antwortet
         private void gettingConnection(Object source, ElapsedEventArgs e)
@@ -1832,9 +1767,6 @@ namespace CANguruX
         public void onConnectClick(object sender, EventArgs e)
         {
             this.buttonConnect.Invoke(new MethodInvoker(() => this.buttonConnect.Text = "Connecting ..."));
-            cntGleisbild = ConfigStream.read_track_file();
-            if (!checkFiles())
-                return;
             SetgettingConnectionTimer();
         }
 

@@ -125,11 +125,8 @@ C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-V
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\bin\Debug\CANguru.exe.config
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\bin\Debug\CANguru.exe
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\bin\Debug\CANguru.pdb
-C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\bin\Debug\ZLIB.dll
-C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\bin\Debug\zlib.net.dll
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguruX.Form1.resources
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\UDP_ClntSrvr.Properties.Resources.resources
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.csproj.GenerateResource.cache
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.csproj.CoreCompileInputs.cache
-C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.csproj.Up2Date
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0102-CANguru-Server-Version-3.5\CANguru\obj\Debug\CANguru.exe.config

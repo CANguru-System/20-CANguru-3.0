@@ -82,21 +82,11 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="ZLIB, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Release\ZLIB.dll</HintPath>
-    </Reference>
-    <Reference Include="zlib.net, Version=1.0.3.0, Culture=neutral, PublicKeyToken=47d7877cb3620160">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Release\zlib.net.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CCompress.cs" />
     <Compile Include="CConfigStream.cs" />
     <Compile Include="Cnames.cs" />
     <Compile Include="CQueue.cs" />
-    <Compile Include="Crc16Ccitt.cs" />
     <Compile Include="Cutils.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

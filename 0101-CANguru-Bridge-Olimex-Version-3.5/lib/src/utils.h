@@ -72,10 +72,6 @@ uint8_t arrayTCPFrames[maxPackets][CAN_FRAME_SIZE] = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-uint8_t cntURLUsed = 0;
-String arrayURL[maxPackets] = {};
-AsyncWebServerRequest *arrayRequest[maxPackets] = {};
-
 // die Portadressen; 15730 und 15731 sind von Märklin festgelegt
 // OUT is even
 const unsigned int localPortDelta = 2;                                      // local port to listen on
@@ -199,36 +195,47 @@ void stillAliveBlinking()
   uint8_t M_ERROR[] = {0x00, lostDecoder, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   if (currStatus != lastStatus)
   {
-    if (watchdogEnabled == true)
+/*    if (getAlive(slv) == isAlive)
     {
-      if (getAlive(slv) == isAlive)
-      {
-        lastStatus = currStatus;
-        M_BLINK[0x05] = currStatus;
-        M_BLINK[0x06] = slv;
-        sendTheData(slv, M_BLINK, CAN_FRAME_SIZE);
-        setAlive(slv, isLost);
-      }
-      else
-      {
-        if (getAlive(slv) == isLost)
-        {
-          // FEHLER: Slave hat sich nicht gemeldet!
-          setAlive(slv, ErrorMsgSent);
-          M_ERROR[0x05] = slv;
-          log_i("Decoder lost #%d", slv);
-          sendToServer(M_ERROR, MSGfromBridge);
-        }
-      }
-    }
-    else
-    {
-      // no watchdog enabled
       lastStatus = currStatus;
       M_BLINK[0x05] = currStatus;
       M_BLINK[0x06] = slv;
       sendTheData(slv, M_BLINK, CAN_FRAME_SIZE);
       setAlive(slv, isLost);
+    }
+    if (watchdogEnabled == true)
+    {
+      if (getAlive(slv) == isLost)
+      {
+        // FEHLER: Slave hat sich nicht gemeldet!
+        setAlive(slv, ErrorMsgSent);
+        M_ERROR[0x05] = slv;
+        log_i("Decoder lost #%d", slv);
+        sendToServer(M_ERROR, MSGfromBridge);
+      }
+    }
+  }
+  slv++;
+  if (slv >= get_slaveCnt())
+    slv = 0;*/
+    if (getAlive(slv) == isAlive)
+    {
+      lastStatus = currStatus;
+      M_BLINK[0x05] = currStatus;
+      M_BLINK[0x06] = slv;
+      sendTheData(slv, M_BLINK, CAN_FRAME_SIZE);
+      setAlive(slv, isLost);
+    }
+    else
+    {
+      if ((watchdogEnabled == true) && (getAlive(slv) == isLost))
+      {
+        // FEHLER: Slave hat sich nicht gemeldet!
+        setAlive(slv, ErrorMsgSent);
+        M_ERROR[0x05] = slv;
+        log_i("Decoder lost #%d", slv);
+        sendToServer(M_ERROR, MSGfromBridge);
+      }
     }
     slv++;
     if (slv >= get_slaveCnt())

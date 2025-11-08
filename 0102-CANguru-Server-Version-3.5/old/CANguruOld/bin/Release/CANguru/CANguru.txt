@@ -1,0 +1,113 @@
+Liste der installierten CANguru-Decoder:
+22 CANguru-Decoder gefunden.
+
+Decoder #1: CANguru Stepper-D715
+	IP-Adresse: 192.168.178.062
+	Moduladresse: 35 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #2: CANguru Stepper-D716
+	IP-Adresse: 192.168.178.210
+	Moduladresse: 24 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #3: CANguru Stepper-D717
+	IP-Adresse: 192.168.178.212
+	Moduladresse: 28 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #4: CANguru Stepper-D718
+	IP-Adresse: 192.168.178.208
+	Moduladresse: 30 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #5: CANguru Stepper-D719
+	IP-Adresse: 192.168.178.211
+	Moduladresse: 33 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #6: CANguru Stepper-D71A
+	IP-Adresse: 192.168.178.201
+	Moduladresse: 11 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #7: CANguru Stepper-D71B
+	IP-Adresse: 192.168.178.190
+	Moduladresse: 6 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #8: CANguru Stepper-D71C
+	IP-Adresse: 192.168.178.203
+	Moduladresse: 40 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #9: CANguru Stepper-D71D
+	IP-Adresse: 192.168.178.147
+	Moduladresse: 5 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #10: CANguru Stepper-D71E
+	IP-Adresse: 192.168.178.209
+	Moduladresse: 14 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #11: CANguru Stepper-D71F
+	IP-Adresse: 192.168.178.177
+	Moduladresse: 3 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #12: CANguru Stepper-D720
+	IP-Adresse: 192.168.178.213
+	Moduladresse: 31 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #13: CANguru Stepper-D721
+	IP-Adresse: 192.168.178.183
+	Moduladresse: 29 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #14: CANguru Stepper-D722
+	IP-Adresse: 192.168.178.178
+	Moduladresse: 4 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #15: CANguru Stepper-D723
+	IP-Adresse: 192.168.178.197
+	Moduladresse: 36 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #16: CANguru Stepper-D724
+	IP-Adresse: 192.168.178.204
+	Moduladresse: 27 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #17: CANguru Stepper-D725
+	IP-Adresse: 192.168.178.205
+	Moduladresse: 13 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #18: CANguru Stepper-D726
+	IP-Adresse: 192.168.178.174
+	Moduladresse: 2 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #19: CANguru Stepper-D727
+	IP-Adresse: 192.168.178.202
+	Moduladresse: 12 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #20: CANguru Stepper-D728
+	IP-Adresse: 192.168.178.207
+	Moduladresse: 25 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #21: CANguru Stepper-D729
+	IP-Adresse: 192.168.178.206
+	Moduladresse: 23 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps
+Decoder #22: CANguru Stepper-D72A
+	IP-Adresse: 192.168.178.194
+	Moduladresse: 10 Adr
+	Servoverz?gerung: 2 x
+	Motorschritte: 1200 Steps

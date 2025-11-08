@@ -111,6 +111,7 @@
 #define SYS_GO		          0x01	//System - Go
 #define LokDiscovery 0x02
 #define LokDiscovery_R LokDiscovery+1
+#define Lok_Zyklus_Stopp 0x04
 #define MFXVerify 0x07
 #define MFXVerify_R MFXVerify+1
 #define Lok_Speed           0x08
@@ -149,8 +150,6 @@
 #define LoadCS2Data 0x56
 #define LoadCS2Data_R LoadCS2Data + 0x01            // 0x57
 #define GETCONFIG_RESPONSE LoadCS2Data_R + 0x01     // 0x58
-#define DoCompress GETCONFIG_RESPONSE + 0x02        // 0x5A
-#define DoNotCompress DoCompress + 0x01             // 0x5B
 #define BlinkAlive 0x60
 #define BlinkAlive_R BlinkAlive + 0x01
 #define restartBridge 0x62

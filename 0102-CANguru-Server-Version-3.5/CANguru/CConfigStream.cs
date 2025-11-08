@@ -127,54 +127,6 @@ namespace CANguruX
                 bufferIndex = 0;
         }
 
-        public int read_track_file()
-        {
-            int res = 0;
-            bool page = false;
-            int id = 0;
-            int counter = 0;
-            string line;
-            string fName = "";
-
-            string f = string.Concat(Cnames.path, Cnames.glsbild);
-
-            try
-            {
-                if (!File.Exists(f))
-                {
-                    return 0;
-                }
-                using (StreamReader cs2 = new StreamReader(new FileStream(f, FileMode.Open)))
-                {
-                    while (cs2.Peek() >= 0)
-                    {
-                        line = cs2.ReadLine();
-                        if (line == "seite")
-                            page = true;
-                        else if (line.Contains(".id"))
-                            id = Convert.ToInt32(line.Substring(line.IndexOf("=") + 1), 10);
-                        else if (line.Contains(".name"))
-                        {
-                            fName = line.Substring(line.IndexOf("=") + 1);
-                            if (page)
-                            {
-                                page_name[id] = fName;
-                                if (page_name[id] == "")
-                                    return res;
-                                counter++;
-                            }
-                        }
-                    }
-                    return counter;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("The process failed: {0}", e.ToString());
-            }
-            return res;
-        }
-
         private static IEnumerable<int> PatternAt(byte[] source, byte[] pattern, int start)
         {
             for (int i = start; i < source.Length; i++)
@@ -428,7 +380,7 @@ namespace CANguruX
             }
             writeConfigStruct(cntConfig);
             deleteDoubleEntry(cntConfig);
-            if (unknown)
+        //    if (unknown)
                 MessageBox.Show("Lok erfasst", "Lokomotiven", MessageBoxButtons.OK);
         }
 

@@ -28,6 +28,28 @@ enum enum_canguruStatus
 enum_canguruStatus canguruStatus;
 
 // buffer for receiving and sending data
+uint8_t M_PATTERN_ALL[lastPattern][CAN_FRAME_SIZE] = {
+    {0x00, 0x36, 0x03, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x08, 0x07, 0x00, 0x00},
+    {0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x04, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x06, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x0C, 0x03, 0x01, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x30, 0x47, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x31, 0x47, 0x11, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x08, 0xFF, 0xFF},
+    {0x00, 0x31, 0x63, 0x4A, 0x08, 0x00, 0x00, 0x00, 0x00, 0x04, 0x02, 0xFF, 0xF0},
+    {0x00, 0x31, 0x63, 0x4B, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x44, 0x00, 0x00},
+    {0x00, ReadConfig, 0x03, 0x00, 0x07, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, MfxProc_R, 0x03, 0x01, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, MfxProc_R, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, LoadCS2Data, 0x03, 0x01, 0x08, 0x0C, 0x6F, 0x6B, 0x73, 0x00, 0x00, 0x00, 0x00},
+    {0x00, LoadCS2Data_R, 0x03, 0x01, 0x08, 0x00, 0x6C, 0x68, 0x73, 0x00, 0x00, 0x00, 0x00},
+    {0x00, 0x50, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, sendCntLokBuffer, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, sendLokBuffer, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    {0x00, CALL4CONNECT + 1, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 uint8_t M_PATTERN[] = {0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 uint8_t lastmfxUID[] = {0x00, 0x00, 0x00, 0x00};
 
@@ -38,9 +60,6 @@ File locofile;
 String lokofileName = "lokomotive.cs2";
 //    {"loks   ", "lokomotive.cs2"},
 String lokofileNameShortName = "loks   ";
-String geraetfileName = "geraet.vrs";
-//    {"ger    ", "geraet.vrs"},
-String geraetfileNameShortName = "ger    ";
 
 uint8_t cntLoks;
 struct LokBufferType
@@ -133,149 +152,7 @@ void printMSG(uint8_t no)
 // in den Frame zu kopieren sind
 void produceFrame(patterns noFrame)
 {
-  memset(M_PATTERN, 0x0, CAN_FRAME_SIZE);
-  M_PATTERN[2] = 0x03;
-  M_PATTERN[3] = 0x01;
-  switch (noFrame)
-  {
-  case M_GLEISBOX_MAGIC_START_SEQUENCE:
-    M_PATTERN[1] = 0x36;
-    M_PATTERN[2] = 0x03;
-    M_PATTERN[3] = 0x01;
-    M_PATTERN[4] = 0x05;
-    M_PATTERN[9] = 0x11;
-    break;
-  case M_GLEISBOX_ALL_PROTO_ENABLE:
-    M_PATTERN[2] = 0x03;
-    M_PATTERN[3] = 0x01;
-    M_PATTERN[4] = 0x06;
-    M_PATTERN[9] = 0x08;
-    M_PATTERN[10] = 0x07;
-    break;
-  case M_GO:
-    M_PATTERN[1] = 0x00;
-    M_PATTERN[2] = 0x03;
-    M_PATTERN[3] = 0x00;
-    M_PATTERN[4] = 0x05;
-    M_PATTERN[9] = 0x01;
-    break;
-  case M_STOP:
-    M_PATTERN[1] = 0x00;
-    M_PATTERN[2] = 0x03;
-    M_PATTERN[3] = 0x00;
-    M_PATTERN[4] = 0x05;
-    M_PATTERN[9] = 0x00;
-    break;
-  case M_BIND:
-    M_PATTERN[1] = 0x04;
-    M_PATTERN[4] = 0x06;
-    M_PATTERN[9] = 0x00;
-    break;
-  case M_VERIFY:
-    M_PATTERN[1] = 0x06;
-    M_PATTERN[4] = 0x06;
-    M_PATTERN[9] = 0x00;
-    break;
-  case M_FUNCTION:
-    M_PATTERN[1] = 0x0C;
-    M_PATTERN[4] = 0x06;
-    M_PATTERN[7] = 0x04;
-    break;
-  case M_CAN_PING:
-    M_PATTERN[1] = 0x30;
-    M_PATTERN[2] = 0x47;
-    M_PATTERN[3] = 0x11;
-    break;
-  case M_PING_RESPONSE:
-    M_PATTERN[0] = 0x00;
-    M_PATTERN[1] = 0x30;
-    M_PATTERN[2] = 0x00;
-    M_PATTERN[3] = 0x00;
-    M_PATTERN[4] = 0x00;
-    break;
-  case M_CAN_PING_CS2:
-    M_PATTERN[1] = 0x31;
-    M_PATTERN[2] = 0x47;
-    M_PATTERN[3] = 0x11;
-    M_PATTERN[4] = 0x08;
-    M_PATTERN[9] = 0x03;
-    M_PATTERN[10] = 0x08;
-    M_PATTERN[11] = 0xFF;
-    M_PATTERN[12] = 0xFF;
-    break;
-  case M_CAN_PING_CS2_1:
-    M_PATTERN[1] = 0x31;
-    M_PATTERN[2] = 0x63;
-    M_PATTERN[3] = 0x4A;
-    M_PATTERN[4] = 0x08;
-    M_PATTERN[9] = 0x04;
-    M_PATTERN[10] = 0x02;
-    M_PATTERN[11] = 0xFF;
-    M_PATTERN[12] = 0xF0;
-    break;
-  case M_CAN_PING_CS2_2:
-    M_PATTERN[1] = 0x31;
-    M_PATTERN[2] = 0x63;
-    M_PATTERN[3] = 0x4B;
-    M_PATTERN[4] = 0x08;
-    M_PATTERN[9] = 0x03;
-    M_PATTERN[10] = 0x44;
-    break;
-  case M_READCONFIG:
-    M_PATTERN[1] = ReadConfig;
-    M_PATTERN[4] = 0x07;
-    M_PATTERN[7] = 0x40;
-    break;
-  case M_STARTCONFIG:
-    M_PATTERN[1] = MfxProc_R;
-    M_PATTERN[4] = 0x02;
-    M_PATTERN[5] = 0x01;
-    break;
-  case M_FINISHCONFIG:
-    M_PATTERN[1] = MfxProc_R;
-    M_PATTERN[4] = 0x01;
-    M_PATTERN[5] = 0x00;
-    break;
-  case M_DOCOMPRESS:
-    M_PATTERN[1] = DoCompress;
-    M_PATTERN[4] = 0x00;
-    break;
-  case M_DONOTCOMPRESS:
-    M_PATTERN[1] = DoNotCompress;
-    M_PATTERN[4] = 0x00;
-    break;
-  case M_GETCONFIG:
-    M_PATTERN[1] = LoadCS2Data;
-    M_PATTERN[4] = 0x08;
-    M_PATTERN[5] = 0x6C;
-    M_PATTERN[6] = 0x6F;
-    M_PATTERN[7] = 0x6B;
-    M_PATTERN[8] = 0x73;
-    break;
-  case M_GETCONFIG_R:
-    M_PATTERN[1] = LoadCS2Data_R;
-    M_PATTERN[4] = 0x08;
-    M_PATTERN[5] = 0x6C;
-    M_PATTERN[6] = 0x6F;
-    M_PATTERN[7] = 0x6B;
-    M_PATTERN[8] = 0x73;
-    break;
-  case M_SIGNAL:
-    M_PATTERN[1] = 0x50;
-    M_PATTERN[4] = 0x01;
-    break;
-  case M_CNTLOKBUFFER:
-    M_PATTERN[1] = sendCntLokBuffer;
-    break;
-  case M_SENDLOKBUFFER:
-    M_PATTERN[1] = sendLokBuffer;
-    M_PATTERN[4] = 0x01;
-    break;
-  case M_CALL4CONNECTISDONE:
-    M_PATTERN[1] = CALL4CONNECT + 1;
-    M_PATTERN[4] = 0x00;
-    break;
-  }
+  memcpy(M_PATTERN, M_PATTERN_ALL[noFrame], CAN_FRAME_SIZE);
 }
 
 #include <utils.h>
@@ -348,11 +225,14 @@ void sendToServer(uint8_t *buffer, CMD dest)
   uint16_t packetSize = 0;
   uint8_t cmd = buffer[1];
   buffer[0] = dest;
-  log_i("printMSG: %#X", cmd);
   UDPToServer.beginPacket(ipGateway, localPortToServer);
   UDPToServer.write(buffer, CAN_FRAME_SIZE);
   UDPToServer.endPacket();
   buffer[0] = 0x00;
+  log_d("");
+  if (buffer[Framelng] >= 0x0F)
+    buffer[Framelng] -= 0x0F;
+  log_buf_d(buffer, CAN_FRAME_SIZE) ;
   // auf Quittung warten
   if (dest == toServer)
   {
@@ -380,20 +260,12 @@ void msgStartScanning()
 }
 
 // Anfrage, wieviele Daten sind zu übertragen
-uint32_t getDataSize(uint8_t f)
+uint32_t getDataSize()
 {
   uint8_t UDPbuffer[] = {0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   //
   produceFrame(M_GETCONFIG);
-  switch (f)
-  {
-  case 0:
-    memcpy(&M_PATTERN[0x05], &lokofileNameShortName, lokofileNameShortName.length());
-    break;
-  case 1:
-    memcpy(&M_PATTERN[0x05], &geraetfileNameShortName, geraetfileNameShortName.length());
-    break;
-  }
+  memcpy(&M_PATTERN[0x05], &lokofileNameShortName, lokofileNameShortName.length());
   // to Gateway
   sendToServer(M_PATTERN, toUDP);
   delay(wait_time_small);
@@ -424,19 +296,11 @@ uint32_t getDataSize(uint8_t f)
 }
 
 // Anfordrung an den CANguru-Server zur Übertragung der lokomotive.cs2-Datei
-void ask4CS2Data(byte lineNo, uint8_t f)
+void ask4CS2Data(byte lineNo)
 {
   //
   produceFrame(M_GETCONFIG_R);
-  switch (f)
-  {
-  case 0:
-    memcpy(&M_PATTERN[0x05], &lokofileNameShortName, lokofileNameShortName.length());
-    break;
-  case 1:
-    memcpy(&M_PATTERN[0x05], &geraetfileNameShortName, geraetfileNameShortName.length());
-    break;
-  }
+  memcpy(&M_PATTERN[0x05], &lokofileNameShortName, lokofileNameShortName.length());
   // LoadCS2Data_R  0x57
   M_PATTERN[0x0A] = lineNo;
   M_PATTERN[0x0B] = httpBufferLength & 0x00FF;
@@ -452,35 +316,25 @@ void ask4CS2Data(byte lineNo, uint8_t f)
 // Übertragung der lokomotive.cs2-Datei vom CANguru-Server
 // die CANguru-Bridge hält diese Daten und leitet sie bei Anfrage an
 // den WDP weiter
-bool loadCS2LocFile(uint8_t f)
+bool loadCS2LocFile()
 {
   String fName = "";
-  switch (f)
-  {
-  case 0:
-    fName = "/" + lokofileName;
-    break;
-  case 1:
-    fName = "/" + geraetfileName;
-    break;
-  }
-  produceFrame(M_DONOTCOMPRESS);
-  sendToServer(M_PATTERN, toUDP);
+  fName = "/" + lokofileName;
   // ruft Daten ab
-  uint32_t cntFrame = getDataSize(f);
+  uint32_t cntFrame = getDataSize();
   char charArray[fName.length() + 1]; // +1 for the null terminator
   strcpy(charArray, fName.c_str());
   if (cntFrame == 0)
   {
     return false;
   }
-  if (LittleFS.exists(fName))
-  {
-    log_i("LittleFS exists: %s", charArray);
-    return true;
-    if (!LittleFS.remove(fName))
-      log_d("Did NOT remove %s", charArray);
-  }
+  /*  if (LittleFS.exists(fName))
+    {
+      log_i("LittleFS exists: %s", charArray);
+      return true;
+      if (!LittleFS.remove(fName))
+        log_d("Did NOT remove %s", charArray);
+    }*/
   locofile = LittleFS.open(fName, FILE_WRITE);
   // Configdaten abrufen
   uint16_t packetSize = 0;
@@ -489,7 +343,7 @@ bool loadCS2LocFile(uint8_t f)
   //
   while (inBufferCnt < cntFrame)
   {
-    ask4CS2Data(lineNo, f);
+    ask4CS2Data(lineNo);
     packetSize = 0;
     while (packetSize == 0)
     {
@@ -526,86 +380,9 @@ bool loadCS2LocFile(uint8_t f)
   log_i("LittleFS read: %s", charArray);
   return true;
 }
-void onRequest(AsyncWebServerRequest *request)
-{
-  for (uint8_t p = 0; p < maxPackets; p++)
-    if ((arrayURL[p] == "") && (request->url() != ""))
-    {
-      arrayURL[p] = request->url();
-      arrayRequest[p] = request;
-      cntURLUsed++;
-      break;
-    }
-}
 
-void analyseHTTP()
-{
-  if (cntURLUsed == 0)
-    return;
-  bool urlfound;
-  bool ffound;
-  uint8_t fNmbr = 255;
-  String currentLine;
-  AsyncWebServerRequest *request;
-  urlfound = false;
-  for (uint8_t p = 0; p < maxPackets; p++)
-    if (arrayURL[p] != "")
-    {
-      currentLine = arrayURL[p];
-      cntURLUsed--;
-      arrayURL[p] = "";
-      request = arrayRequest[p];
-      if (request != nullptr)
-        urlfound = true;
-      break;
-    }
-  if (urlfound == false)
-    return;
-  ffound = false;
-  char charArray[currentLine.length() + 1]; // +1 for the null terminator
-  strcpy(charArray, currentLine.c_str());
-  log_d("http: %s", charArray);
-  currentLine.toLowerCase();
-  if (currentLine.indexOf(lokofileName) > 0)
-  {
-    ffound = true;
-    fNmbr = 0;
-  }
-  else if (currentLine.indexOf(geraetfileName) > 0)
-  {
-    ffound = true;
-    fNmbr = 1;
-  }
-  if (ffound)
-  {
-    loadCS2LocFile(fNmbr);
-    String fName = "";
-    switch (fNmbr)
-    {
-    case 0:
-      fName = lokofileName;
-      break;
-    case 1:
-      fName = geraetfileName;
-      break;
-    }
-    if (currentLine != "")
-    {
-      // Die Referenz ist gültig, du kannst darauf zugreifen
-      telnetClient.printTelnet(true, "Sendet per HTTP: " + currentLine);
-      request->send(LittleFS, "/" + fName, "text/html");
-    }
-    return;
-  }
-  // Handle Unknown Request
-  if (currentLine != "")
-  {
-    // Die Referenz ist gültig, du kannst darauf zugreifen
-    request->send(404, "text/plain", "Not found: " + currentLine);
-    telnetClient.printTelnet(true, "Not found: " + currentLine, indent);
-  }
-}
-
+// vergleicht die erkannte mfx-UID mit den schon bekannten
+// und gibt die dazugehörige Lokadresse zurück
 uint8_t getLocID()
 {
   bool found = false;
@@ -820,6 +597,8 @@ void proc_fromServer2CANandClnt()
   {
     // read the packet into packetBufffer
     UDPFromServer.read(UDPbuffer, CAN_FRAME_SIZE);
+    log_d("");
+    log_buf_d(UDPbuffer, CAN_FRAME_SIZE) ;
     // send received data via ESPNOW and CAN
     switch (UDPbuffer[0x1])
     {
@@ -834,6 +613,10 @@ void proc_fromServer2CANandClnt()
     case 0x06:
     case SEND_IP:
     case CONFIG_Status:
+    if (UDPbuffer[0x01] == SEND_IP)
+      {
+        log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
+      }
       proc2Clnts(UDPbuffer, fromGW2Clnt);
       break;
     case Watchdog:
@@ -862,7 +645,7 @@ void proc_fromServer2CANandClnt()
       // there is a new file lokomotive.cs2 to send
       produceFrame(M_SIGNAL);
       sendToServer(M_PATTERN, fromCAN);
-      loadCS2LocFile(0);
+      loadCS2LocFile();
       break;
     // PING
     case PING:
@@ -1067,21 +850,19 @@ void setup()
   // start the TCP-server
   TCPINSYS.begin();
   //
-  if (!LittleFS.begin(true))
+  // Versuche zu mounten
+  if (LittleFS.begin(true))
   {
-    log_e("An Error has occurred while mounting LittleFS");
-    return;
-  }
-  if (!LittleFS.format())
-  {
-    log_e("An Error has occurred while formatting LittleFS");
-    return;
+    LittleFS.format(); // Achtung: löscht alle Dateien!
+    Serial.println("LittleFS erfolgreich gemountet nach Formatierung .");
   }
   //
-  // Catch-All Handlers
-  // Any request that can not find a Handler that canHandle it
-  // ends in the callbacks below.
-  AsyncWebSrvr.onNotFound(onRequest);
+  // Route zum Senden der Datei
+  AsyncWebSrvr.on("/betatest/cs2/lokomotive.cs2", HTTP_GET, [](AsyncWebServerRequest *request)
+                  { request->send(LittleFS, "/" + lokofileName, "text/plain"); });
+  AsyncWebSrvr.on("/config/lokomotive.cs2", HTTP_GET, [](AsyncWebServerRequest *request)
+                  { request->send(LittleFS, "/" + lokofileName, "text/plain"); });
+
   // start the http-server
   AsyncWebSrvr.begin();
 }
@@ -1128,7 +909,7 @@ bool proc_wait4Server()
 
 void proc_start_lokBuffer()
 {
-  log_i("proc_start_lokBuffer");
+  log_d("proc_start_lokBuffer");
   produceFrame(M_CNTLOKBUFFER);
   sendToServer(M_PATTERN, toServer);
 }
@@ -1199,15 +980,11 @@ void loop()
     if (allLoksAreReported == true)
     {
       delay(100);
-      if (loadCS2LocFile(0))
-        telnetClient.printTelnet(true, "lokomotive.cs2 gelesen");
+      if (loadCS2LocFile())
+        telnetClient.printTelnet(true, lokofileName + " gelesen");
       else
-        telnetClient.printTelnet(true, "Konnte lokomotive.cs2 nicht lesen");
+        telnetClient.printTelnet(true, "Konnte " + lokofileName + " nicht lesen");
       telnetClient.printTelnet(true, "");
-      if (loadCS2LocFile(1))
-        telnetClient.printTelnet(true, "geraete.vrs gelesen");
-      else
-        telnetClient.printTelnet(true, "Konnte geraete.vrs nicht lesen");
       telnetClient.printTelnet(true, "");
       delay(200);
       telnetClient.printTelnet(true, "Rufe die Decoder auf:");
@@ -1223,7 +1000,7 @@ void loop()
     if (getallSlavesAreReady() >= (get_slaveCnt()))
     {
       canguruStatus = systemIsRunning;
-      log_i("systemIsRunning");
+      log_d("systemIsRunning");
     }
     break;
   case systemIsRunning:
@@ -1232,7 +1009,6 @@ void loop()
     proc_fromCAN2WDPandServer();
     proc_fromWDP2CAN();
     fillTheCircle();
-    analyseHTTP();
     break;
   default:
     break;
