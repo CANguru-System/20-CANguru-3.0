@@ -941,11 +941,13 @@ namespace CANguruX
                         }
                         if ((cmd == CMD.MSGfromBridge) && content[1] == 4)
                         {
+                            // die Decoderliste wird durchsucht
                             if (allDecoders.Count > 0)
                             {
                                 bool notLost = true;
                                 foreach (oneDecoder decoder in allDecoders)
                                 {
+                                    // wenn der Decoder auf lost steht, ist er nicht angemeldet
                                     if (decoder.lost)
                                     {
                                         string message = String.Concat("Decoder nicht gefunden:", decoder.ipAdr + Cnames.delimiter + decoder.name, "!");
@@ -953,6 +955,7 @@ namespace CANguruX
                                         notLost = false;
                                     }
                                 }
+                                // kein Decoder stand auf lost
                                 if (notLost)
                                     ChangeMyText(this.TelnetComm, "Alle Decoder der letzten Sitzung gefunden!");
                             }
@@ -1210,8 +1213,9 @@ namespace CANguruX
                                                 // Vorbereitung für Fehlermeldungen
                                                 // Sammeln der Infos
                                                 // Name + UID
-                                                string[] teile = Name_UID.Split(Cnames.delimiter); // Trennt an jedem -
-                                                allDecoders.Add(new oneDecoder(teile[0], teile[1], "", true));
+                                                string[] teile = Name_UID.Split(Cnames.delimiter); // Trennt an jedem '/'
+                                                // neue Decoder werden in die Liste aufgenommen und dort als nicht lost gekennzeichnet
+                                                allDecoders.Add(new oneDecoder(teile[0], teile[1], "", false));
                                             }
                                             if (CANguruDescriptionNbr > 0)
                                                 read1ConfigChannel_ValueBlock(ref CANguruDescriptionNbr);
@@ -1326,27 +1330,32 @@ namespace CANguruX
                                             // IP-Address einlesen
                                             for (byte i = 1; i < 5; i++)
                                                 CANguruPINGArr[c, Cnames.lngFrame + i] = content[4 + i];
-                                            // Decoder aus der Liste der letzten Sitzung entfernen
-                                            // Wenn diese Liste später leer ist, wurden alle Decoder gefunden.
+                                            // IP-Adresse in dlei Liste der Decoder eintragen
                                             ip = makeIPAddress(c, false);
                                             allDecoders.ElementAt(c + lastDecoders).ipAdr = ip;
 
-
+                                            // Decoder aus der Liste der letzten Sitzung entfernen
+                                            // Wenn diese Liste später leer ist, wurden alle Decoder gefunden.
                                             // Dictionary: Schlüssel = Wert, Inhalt = Liste der Indizes
                                             Dictionary<string, List<int>> indexMap = new Dictionary<string, List<int>>();
-
+                                            // Doppeleinträge werden anhand der identsichen IP-Adresse erkannt
                                             for (int i = 0; i < allDecoders.Count; i++)
                                             {
+                                                // die Liste wird durchlaufen
                                                 string ip_ = allDecoders[i].ipAdr;
+                                                // jede IP-Adresse wird in der Liste indexMap gesucht
+                                                // wird sie nicht gefunden, wird sie dort eingetragen.
+                                                // am Ende stehen in der Liste indexMap die Indizes aller doppelten IP-Adressen
                                                 if (!indexMap.ContainsKey(ip_))
                                                     indexMap[ip_] = new List<int>();
-
                                                 indexMap[ip_].Add(i);
                                             }
 
                                             // das sind die Doppeleinträge; also die, die
                                             // aus der Liste der Vorgängersitzung und die aktuell eingelesenen;
                                             // die sind also nicht verloren
+                                            // neue Decoder, die nicht in der Liste der Vorgängersitzung sein können, wurden
+                                            // bereits bei der Erkennung als nicht verloren gekennzeichnet
                                             foreach (var pair in indexMap)
                                             {
                                                 foreach (int index in pair.Value)

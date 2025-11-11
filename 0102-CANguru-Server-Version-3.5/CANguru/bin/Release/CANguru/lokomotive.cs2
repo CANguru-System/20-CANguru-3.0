@@ -2,15 +2,15 @@
 version
  .minor=3
 session
- .id=04
+ .id=06
 lokomotive
- .name=DB 640 017-9
+ .name=BR 260
  .uid=0x4001
  .adresse=0x01
  .typ=mfx
  .sid=0x01
- .mfxuid=0x7CFDC941
- .icon=DB 640 017-9
+ .mfxuid=0xF9FACD69
+ .icon=BR 260
  .av=60
  .bv=40
  .volume=100
@@ -56,13 +56,13 @@ lokomotive
  .funktionen
  ..nr=15
 lokomotive
- .name=BR 260
+ .name=DB 640 017-9
  .uid=0x4001
  .adresse=0x01
  .typ=mfx
  .sid=0x01
- .mfxuid=0xF9FACD69
- .icon=BR 260
+ .mfxuid=0x7CFDC941
+ .icon=DB 640 017-9
  .av=60
  .bv=40
  .volume=100
