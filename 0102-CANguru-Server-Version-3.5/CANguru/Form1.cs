@@ -62,6 +62,7 @@ namespace CANguruX
         IniFile ini = new IniFile();
 
         Thread threadCAN;
+        Thread threadWDP;
         // UDP to CAN
         public UdpClient CANServer;
         public UdpClient CANClient;
@@ -997,6 +998,14 @@ namespace CANguruX
                             // Das Programm reagiert auf die Erkennung 
                             switch (content[1])
                             {
+                                case 0x00: // System
+                                    {
+                                        // Volt an byte[] VOLT_GO = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 };
+                                        // Volt aaus byte[] VOLT_GO = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                                        if (content[9] == 1)
+                                            btnVolt.Text = "Gleisspannung AUS";
+                                    }
+                                    break;
                                 case 0x0F: // ReadConfig_R:
                                     {
                                         if (CV_change == true)

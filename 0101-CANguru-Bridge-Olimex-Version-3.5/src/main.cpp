@@ -732,6 +732,7 @@ void proc_fromWDP2CAN()
         // Schienenspannung einschalten
         produceFrame(M_GO);
         proc2Clnts(M_PATTERN, fromGW2Clnt);
+        sendToServer(UDPbuffer, toServer);
         // Meldung an die Clients, dass WDP gestartet wurde
         set_SYSseen(true);
         produceFrame(M_CALL4CONNECTISDONE);
