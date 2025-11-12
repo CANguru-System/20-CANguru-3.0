@@ -1,14 +1,8 @@
 {
   "name": "CANguru",
   "version": "3.0.0",
-  "description": "Library for CANguru devices and decoders",
-  "keywords": ["CANguru", "decoder", "ESP32", "CAN"],
-  "authors": [
-    {
-      "name": "CANguru-System",
-      "url": "https://github.com/CANguru-System"
-    }
-  ],
+  "description": "Library for CANguru decoders",
+  "keywords": ["CANguru", "decoder", "ESP32"],
   "frameworks": "arduino",
   "platforms": "espressif32"
 }
