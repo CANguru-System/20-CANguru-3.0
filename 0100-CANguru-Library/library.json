@@ -1,4 +1,14 @@
 {
-  "name": "0100-CANguru-Library",
-  "version": "0.0.0+20240304115241"
+  "name": "CANguru",
+  "version": "3.0.0",
+  "description": "Library for CANguru devices and decoders",
+  "keywords": ["CANguru", "decoder", "ESP32", "CAN"],
+  "authors": [
+    {
+      "name": "CANguru-System",
+      "url": "https://github.com/CANguru-System"
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif32"
 }

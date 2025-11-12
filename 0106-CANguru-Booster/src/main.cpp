@@ -10,9 +10,8 @@
 
 #include <WiFi.h>
 #include <WiFiClient.h>
-#include <WebServer.h>
 #include "Preferences.h"
-#include "CANguruDefs.h"
+#include <CANguruDefs.h>
 #include <esp_now.h>
 
 #include <Ticker.h>
@@ -192,12 +191,12 @@ void setup()
   systemIsSeen = false;
   bDecoderIsAlive = true;
   // U = I * R
-  log_e("MaxA: %X\r\n", currMaxAmp);
+  log_i("MaxA: %X\r\n", currMaxAmp);
   float volt = float(currMaxAmp) / 10.0 * resistor;
   // I = U / R --> 1.36 Volt / 0.68 Ohm entspricht ca. 2.0 Ampere
-  log_e("Volt: %X\r\n", volt);
+  log_i("Volt: %X\r\n", volt);
   currRAWMaxAmp = volt / 3.3 * 4095;
-  log_e("currRAWMaxAmp: %X\r\n", currRAWMaxAmp);
+  log_i("currRAWMaxAmp: %X\r\n", currRAWMaxAmp);
   // Variablen werden gemäß der eingelesenen Werte gesetzt
   // enable-Eingänge der Booster einschalten
   // ADC capture width is 12Bit.
@@ -346,7 +345,7 @@ void onPrint(boosters booster)
   sendCanFrame();
   if (d0 > 0 || d1 > 0)
   {
-    log_e("B: %X A:%X.%X\r\n", booster, d0, d1);
+    log_i("B: %X A:%X.%X\r\n", booster, d0, d1);
   }
 }
 
