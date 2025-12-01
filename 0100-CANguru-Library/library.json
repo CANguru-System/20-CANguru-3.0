@@ -1,7 +1,0 @@
-{
-  "name": "CANguru",
-  "version": "3.0.0",
-  "description": "Library for CANguru decoders",
-  "frameworks": "arduino",
-  "platforms": "espressif32"
-}

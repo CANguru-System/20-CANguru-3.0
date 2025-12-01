@@ -33,4 +33,3 @@ C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0105-CANguru-Install-
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0105-CANguru-Install-All\InstallGUI\obj\Release\InstallGUI.pdb
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0105-CANguru-Install-All\InstallGUI\bin\Release\QRCoder.dll
 C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0105-CANguru-Install-All\InstallGUI\obj\Release\InstallGUI.csproj.Up2Date
-C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0105-CANguru-Install-All\InstallGUI\obj\Release\InstallGUI.exe.config

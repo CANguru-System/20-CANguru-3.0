@@ -176,25 +176,14 @@ int16_t _width, _height, _lowEnd, middleX, middleY;
 bool bfillRect;
 //#define current_sensor
 
-void setAmpere(uint8_t i, uint8_t d)
+void setAmpere(uint8_t beforePoint0, uint8_t afterpoint0, uint8_t beforePoint1, uint8_t afterpoint1)
 {
-#ifdef current_sensor
-  static char amperes[] = {
-    0x31, 0x3A, 0x00, 0x2E, 0x00, 0x20, // 0x02, 0x04
-    0x32, 0x3A, 0x00, 0x2E, 0x00, 0x20, // 0x08, 0x0A
-    0x33, 0x3A, 0x00, 0x2E, 0x00, 0x20, // 0x0E, 0x10,
-    0x34, 0x3A, 0x00, 0x2E, 0x00, 0x20, 0x00};// 0x14, 0x16
-  const uint8_t nbrLoc[] = {0x02, 0x04, 0x08, 0x0A, 0x0E, 0x10, 0x14, 0x16};
-
-  amperes[nbrLoc[i]] = d + 0x30;
-  if (i == 7)
-  {
-    // zeigt den Stromverbauch eines angeschlossenen Boosters an
-    display9341.fillRect(0, _lowEnd, _width, _height, ILI9341_BLACK);
-    display9341.setCursor(0, _lowEnd);
-    display9341.println(amperes);
-  }
-#endif
+  char currStr[50] = {0};
+  sprintf(currStr, "B0:%X.%X - B1:%X.%X", beforePoint0, afterpoint0, beforePoint1, afterpoint1);
+  log_i("%s", currStr);
+  uint16_t h = display9341.height();
+  display9341.setCursor(x_pos, h/2);
+  display9341.println(currStr);
 }
 
 // liefert die Adresse des Display

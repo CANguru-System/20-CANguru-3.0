@@ -17,12 +17,14 @@
 #include <Ticker.h>
 #include <OTA_include.h>
 
-#include "driver/adc.h"
-
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
+#include "Adafruit_INA3221.h"
+#include <Wire.h>
 
 Preferences preferences;
+// Create an INA3221 object
+// Adafruit_INA3221 ina3221;
 
 // Forward-Declaration
 void sendConfig();
@@ -30,25 +32,11 @@ void generateHash(uint8_t offset);
 void sendPING();
 void sendIP();
 void sendCanFrame();
+void turnPowerOn();
+void turnPowerOff();
 
-enum boosters
-{
-  booster_0,
-  booster_3,
-  booster_6,
-  booster_7,
-  endbooster
-};
-
-adc1_channel_t adc_channels[] = {
-    ADC1_CHANNEL_0, // ADC1 channel 0 is GPIO36
-    ADC1_CHANNEL_3, // ADC1 channel 3 is GPIO39
-    ADC1_CHANNEL_6, // ADC1 channel 6 is GPIO34
-    ADC1_CHANNEL_7  // ADC1 channel 7 is GPIO35
-};
+gpio_num_t enableBoosters = GPIO_NUM_20;
 gpio_num_t enableArr[] = {GPIO_NUM_26, GPIO_NUM_27, GPIO_NUM_14, GPIO_NUM_25};
-
-uint32_t valueArr[] = {0, 0, 0, 0};
 
 // config-Daten
 // Parameter-Kanäle
@@ -78,11 +66,12 @@ boolean bridgeIsConnected2Server;
 #define VERS_HIGH 0x00 // Versionsnummer vor dem Punkt
 #define VERS_LOW 0x01  // Versionsnummer nach dem Punkt
 
-const uint8_t minAmp = 1;
-const uint8_t maxAmp = 20;
-const float resistor = 0.68;
-uint8_t currMaxAmp;
-uint16_t currRAWMaxAmp;
+const uint8_t minAmpLimit = 1;
+const uint8_t maxAmpLimit = 16;
+uint8_t currRawMaxAmp;
+float currMaxAmp;
+float Current_value0 = 0.2;
+float Current_value1 = 0.3;
 
 // Protokollkonstanten
 #define PROT_MM MM_ACC
@@ -90,26 +79,61 @@ uint16_t currRAWMaxAmp;
 
 IPAddress IP;
 
-void turnPowerOn(boosters booster)
+enum boosters
 {
-  digitalWrite(enableArr[booster], HIGH);
-  log_i("Voltage GO - Booster: %d", booster);
-}
-
-void turnPowerOff(boosters booster)
-{
-  digitalWrite(enableArr[booster], LOW);
-  log_i("Voltage STOPP - Booster: %d", booster);
-}
+  booster_0,
+  booster_3,
+  booster_6,
+  booster_7,
+  endbooster
+};
 
 #include "espnow.h"
+
+void turnPowerOn()
+{
+  for (boosters booster = booster_0; booster < endbooster; booster = boosters(booster + 1))
+  {
+    //  digitalWrite(enableBoosters, HIGH);
+    digitalWrite(enableArr[booster], HIGH);
+    // 00 00 47 11 5 00 00 00 00 01 Go an alle
+    opFrame[CANcmd] = SYS_CMD;
+    opFrame[Framelng] = 0x05;
+    opFrame[data4] = SYS_GO;
+    opFrame[data5] = 0x00;
+    opFrame[data6] = 0x00;
+    opFrame[data7] = 0x00;
+    sendTheData();
+    //<The input voltage of ADC will be attenuated extending the range of measurement by about 11 dB (3.55 x)
+  }
+  log_i("Current GO - Booster");
+}
+
+void turnPowerOff()
+{
+  for (boosters booster = booster_0; booster < endbooster; booster = boosters(booster + 1))
+  {
+    //  digitalWrite(enableBoosters, LOW);
+    digitalWrite(enableArr[booster], LOW);
+    // 00 00 47 11 5 00 00 00 00 01 Go an alle
+    opFrame[CANcmd] = SYS_CMD;
+    opFrame[Framelng] = 0x05;
+    opFrame[data4] = SYS_STOPP;
+    opFrame[data5] = 0x00;
+    opFrame[data6] = 0x00;
+    opFrame[data7] = 0x00;
+    sendTheData();
+    //<The input voltage of ADC will be attenuated extending the range of measurement by about 11 dB (3.55 x)
+  }
+  log_i("Current STOPP - Booster");
+}
 
 void setup()
 {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
   Serial.begin(bdrMonitor);
   delay(500);
-  Serial.println("\r\n\r\nC A N g u r u - B O O S T E R");
+  Serial.println("\r\n\r\nC A N g u r u - B O O S T E R V2.0");
   log_i("\n on %s", ARDUINO_BOARD);
   log_i("CPU Frequency = %d Mhz", F_CPU / 1000000);
   //  log_e("ERROR!");
@@ -136,6 +160,15 @@ void setup()
 
   // WLAN -Verbindungen können wieder ausgeschaltet werden
   WiFi.disconnect();
+  // old
+  for (boosters booster = booster_0; booster < endbooster; booster = boosters(booster + 1))
+  {
+    pinMode(enableArr[booster], OUTPUT);
+    //<The input voltage of ADC will be attenuated extending the range of measurement by about 11 dB (3.55 x)
+  }
+
+  //  pinMode(enableBoosters, OUTPUT);
+  turnPowerOff();
 
   // die preferences-Library wird gestartet
   if (preferences.begin(prefName, false))
@@ -155,8 +188,8 @@ void setup()
     // dann wird dieser Anteil übersprungen
     // 47, weil das EEPROM (hoffentlich) nie ursprünglich diesen Inhalt hatte
     // entspricht 2.0 A
-    currMaxAmp = maxAmp;
-    preferences.putUChar("maxAmp", currMaxAmp);
+    currRawMaxAmp = maxAmpLimit;
+    preferences.putUChar("maxAmp", currRawMaxAmp);
     // ota auf "FALSE" setzen
     preferences.putUChar("ota", startWithoutOTA);
     // setup_done auf "TRUE" setzen
@@ -169,7 +202,8 @@ void setup()
     {
       // nach dem ersten Mal Einlesen der gespeicherten Werte
       // Adresse
-      currMaxAmp = readValfromPreferences(preferences, "maxAmp", maxAmp, minAmp, maxAmp);
+      currRawMaxAmp = readValfromPreferences(preferences, "maxAmp", maxAmpLimit, minAmpLimit, maxAmpLimit);
+      currMaxAmp = (float)currRawMaxAmp / 10;
     }
     else
     {
@@ -190,25 +224,29 @@ void setup()
   bridgeIsConnected2Server = false;
   systemIsSeen = false;
   bDecoderIsAlive = true;
-  // U = I * R
-  log_i("MaxA: %X\r\n", currMaxAmp);
-  float volt = float(currMaxAmp) / 10.0 * resistor;
-  // I = U / R --> 1.36 Volt / 0.68 Ohm entspricht ca. 2.0 Ampere
-  log_i("Volt: %X\r\n", volt);
-  currRAWMaxAmp = volt / 3.3 * 4095;
-  log_i("currRAWMaxAmp: %X\r\n", currRAWMaxAmp);
+  /*
+  // Initialize the INA3221
+  if (!ina3221.begin(0x40, &Wire)) { // can use other I2C addresses or buses
+    Serial.println("Failed to find INA3221 chip");
+    while (1)
+      delay(10);
+  }
+  Serial.println("INA3221 Found!");
+
+  ina3221.setAveragingMode(INA3221_AVG_512_SAMPLES);
+
+  // Set shunt resistances for all channels to 0.05 ohms
+  for (uint8_t i = 0; i < 3; i++) {
+    ina3221.setShuntResistance(i, 0.1);
+  }
+
+  // Set a power valid alert to tell us if ALL channels are between the two
+  // limits:
+  ina3221.setPowerValidLimits(3.0 , 15.0); // lower limit - upper limit
+*/
   // Variablen werden gemäß der eingelesenen Werte gesetzt
   // enable-Eingänge der Booster einschalten
   // ADC capture width is 12Bit.
-  adc1_config_width(ADC_WIDTH_BIT_12);
-  for (boosters booster = booster_0; booster < endbooster; booster = boosters(booster + 1))
-  {
-    pinMode(enableArr[booster], OUTPUT);
-    turnPowerOff(booster);
-    valueArr[booster] = 0;
-    //<The input voltage of ADC will be attenuated extending the range of measurement by about 11 dB (3.55 x)
-    adc1_config_channel_atten(adc_channels[booster], ADC_ATTEN_DB_11);
-  }
   // Vorbereiten der Blink-LED
   stillAliveBlinkSetup(LED_BUILTIN);
 }
@@ -223,15 +261,15 @@ void receiveKanalData()
   // Kanalnummer #1 - Aktueller Maximalstrom
   case 1:
   {
-    oldval = currMaxAmp;
-    currMaxAmp = (opFrame[11] << 8) + opFrame[12];
-    if (testMinMax(oldval, currMaxAmp, minAmp, maxAmp))
+    oldval = currRawMaxAmp;
+    currRawMaxAmp = (opFrame[11] << 8) + opFrame[12];
+    if (testMinMax(oldval, currRawMaxAmp, minAmpLimit, maxAmpLimit))
     {
-      preferences.putUChar("maxAmp", currMaxAmp);
+      preferences.putUChar("maxAmp", currRawMaxAmp);
     }
     else
     {
-      currMaxAmp = oldval;
+      currRawMaxAmp = oldval;
     }
   }
   break;
@@ -263,14 +301,14 @@ void sendConfig()
   const uint8_t NumLinesKanal01 = 4 * Kanalwidth;
   uint8_t arrKanal01[NumLinesKanal01] = {
       /*    Konfigirationskanalnummer / Kenner Slider / Unterer Wert (Word) / Oberer Wert (Word) / Aktuelle Einstellung (Word) */
-      /*1*/ Kanal01, slider, 0, minAmp, 0, maxAmp, 0, currMaxAmp,
+      /*1*/ Kanal01, slider, 0, minAmpLimit, 0, maxAmpLimit, 0, currRawMaxAmp,
       /*     Auswahlbezeichnung */
       /*2*/ 'M', 'a', 'x', ' ', 'S', 't', 'r', 'o',
       /*3*/ 'm', (uint8_t)0,
       /* Bezeichnung Start */
-      /*3*/ minAmp / 10 + (uint8_t)'0', '.', minAmp % 10 + (uint8_t)'0', (uint8_t)0,
+      /*3*/ minAmpLimit / 10 + (uint8_t)'0', '.', minAmpLimit % 10 + (uint8_t)'0', (uint8_t)0,
       /* Bezeichnung Ende */
-      /*3*/ maxAmp / 10 + (uint8_t)'0', '.', maxAmp % 10 + (uint8_t)'0', (uint8_t)0,
+      /*3*/ maxAmpLimit / 10 + (uint8_t)'0', '.', maxAmpLimit % 10 + (uint8_t)'0', (uint8_t)0,
       /* Einheit */
       /*4*/ 'A', 'm', 'p', (uint8_t)0, (uint8_t)0, (uint8_t)0};
 
@@ -328,62 +366,69 @@ void sendConfig()
   delay(wait_time_small);
 }
 
-void onPrint(boosters booster)
+void onPrint(float Current_value0, float Current_value1)
 {
-  // Subtract min from max
-  float voltage_value = (valueArr[booster] * 3.3) / 4095.0; // voltage_value = 1.2;
-  uint8_t d0 = (uint8_t)voltage_value;                      // d0 = 1;
-  voltage_value -= d0;                                      // voltage_value = 0.2;
-  voltage_value *= 10.0;                                    // voltage_value = 2.0;
-  uint8_t d1 = (uint8_t)voltage_value;                      // d1 = 2;
-  uint8_t index = 2 * booster + 5;
-  opFrame[index] = d0;     // 0-5  1-7  2-9  3-11
-  opFrame[index + 1] = d1; // 0-6  1-8  2-10  3-12
-
-  opFrame[1] = sendCurrAmp - 1;
-  opFrame[4] = 0x08;
+  float f0 = Current_value0;
+  float f1 = Current_value1;
+  // channel 0
+  //  Subtract min from max
+  uint8_t beforePoint0 = (uint8_t)f0;            // d0 = 1;
+  f0 -= beforePoint0;                            // Current_value = 0.2;
+  uint8_t afterpoint0 = (uint8_t)round(f0 * 10); // d1 = 3;
+  opFrame[data4] = beforePoint0;
+  opFrame[data5] = afterpoint0;
+  // channel 1
+  //  Subtract min from max
+  uint8_t beforePoint1 = (uint8_t)f1;            // beforePoint1 = 2
+  f1 -= beforePoint1;                            // f1 = 0.3;
+  uint8_t afterpoint1 = (uint8_t)round(f1 * 10); // d1 = 3;
+  opFrame[data6] = beforePoint1;
+  opFrame[data7] = afterpoint1;
+  opFrame[CANcmd] = sendCurrAmp - 1;
+  opFrame[Framelng] = 0x08;
+  log_i("B0:%X.%X - B1:%X.%X", beforePoint0, afterpoint0, beforePoint1, afterpoint1);
   sendCanFrame();
-  if (d0 > 0 || d1 > 0)
-  {
-    log_i("B: %X A:%X.%X\r\n", booster, d0, d1);
-  }
 }
 
 // In dieser Schleife verbringt der Decoder die meiste Zeit
 void loop()
 {
+  /*
+  // Display voltage and current (in mA) for all three channels
+  for (uint8_t i = 0; i < 2; i++) {
+    float voltage = ina3221.getBusVoltage(i);
+    float current = ina3221.getCurrentAmps(i) * 1000; // Convert to mA
+
+    Serial.print("Channel ");
+    Serial.print(i);
+    Serial.print(": Voltage = ");
+    Serial.print(voltage, 2);
+    Serial.print(" V, Current = ");
+    Serial.print(current, 2);
+    Serial.println(" mA");
+  }
+
+  Serial.println();
+*/
   static unsigned long lastUpdate = millis(); // last update of position
   const unsigned long updateInterval = 2000;
-  static uint16_t sample[] = {0, 0, 0, 0};
-  const uint16_t samples = 2048;
-  static boosters booster = endbooster;
   if (bridgeIsConnected2Server)
   {
-    booster = boosters(booster + 1);
-    if (booster >= endbooster)
-      booster = booster_0;
-    /*Note: ADC2 pins cannot be used when Wi-Fi is used. So, if you’re using Wi-Fi and you’re having
-    trouble getting the value from an ADC2 GPIO, you may consider using an ADC1 GPIO instead, that
-    should solve your problem.*/
     // value read from the sensor
-    uint16_t currValue = adc1_get_raw(adc_channels[booster]);
-    if (currValue > 10)
-    {
-      valueArr[booster] += currValue;
-      sample[booster]++;
-    }
+    //    uint16_t currValue = adc1_get_raw(adc_channels[booster]);
 
-    //if ((millis() - lastUpdate) > updateInterval)
-    if (sample[booster] >= samples)
+    if ((millis() - lastUpdate) > updateInterval)
     {
-      //  if (valueArr[booster]> 10)
-      //    log_i("%d: %d Samples: %d - %d", booster, valueArr[booster], sample[booster], valueArr[booster]/sample[booster]);
-      sample[booster] = 0;
-      valueArr[booster] /= samples;
-      if (valueArr[booster] > currRAWMaxAmp)
-        turnPowerOff(booster);
-      onPrint(booster);
-      valueArr[booster] = 0;
+      Current_value0 += 0.1;
+      Current_value1 += 0.1;
+      if ((Current_value0 > currMaxAmp) || (Current_value1 > currMaxAmp))
+      {
+        turnPowerOff();
+        delay(1000);
+        Current_value0 = 0.2;
+        Current_value1 = 0.3;
+      }
+      onPrint(Current_value0, Current_value1);
       lastUpdate = millis();
     }
   }

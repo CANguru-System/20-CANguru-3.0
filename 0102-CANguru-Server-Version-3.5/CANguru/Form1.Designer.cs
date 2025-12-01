@@ -33,6 +33,10 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.Telnet = new System.Windows.Forms.TabPage();
             this.groupCommand = new System.Windows.Forms.GroupBox();
+            this.tbAmpBox1 = new System.Windows.Forms.TextBox();
+            this.tbAmpBox0 = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.progressBarPing = new System.Windows.Forms.ProgressBar();
             this.TelnetComm = new System.Windows.Forms.TextBox();
             this.groupInput = new System.Windows.Forms.GroupBox();
@@ -156,6 +160,10 @@
             // 
             // groupCommand
             // 
+            this.groupCommand.Controls.Add(this.tbAmpBox1);
+            this.groupCommand.Controls.Add(this.tbAmpBox0);
+            this.groupCommand.Controls.Add(this.label14);
+            this.groupCommand.Controls.Add(this.label13);
             this.groupCommand.Controls.Add(this.progressBarPing);
             this.groupCommand.Controls.Add(this.TelnetComm);
             this.groupCommand.Location = new System.Drawing.Point(8, 86);
@@ -166,6 +174,42 @@
             this.groupCommand.TabIndex = 9;
             this.groupCommand.TabStop = false;
             this.groupCommand.Text = "Command";
+            // 
+            // tbAmpBox1
+            // 
+            this.tbAmpBox1.Location = new System.Drawing.Point(337, 389);
+            this.tbAmpBox1.Name = "tbAmpBox1";
+            this.tbAmpBox1.Size = new System.Drawing.Size(45, 20);
+            this.tbAmpBox1.TabIndex = 11;
+            this.tbAmpBox1.Text = "0.0";
+            this.tbAmpBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbAmpBox0
+            // 
+            this.tbAmpBox0.Location = new System.Drawing.Point(100, 389);
+            this.tbAmpBox0.Name = "tbAmpBox0";
+            this.tbAmpBox0.Size = new System.Drawing.Size(45, 20);
+            this.tbAmpBox0.TabIndex = 10;
+            this.tbAmpBox0.Text = "0.0";
+            this.tbAmpBox0.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(240, 396);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(66, 13);
+            this.label14.TabIndex = 9;
+            this.label14.Text = "Booster 2/3:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(16, 396);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(69, 13);
+            this.label13.TabIndex = 8;
+            this.label13.Text = "Booster 0 /1:";
             // 
             // progressBarPing
             // 
@@ -181,7 +225,7 @@
             this.TelnetComm.Location = new System.Drawing.Point(5, 20);
             this.TelnetComm.Multiline = true;
             this.TelnetComm.Name = "TelnetComm";
-            this.TelnetComm.Size = new System.Drawing.Size(450, 395);
+            this.TelnetComm.Size = new System.Drawing.Size(450, 359);
             this.TelnetComm.TabIndex = 7;
             // 
             // groupInput
@@ -934,6 +978,10 @@
         private System.Windows.Forms.NumericUpDown cntDecoders;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.Button watchdogBtn;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox tbAmpBox1;
+        private System.Windows.Forms.TextBox tbAmpBox0;
     }
 }
 

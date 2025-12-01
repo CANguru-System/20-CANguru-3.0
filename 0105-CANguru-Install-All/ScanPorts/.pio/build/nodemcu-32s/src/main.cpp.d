@@ -83,6 +83,7 @@
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/log/include/esp_log_internal.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-matrix.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
+ C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/hal/include/hal/uart_types.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/variants/nodemcu-32s/pins_arduino.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch.h \
@@ -121,6 +122,7 @@
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPAddress.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareSerial.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/HWCDC.h \
+ C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/USBCDC.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/Esp.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/spi_flash/include/esp_partition.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/spi_flash/include/esp_flash.h \
@@ -193,6 +195,6 @@
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/cores/esp32/cbuf.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/EEPROM/src/EEPROM.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
- .pio/libdeps/nodemcu-32s/0100-CANguru-Library/OWN_LED.h \
+ .pio/libdeps/nodemcu-32s/CANguru/include/OWN_LED.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/nvs_flash/include/nvs_flash.h \
  C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/nvs_flash/include/nvs.h

@@ -1,0 +1,11 @@
+ESP32C3 Super Mini
+https://done.land/components/microcontroller/families/esp/esp32/developmentboards/esp32-c3/c3supermini/
+
+INA3221
+https://github.com/TobiasPSP/doneland_sources/tree/main/Components/Power/Measuring%20Current/Via%20Shunt/INA3221
+
+3-Channel-Current-Meter
+https://github.com/TobiasPSP/doneland_sources/tree/main/Components/Power/Measuring%20Current/Via%20Shunt/INA3221/3-Channel%20Current%20Meter
+
+INA3221 Library
+https://github.com/TinyuZhao/INA3221/tree/main

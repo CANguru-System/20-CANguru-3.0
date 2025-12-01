@@ -53,7 +53,9 @@ namespace InstallGUI
             maxi,
             formsignal,
             hausbeleuchtung,
-            testdecoder,
+            testSuperMini,
+            testNodeMCU,
+            testXIAO,
             next
         }
 
@@ -128,8 +130,12 @@ namespace InstallGUI
             decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0108-Formsignal-Stepper-ESP32C3\.pio\build\esp32c3_supermini", firmware_source_binFile = @"..\0108-Formsignal-Stepper-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // hausbeleuchtung
             decoderliste.Add(new decoderStruct { directory = @"..\0109-Hausbeleuchtung\Licht", firmware_source_pio = @"..\0109-Hausbeleuchtung\Licht\.pio\build\esp32c3_supermini", firmware_source_binFile = @"..\0109-Hausbeleuchtung\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
-            // testdecoder
+            // testSuperMini
             decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0200-TestDecoder-ESP32C3\.pio\build\esp32c3_supermini", firmware_source_binFile = @"..\0200-TestDecoder-ESP32C3\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
+            // testNodeMCU
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0200-TestDecoder-NodeMCU\.pio\build\nodemcu-32s", firmware_source_binFile = @"..\0200-TestDecoder-NodeMCU\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            // testXIAO
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0200-TestDecoder-XIAO\.pio\build\seeed_xiao_esp32c3", firmware_source_binFile = @"..\0200-TestDecoder-XIAO\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             if (System.IO.File.Exists(credFile))
             {
                 try
@@ -853,7 +859,7 @@ namespace InstallGUI
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
             reportBox.Refresh();
             loaded = firmware.none;
-            no_wifi = true;
+            no_wifi = false;
             mklittlefs.Enabled = false;
             hostBox.Enabled = false;
         }
@@ -874,11 +880,41 @@ namespace InstallGUI
             hostBox.Enabled = false;
         }
 
-        private void tstDecoder_CheckedChanged(object sender, EventArgs e)
+        private void tstSuperMini_CheckedChanged(object sender, EventArgs e)
         {
-            if (!tstDecoder.Checked)
+            if (!tstSuperMini.Checked)
                 return;
-            currDecoder = decoderliste[(int)decoders_native.testdecoder];
+            currDecoder = decoderliste[(int)decoders_native.testSuperMini];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
+            reportBox.Refresh();
+            loaded = firmware.none;
+            no_wifi = false;
+            mklittlefs.Enabled = true;
+            hostBox.Enabled = true;
+        }
+
+        private void tstNodeMCU_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!tstNodeMCU.Checked)
+                return;
+            currDecoder = decoderliste[(int)decoders_native.testNodeMCU];
+            string directoryPath = currDecoder.firmware_source_pio;
+            checkpio(directoryPath, ref currDecoder);
+            reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
+            reportBox.Refresh();
+            loaded = firmware.none;
+            no_wifi = false;
+            mklittlefs.Enabled = true;
+            hostBox.Enabled = true;
+        }
+
+        private void tstXIAO_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!tstXIAO.Checked)
+                return;
+            currDecoder = decoderliste[(int)decoders_native.testXIAO];
             string directoryPath = currDecoder.firmware_source_pio;
             checkpio(directoryPath, ref currDecoder);
             reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
@@ -1011,9 +1047,19 @@ namespace InstallGUI
                 showSource((int)decoders_native.maxi);
                 return;
             }
-            if (tstDecoder.Checked)
+            if (tstSuperMini.Checked)
             {
-                showSource((int)decoders_native.testdecoder);
+                showSource((int)decoders_native.testSuperMini);
+                return;
+            }
+            if (tstNodeMCU.Checked)
+            {
+                showSource((int)decoders_native.testNodeMCU);
+                return;
+            }
+            if (tstSuperMini.Checked)
+            {
+                showSource((int)decoders_native.testXIAO);
                 return;
             }
         }
@@ -1078,9 +1124,25 @@ namespace InstallGUI
                 reportBox.Refresh();
                 return;
             }
-            if (tstDecoder.Checked)
+            if (tstSuperMini.Checked)
             {
-                currDecoder = decoderliste[(int)decoders_native.testdecoder];
+                currDecoder = decoderliste[(int)decoders_native.testSuperMini];
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
+                reportBox.Refresh();
+                return;
+            }
+            if (tstNodeMCU.Checked)
+            {
+                currDecoder = decoderliste[(int)decoders_native.testNodeMCU];
+                checkpio(currDecoder.firmware_source_pio, ref currDecoder);
+                reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
+                reportBox.Refresh();
+                return;
+            }
+            if (tstXIAO.Checked)
+            {
+                currDecoder = decoderliste[(int)decoders_native.testXIAO];
                 checkpio(currDecoder.firmware_source_pio, ref currDecoder);
                 reportBox.Text = "Firmware wird geladen von " + currDecoder.firmware_source_pio;
                 reportBox.Refresh();

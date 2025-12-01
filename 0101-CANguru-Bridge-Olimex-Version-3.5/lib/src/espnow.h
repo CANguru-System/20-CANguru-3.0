@@ -119,9 +119,12 @@ struct slaveInfoStruct
   aliveStatus decoderIsAlive;
   uint64_t intValue;
 };
-
+// setzt die Variable BoosterFound
+void setBoosterFound(bool found);
+// gibt den Wert der Variable BoosterFound zurück
+bool getBoosterFound();
 // speichert die Stromstaerke in das array amperes
-void setAmpere(uint8_t i, uint8_t d);
+void setAmpere(uint8_t beforePoint0, uint8_t afterpoint0, uint8_t beforePoint1, uint8_t afterpoint1);
 // identifiziert einen Slave anhand seiner UID
 uint8_t matchUID(uint8_t *buffer);
 // ESPNow wird initialisiert

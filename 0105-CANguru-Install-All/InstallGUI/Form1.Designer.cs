@@ -45,9 +45,11 @@ namespace InstallGUI
             this.label4 = new System.Windows.Forms.Label();
             this.processBox = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tstXIAO = new System.Windows.Forms.RadioButton();
+            this.tstNodeMCU = new System.Windows.Forms.RadioButton();
             this.rbMaxi = new System.Windows.Forms.RadioButton();
             this.rbBridge = new System.Windows.Forms.RadioButton();
-            this.tstDecoder = new System.Windows.Forms.RadioButton();
+            this.tstSuperMini = new System.Windows.Forms.RadioButton();
             this.rbLight = new System.Windows.Forms.RadioButton();
             this.rbBooster = new System.Windows.Forms.RadioButton();
             this.rbFormsignal = new System.Windows.Forms.RadioButton();
@@ -194,20 +196,46 @@ namespace InstallGUI
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.tstXIAO);
+            this.groupBox1.Controls.Add(this.tstNodeMCU);
             this.groupBox1.Controls.Add(this.rbMaxi);
             this.groupBox1.Controls.Add(this.rbBridge);
-            this.groupBox1.Controls.Add(this.tstDecoder);
+            this.groupBox1.Controls.Add(this.tstSuperMini);
             this.groupBox1.Controls.Add(this.rbLight);
             this.groupBox1.Controls.Add(this.rbBooster);
             this.groupBox1.Controls.Add(this.rbFormsignal);
             this.groupBox1.Controls.Add(this.rbstepper);
             this.groupBox1.Controls.Add(this.rbgleisbesetztmelder);
-            this.groupBox1.Location = new System.Drawing.Point(20, 362);
+            this.groupBox1.Location = new System.Drawing.Point(20, 352);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(354, 129);
+            this.groupBox1.Size = new System.Drawing.Size(354, 145);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Decoder";
+            // 
+            // tstXIAO
+            // 
+            this.tstXIAO.AutoSize = true;
+            this.tstXIAO.Location = new System.Drawing.Point(190, 124);
+            this.tstXIAO.Name = "tstXIAO";
+            this.tstXIAO.Size = new System.Drawing.Size(134, 17);
+            this.tstXIAO.TabIndex = 5;
+            this.tstXIAO.TabStop = true;
+            this.tstXIAO.Text = "Test-Decoder C3-XIAO";
+            this.tstXIAO.UseVisualStyleBackColor = true;
+            this.tstXIAO.CheckedChanged += new System.EventHandler(this.tstXIAO_CheckedChanged);
+            // 
+            // tstNodeMCU
+            // 
+            this.tstNodeMCU.AutoSize = true;
+            this.tstNodeMCU.Location = new System.Drawing.Point(18, 124);
+            this.tstNodeMCU.Name = "tstNodeMCU";
+            this.tstNodeMCU.Size = new System.Drawing.Size(143, 17);
+            this.tstNodeMCU.TabIndex = 6;
+            this.tstNodeMCU.TabStop = true;
+            this.tstNodeMCU.Text = "Test-Decoder NodeMCU";
+            this.tstNodeMCU.UseVisualStyleBackColor = true;
+            this.tstNodeMCU.CheckedChanged += new System.EventHandler(this.tstNodeMCU_CheckedChanged);
             // 
             // rbMaxi
             // 
@@ -233,17 +261,17 @@ namespace InstallGUI
             this.rbBridge.UseVisualStyleBackColor = true;
             this.rbBridge.CheckedChanged += new System.EventHandler(this.rbBridge_CheckedChanged);
             // 
-            // tstDecoder
+            // tstSuperMini
             // 
-            this.tstDecoder.AutoSize = true;
-            this.tstDecoder.Location = new System.Drawing.Point(190, 101);
-            this.tstDecoder.Name = "tstDecoder";
-            this.tstDecoder.Size = new System.Drawing.Size(139, 17);
-            this.tstDecoder.TabIndex = 2;
-            this.tstDecoder.TabStop = true;
-            this.tstDecoder.Text = "Test-Decoder ESP32C3";
-            this.tstDecoder.UseVisualStyleBackColor = true;
-            this.tstDecoder.CheckedChanged += new System.EventHandler(this.tstDecoder_CheckedChanged);
+            this.tstSuperMini.AutoSize = true;
+            this.tstSuperMini.Location = new System.Drawing.Point(190, 101);
+            this.tstSuperMini.Name = "tstSuperMini";
+            this.tstSuperMini.Size = new System.Drawing.Size(159, 17);
+            this.tstSuperMini.TabIndex = 2;
+            this.tstSuperMini.TabStop = true;
+            this.tstSuperMini.Text = "Test-Decoder C3-Super Mini";
+            this.tstSuperMini.UseVisualStyleBackColor = true;
+            this.tstSuperMini.CheckedChanged += new System.EventHandler(this.tstSuperMini_CheckedChanged);
             // 
             // rbLight
             // 
@@ -414,7 +442,7 @@ namespace InstallGUI
             // 
             this.groupBox3.Controls.Add(this.pio);
             this.groupBox3.Controls.Add(this.binFile);
-            this.groupBox3.Location = new System.Drawing.Point(23, 501);
+            this.groupBox3.Location = new System.Drawing.Point(23, 505);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(351, 22);
             this.groupBox3.TabIndex = 26;
@@ -479,7 +507,7 @@ namespace InstallGUI
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "CANguru-Installationsprogramm 1.25";
+            this.Text = "CANguru-Installationsprogramm 1.50";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -523,13 +551,15 @@ namespace InstallGUI
         private System.Windows.Forms.PictureBox eyeicon;
         private RadioButton rbMaxi;
         private RadioButton rbFormsignal;
-        private RadioButton tstDecoder;
+        private RadioButton tstSuperMini;
         private Button mklittlefs;
         private TextBox hostBox;
         private Label label7;
         private GroupBox groupBox3;
         private RadioButton pio;
         private RadioButton binFile;
+        private RadioButton tstXIAO;
+        private RadioButton tstNodeMCU;
     }
 }
 

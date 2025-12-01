@@ -62,7 +62,6 @@ namespace CANguruX
         IniFile ini = new IniFile();
 
         Thread threadCAN;
-        Thread threadWDP;
         // UDP to CAN
         public UdpClient CANServer;
         public UdpClient CANClient;
@@ -1001,9 +1000,17 @@ namespace CANguruX
                                 case 0x00: // System
                                     {
                                         // Volt an byte[] VOLT_GO = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 };
-                                        // Volt aaus byte[] VOLT_GO = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-                                        if (content[9] == 1)
+                                        // Volt aus byte[] VOLT_STOP = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+                                        if (content[9] == 0x00)
+                                        {
+                                            btnVolt.Text = "Gleisspannung EIN";
+                                            this.tbAmpBox0.Invoke(new MethodInvoker(() => this.tbAmpBox0.Text = "STOPP"));
+                                            this.tbAmpBox1.Invoke(new MethodInvoker(() => this.tbAmpBox1.Text = "STOPP"));
+                                        }
+                                        if (content[9] == 0x01)
+                                        {
                                             btnVolt.Text = "Gleisspannung AUS";
+                                        }
                                     }
                                     break;
                                 case 0x0F: // ReadConfig_R:
@@ -1420,6 +1427,16 @@ namespace CANguruX
                                         CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
                                         CANClient.Send(LOK_BUFFER, Cnames.lngFrame);
                                     }
+                                    break;
+                                case 0x94:
+                                    byte ampbefore0 = content[9];
+                                    byte ampbeafter0 = content[10];
+                                    String amp0 = (ampbefore0.ToString() + "." + ampbeafter0.ToString());
+                                    byte ampbefore1 = content[11];
+                                    byte ampbeafter1 = content[12];
+                                    String amp1 = (ampbefore1.ToString() + "." + ampbeafter1.ToString());
+                                    this.tbAmpBox0.Invoke(new MethodInvoker(() => this.tbAmpBox0.Text = amp0));
+                                    this.tbAmpBox1.Invoke(new MethodInvoker(() => this.tbAmpBox1.Text = amp1));
                                     break;
                             }
                         }

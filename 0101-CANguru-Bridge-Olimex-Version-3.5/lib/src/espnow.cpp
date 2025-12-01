@@ -22,6 +22,7 @@ uint8_t slaveCnt;
 uint8_t slaveCurr;
 uint8_t nbrSlavesAreReady;
 uint8_t wantedscanResults;
+bool BoosterFound;
 
 struct macType
 {
@@ -52,6 +53,16 @@ uint8_t matchUID(uint8_t *buffer)
       return s;
   }
   return 0xFF;
+}
+
+void setBoosterFound(bool found)
+{
+  BoosterFound = found;
+}
+
+bool getBoosterFound()
+{
+  return BoosterFound;
 }
 
 // ESPNow wird initialisiert
@@ -383,7 +394,6 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status)
 void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
 {
   uint8_t Clntbuffer[CAN_FRAME_SIZE]; // buffer to hold incoming packet,
-  memcpy(Clntbuffer, data, data_len);
   if ((data_len == macLen) || (data_len == macLen + 1))
   {
     // Rückmeldung der slaves, nachdem sie ihre UID festgelegt haben
@@ -391,17 +401,29 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     nbrSlavesAreReady++;
     return;
   }
-/*  if (data_len == macLen + 1)
-  {
-    // Rückmeldung der slaves, nachdem sie ihre UID festgelegt haben
-    // mit nbrSlavesAreReady wird die Anzahl der Rückmeldungen gezählt
-    nbrSlavesAreReady++;
-    log_i("macLen+1 %d", nbrSlavesAreReady);
-    return;
-  }*/
+  memcpy(Clntbuffer, data, data_len);
   switch (data[0x01])
   {
+  case SYS_CMD:
+    sendToServer(Clntbuffer, fromClnt);
+    Serial.println(data[data4]);
+    if (data[data4] == SYS_GO)
+    {
+      displayLCD("System GO!");
+      sendToServer(Clntbuffer, fromClnt);
+    }
+    if (data[data4] == SYS_STOPP)
+    {
+      displayLCD("System STOPP!");
+      sendToServer(Clntbuffer, fromClnt);
+    }
+    break;
   case PING_R:
+    if (Clntbuffer[data7] == DEVTYPE_CANBOOSTER)
+    {
+      BoosterFound = true;
+      displayLCD("Booster found!");
+    }
     sendToServer(Clntbuffer, fromClnt);
     break;
   case CONFIG_Status_R:
@@ -426,10 +448,8 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     }
     break;
   case sendCurrAmp:
-    for (uint8_t i = 0x05; i < 0x05 + 0x08; i++)
-    {
-      setAmpere(i - 0x05, data[i]);
-    }
+    setAmpere(data[data4], data[data5], data[data6], data[data7]);
+    sendToServer(Clntbuffer, fromClnt);
     break;
   case BlinkAlive_R:
     setAlive(data[0x06], isAlive);

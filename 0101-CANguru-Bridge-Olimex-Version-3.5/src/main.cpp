@@ -476,7 +476,7 @@ void proc_fromCAN2WDPandServer()
       sendToWDPfromCAN(UDPbuffer);
       //      sendOutTCPfromCAN(UDPbuffer);
       delay(10);
-      if (UDPbuffer[12] == DEVTYPE_GB && get_slaveCnt() == 0)
+      if (UDPbuffer[data7] == DEVTYPE_GB && get_slaveCnt() == 0)
       {
         printMSG(NoSlaves);
         displayLCD(" -- No Slaves!");
@@ -827,6 +827,7 @@ void setup()
   scanningFinished = false;
   allLoksAreReported = false;
   GleisboxFound = false;
+  setBoosterFound(false);
   watchdogEnabled = true;
   setallSlavesAreReadyToZero();
   // start the telnetClient
@@ -873,7 +874,10 @@ void goSYS()
 {
   printMSG(Decodergelesen);
   printMSG(StartTrainApplication);
-  drawCircle = true;
+  if (getBoosterFound())
+    drawCircle = false;
+    else
+    drawCircle = true;
   log_i("Server has started");
 }
 
@@ -1009,7 +1013,10 @@ void loop()
     proc_fromServer2CANandClnt();
     proc_fromCAN2WDPandServer();
     proc_fromWDP2CAN();
-    fillTheCircle();
+    if (getBoosterFound())
+      drawCircle = false;
+    else
+      fillTheCircle();
     break;
   default:
     break;
