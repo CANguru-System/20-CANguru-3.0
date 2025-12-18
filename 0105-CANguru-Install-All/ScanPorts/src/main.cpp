@@ -22,15 +22,23 @@ void netzwerkScan()
   //  WiFi.mode(WIFI_STA);
   //  WiFi.disconnect();
   // WiFi.scanNetworks will return the number of networks found
-  int n = WiFi.scanNetworks();
+  uint8_t m = 0;
+  uint8_t n = WiFi.scanNetworks();
   if (n == 0)
   {
     printf("Keine Netzwerke gefunden!\r\n");
   }
   else
   {
-    printf("&%dA\r\n", n);
     for (int i = 0; i < n; ++i)
+    {
+      // Drucke SSID and RSSI für jedes gefundene Netzwerk, außer
+      if (!WiFi.SSID(i).startsWith("CNgrSLV"))
+        m++;
+    }
+
+    printf("&%dA\r\n", m);
+    for (int j = 0; j < n; ++j)
     {
       /*
       RSSI Value Range	WiFi Signal Strength
@@ -42,7 +50,8 @@ void netzwerkScan()
       RSSI < – 90 dBm	 Extremely weak signal (unusable)
       */
       // Drucke SSID and RSSI für jedes gefundene Netzwerk
-      printf("%s (%d)\r\n", WiFi.SSID(i).c_str(), WiFi.RSSI(i));
+      if (!WiFi.SSID(j).startsWith("CNgrSLV"))
+        printf("%s (%d)\r\n", WiFi.SSID(j).c_str(), WiFi.RSSI(j));
       delay(10);
     }
   }

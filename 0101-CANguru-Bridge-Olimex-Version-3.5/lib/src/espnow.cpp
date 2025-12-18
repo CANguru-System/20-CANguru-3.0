@@ -358,16 +358,18 @@ void sendTheData(uint8_t slave, const uint8_t *data, size_t len)
   delay(5);
   if (esp_now_add_peer(slaveInfo[slave].peer) == ESP_OK)
   {
+    delay(5);
     esp_err_t sendResult = esp_now_send(slaveInfo[slave].slave.peer_addr, data, len);
     if (sendResult != ESP_OK)
     {
       printESPNowError(sendResult);
     }
-
+    delay(5);
     esp_now_del_peer(slaveInfo[slave].slave.peer_addr);
+    delay(5);
   }
   else
-    log_i("esp_now_add_peer faild Slave: %d", slave);
+    log_i("esp_now_add_peer failed Slave: %d", slave);
 }
 
 void setallSlavesAreReadyToZero()

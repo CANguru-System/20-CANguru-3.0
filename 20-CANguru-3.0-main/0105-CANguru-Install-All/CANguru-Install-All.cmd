@@ -1,0 +1,1 @@
+start  "" "%CD%\InstallGUI\bin\Release\InstallGUI.exe"
