@@ -1,0 +1,47 @@
+[Verbose]
+verbose=1
+[Neuanmeldezaehler]
+Counter=8
+[Watchdog]
+watchdog=0
+[IP-address]
+IPCAN=192.168.178.134
+[Decoder]
+Decoder000=192.168.178.175/CANguru Stepper
+Decoder028=192.168.178.141/CANguru Stepper
+Decoder015=192.168.178.210/CANguru Stepper
+Decoder007=192.168.178.040/CANguru Stepper
+Decoder025=192.168.178.161/Stepper
+Decoder022=192.168.178.194/CANguru Stepper
+Decoder019=192.168.178.147/CANguru Stepper
+Decoder009=192.168.178.062/CANguru Stepper
+Decoder026=192.168.178.065/CANguru Stepper
+Decoder023=192.168.178.095/CANguru Booster
+Decoder008=192.168.178.190/CANguru Stepper
+Decoder014=192.168.178.080/CANguru Stepper
+Decoder030=192.168.178.130/CANguru Stepper
+Decoder027=192.168.178.134/CANguru Stepper
+Decoder013=192.168.178.197/CANguru Stepper
+Decoder005=192.168.178.142/CANguru Stepper
+Decoder029=192.168.178.174/CANguru Stepper
+DecoderCnt=34
+Decoder003=192.168.178.066/CANguru Besetzt-Melder
+Decoder006=192.168.178.208/CANguru Stepper
+Decoder002=192.168.178.209/CANguru Stepper
+Decoder018=192.168.178.136/CANguru Stepper
+expectedDecoders=1
+Decoder001=192.168.178.205/CANguru Stepper
+Decoder031=192.168.178.178/CANguru Stepper
+Decoder017=192.168.178.213/CANguru Stepper
+Decoder004=192.168.178.054/CANguru Besetzt-Melder
+Decoder033=192.168.178.177/CANguru Stepper
+Decoder010=192.168.178.046/CANguru Besetzt-Melder
+Decoder012=192.168.178.183/CANguru Stepper
+Decoder020=192.168.178.206/CANguru Stepper
+Decoder016=192.168.178.036/CANguru Stepper
+Decoder024=192.168.178.201/CANguru Stepper
+Decoder011=192.168.178.211/CANguru Stepper
+Decoder021=192.168.178.084/CANguru Stepper
+Decoder032=192.168.178.203/CANguru Stepper
+[Lok-Adresse]
+LocID=2

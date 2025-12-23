@@ -229,10 +229,10 @@ void sendToServer(uint8_t *buffer, CMD dest)
   UDPToServer.write(buffer, CAN_FRAME_SIZE);
   UDPToServer.endPacket();
   buffer[0] = 0x00;
-  log_d("");
+  //  log_d("");
   if (buffer[Framelng] >= 0x0F)
     buffer[Framelng] -= 0x0F;
-  log_buf_d(buffer, CAN_FRAME_SIZE) ;
+  //  log_buf_d(buffer, CAN_FRAME_SIZE) ;
   // auf Quittung warten
   if (dest == toServer)
   {
@@ -598,7 +598,7 @@ void proc_fromServer2CANandClnt()
     // read the packet into packetBufffer
     UDPFromServer.read(UDPbuffer, CAN_FRAME_SIZE);
     log_d("");
-    log_buf_d(UDPbuffer, CAN_FRAME_SIZE) ;
+    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
     // send received data via ESPNOW and CAN
     switch (UDPbuffer[0x1])
     {
@@ -613,7 +613,7 @@ void proc_fromServer2CANandClnt()
     case 0x06:
     case SEND_IP:
     case CONFIG_Status:
-    if (UDPbuffer[0x01] == SEND_IP)
+      if (UDPbuffer[0x01] == SEND_IP)
       {
         log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
       }
@@ -722,6 +722,8 @@ void proc_fromWDP2CAN()
     // send received data to CAN
     memcpy(&CANbuffer, &UDPbuffer, CAN_FRAME_SIZE);
     proc2CAN(CANbuffer, fromWDP2CAN);
+    log_d("from WDP");
+    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
     switch (UDPbuffer[CANcmd])
     {
     case SYS_CMD:
@@ -761,8 +763,7 @@ void proc_fromWDP2CAN()
     case Lok_Speed:
     case Lok_Direction:
     case Lok_Function:
-      // send received data via wifi to clients
-      proc2Clnts(UDPbuffer, fromWDP2CAN);
+      //    proc2Clnts(UDPbuffer, fromWDP2CAN);
       break;
     case SWITCH_ACC:
       // send received data via wifi to clients
@@ -876,7 +877,7 @@ void goSYS()
   printMSG(StartTrainApplication);
   if (getBoosterFound())
     drawCircle = false;
-    else
+  else
     drawCircle = true;
   log_i("Server has started");
 }

@@ -2,13 +2,13 @@
 version
  .minor=3
 session
- .id=06
+ .id=08
 lokomotive
  .name=BR 260
- .uid=0x4001
- .adresse=0x01
+ .uid=0x4017
+ .adresse=0x17
  .typ=mfx
- .sid=0x01
+ .sid=0x17
  .mfxuid=0xF9FACD69
  .icon=BR 260
  .av=60
@@ -56,11 +56,62 @@ lokomotive
  .funktionen
  ..nr=15
 lokomotive
+ .name=KOEF
+ .uid=0x17
+ .adresse=0x17
+ .typ=mm2_dil8
+ .sid=0xRRRR
+ .icon=KOEF
+ .av=60
+ .bv=40
+ .volume=100
+ .progmask=0x3
+ .vmin=13
+ .vmax=100
+ .xprot=2
+ .funktionen
+ ..nr=0
+ ..typ=1
+ .funktionen
+ ..nr=1
+ ..typ=51
+ .funktionen
+ ..nr=2
+ ..typ=52
+ .funktionen
+ ..nr=3
+ ..typ=53
+ .funktionen
+ ..nr=4
+ ..typ=54
+ .funktionen
+ ..nr=5
+ .funktionen
+ ..nr=6
+ .funktionen
+ ..nr=7
+ .funktionen
+ ..nr=8
+ .funktionen
+ ..nr=9
+ .funktionen
+ ..nr=10
+ .funktionen
+ ..nr=11
+ .funktionen
+ ..nr=12
+ .funktionen
+ ..nr=13
+ .funktionen
+ ..nr=14
+ .funktionen
+ ..nr=15
+lokomotive
  .name=DB 640 017-9
- .uid=0x4001
- .adresse=0x01
+ .uid=0x4002
+ .adresse=0x02
  .typ=mfx
- .sid=0x01
+ .sid=0x02
  .mfxuid=0x7CFDC941
  .icon=DB 640 017-9
  .av=60

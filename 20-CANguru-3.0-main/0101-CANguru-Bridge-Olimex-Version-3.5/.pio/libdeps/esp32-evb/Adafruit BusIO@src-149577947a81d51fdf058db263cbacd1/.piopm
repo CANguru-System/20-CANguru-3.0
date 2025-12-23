@@ -1,0 +1,1 @@
+{"type": "library", "name": "Adafruit BusIO", "version": "1.17.4+sha.b59fedb", "spec": {"owner": null, "id": null, "name": "20-CANguru-3", "requirements": null, "uri": "git+https://github.com/CANguru-System/20-CANguru-3.0.git"}}
