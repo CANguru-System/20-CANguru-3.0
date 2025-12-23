@@ -1587,16 +1587,17 @@ namespace CANguruX
             int decs = CANElemente.Items.Count;
             ini.AddSection("Decoder").AddKey("DecoderCnt").Value = decs.ToString();
             ini.AddSection("Decoder").AddKey("expectedDecoders").Value = cntDecoders.Value.ToString();
-            byte index = 0;
-            for (byte d = 0; d < allDecoders.Count; d++)
+            int cnt = allDecoders.Count;
+            int index = 0;
+            for (byte d = 0; d < cnt; d++)
             {
-                if ((allDecoders.Count - lastDecoders) == 0)
+                if ((cnt - lastDecoders) == 0)
                     break;
-                CANElemente.SetSelected(index, true);
                 // teile[0]: ip
                 // teile[1]: name
                 if (allDecoders[d].UID != "")
                 {
+                    CANElemente.SetSelected(index, true);
                     ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", index))).Value = allDecoders[d].ipAdr + Cnames.delimiter + allDecoders[d].name;
                     index++;
                     //                ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = makeIPAddress(d, false);
