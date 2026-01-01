@@ -2,14 +2,15 @@
 version
  .minor=3
 session
- .id=34
+ .id=05
 lokomotive
- .name=KOEF
- .uid=0x17
- .adresse=0x17
- .typ=mm2_dil8
- .sid=0xRRRR
- .icon=KOEF
+ .name=BR 260
+ .uid=0x4003
+ .adresse=0x03
+ .typ=mfx
+ .sid=0x03
+ .mfxuid=0xF9FACD69
+ .icon=BR 260
  .av=60
  .bv=40
  .volume=100

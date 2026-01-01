@@ -96,7 +96,6 @@ void turnPowerOn()
 
 void turnPowerOff()
 {
-  return;
   digitalWrite(enableBoosters, LOW);
   // 00 00 47 11 5 00 00 00 00 01 Go an alle
   opFrame[CANcmd] = SYS_CMD;

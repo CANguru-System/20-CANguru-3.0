@@ -23,6 +23,7 @@ uint8_t slaveCurr;
 uint8_t nbrSlavesAreReady;
 uint8_t wantedscanResults;
 bool BoosterFound;
+uint8_t BoosterUID[] = {0x00, 0x00, 0x00, 0x00};
 
 struct macType
 {
@@ -63,6 +64,11 @@ void setBoosterFound(bool found)
 bool getBoosterFound()
 {
   return BoosterFound;
+}
+
+void copyBoosterUID(uint8_t *buffer)
+{
+  memccpy(&buffer[5], BoosterUID, 0, 4);
 }
 
 // ESPNow wird initialisiert
@@ -423,7 +429,8 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
   case PING_R:
     if (Clntbuffer[data7] == DEVTYPE_CANBOOSTER)
     {
-      BoosterFound = true;
+      setBoosterFound(true);
+      memccpy(BoosterUID, &Clntbuffer[data4], 0, 4);
       displayLCD("Booster found!");
     }
     sendToServer(Clntbuffer, fromClnt);

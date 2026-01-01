@@ -875,7 +875,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "CANguru-Server 3.56";
+            this.Text = "CANguru-Server 4.1";
             this.tabControl1.ResumeLayout(false);
             this.Telnet.ResumeLayout(false);
             this.groupCommand.ResumeLayout(false);

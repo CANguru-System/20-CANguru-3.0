@@ -123,6 +123,8 @@ struct slaveInfoStruct
 void setBoosterFound(bool found);
 // gibt den Wert der Variable BoosterFound zurück
 bool getBoosterFound();
+// copiert die UID des Boosters
+void copyBoosterUID(uint8_t *buffer);
 // speichert die Stromstaerke in das array amperes
 void setAmpere(uint8_t beforePoint0, uint8_t afterpoint0, uint8_t beforePoint1, uint8_t afterpoint1);
 // identifiziert einen Slave anhand seiner UID

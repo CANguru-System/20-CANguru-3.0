@@ -386,9 +386,10 @@ bool loadCS2LocFile()
 uint8_t getLocID()
 {
   bool found = false;
+  produceFrame(M_CNTLOKBUFFER);
   // noch keine Lok registriert ?
     log_d("getLocID0 received");
-  if (cntLoks == 0)
+//  if (cntLoks == 0)
     return locid;
   // vergleiche die erkannte mit allen bekannten Loks
   for (uint8_t lok = 0; lok < cntLoks; lok++)
@@ -647,6 +648,7 @@ void proc_fromServer2CANandClnt()
     case MfxProc:
       // received next locid
       locid = UDPbuffer[0x05];
+    log_d("MfxProc %X received", locid );
       produceFrame(M_SIGNAL);
       sendToServer(M_PATTERN, fromCAN);
       break;
@@ -710,6 +712,18 @@ log_d("Lok %d Adr %X", Lokno, LokBuffer[Lokno].adr);
         }
       }
       break;
+    case switchBooster:
+  if (getBoosterFound())
+  {
+    // Switch booster logic here
+    if (UDPbuffer[5] == 0x01)
+      log_d("Booster ON command received");
+    else
+      log_d("Booster OFF command received");
+      copyBoosterUID(UDPbuffer);
+      send2OneClient(UDPbuffer);
+  }
+    break;
     case restartBridge:
       proc2Clnts(UDPbuffer, fromGW2Clnt);
       ESP.restart();

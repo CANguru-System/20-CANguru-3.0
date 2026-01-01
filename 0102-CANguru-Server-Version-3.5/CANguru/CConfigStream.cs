@@ -28,7 +28,7 @@ namespace CANguruX
         }
         static configstruct[] lokconfig;
         byte Counter;
-        byte nextLocid;
+        public byte nextLocid;
 
         public const byte minCounter = 0x00;
         public const byte maxCounter = 0xF0;

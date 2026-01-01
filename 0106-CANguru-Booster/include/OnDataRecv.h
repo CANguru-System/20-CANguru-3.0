@@ -87,6 +87,16 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
       preferences.putUChar("ota", startWithOTA);
       ESP.restart();
       break;
+    case switchBooster:
+    if (opFrame[data0] == 0x01)
+      {
+        turnPowerOn();
+      }
+      else
+      {
+        turnPowerOff();
+      }
+      break;
     }
   }
   break;

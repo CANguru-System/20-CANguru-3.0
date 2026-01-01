@@ -358,7 +358,6 @@ namespace CANguruX
 
         private void Form1_Load(object sender, System.EventArgs e)
         {
-            byte[] MFX_LOCID = { 0x00, 0x50, 0x03, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] MFX_COUNTER = { 0x00, 0x00, 0x03, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00 };
             // Set the Minimum, Maximum, and initial Value.
             CV.Value = 1;
@@ -384,10 +383,6 @@ namespace CANguruX
             numLocID.Value = ConfigStream.getnextLocid();
             numLocID.Maximum = ConfigStream.getMaxLocID();
             numLocID.Minimum = ConfigStream.getMinLocID();
-            // an die Bridge melden
-            MFX_LOCID[5] = ConfigStream.getnextLocid();
-            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-            CANClient.Send(MFX_LOCID, Cnames.lngFrame);
             //
             // Set the Minimum, Maximum, and initial Value.
             numUpDnDecNumber.Maximum = 255;
@@ -914,7 +909,6 @@ namespace CANguruX
         {
             byte[] tmpbyte6 = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] pattern = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-            byte[] MFX_LOCID = { 0x00, 0x50, 0x03, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] LOK_BUFFER = { 0x00, 0x93, 0x03, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] RECEIVED_MSG = { 0x00, 0xFF, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             byte[] contenttmp = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -1273,12 +1267,9 @@ namespace CANguruX
                                         }
                                         // Meldung ausgeben
                                         this.mfxProgress.Invoke(new MethodInvoker(() => this.mfxProgress.Text = "Fertig!"));
-                                        // locID auf jeden Fall an die Bridge melden
-                                        this.numLocID.Invoke(new MethodInvoker(() => this.numLocID.Value = ConfigStream.getnextLocid()));
-                                        MFX_LOCID[5] = ConfigStream.getnextLocid();
-                                        ChangeMyText(this.TelnetComm, doMsg4TctWindow(cmd /*CMD.fromCAN*/, MFX_LOCID));
+                                        byte[] BOOSTER_STOP = { 0x00, 0x96, 0x03, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
                                         CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-                                        CANClient.Send(MFX_LOCID, Cnames.lngFrame);
+                                        CANClient.Send(BOOSTER_STOP, Cnames.lngFrame);
                                     }
                                     break;
                                 //#define LoadCS2Data 0x56
@@ -1449,16 +1440,29 @@ namespace CANguruX
             }
         }
 
+        private void SendCurrAdr()
+        {
+            byte[] MFX_LOCID = { 0x00, 0x50, 0x03, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            // aktuelle Schienenadresse übermitteln
+            MFX_LOCID[5] = ConfigStream.getnextLocid();
+            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+            CANClient.Send(MFX_LOCID, Cnames.lngFrame);
+        }
+
         private void mfxLoks_Click(object sender, EventArgs e)
         {
+            SendCurrAdr();
+            byte[] MFX_STOP = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] BOOSTER_STOP = { 0x00, 0x96, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             // Gleisstrom abschalten
             this.mfxProgress.Invoke(new MethodInvoker(() => this.mfxProgress.Text = "MFX-Lok wird gesucht"));
-            byte[] MFX_STOP = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             ChangeMyText(this.TelnetComm, doMsg4TctWindow(CMD.fromGW, MFX_STOP));
             CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
             CANClient.Send(MFX_STOP, Cnames.lngFrame);
             elapsedsec = 0;
             Seta1secTimer();
+            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+            CANClient.Send(BOOSTER_STOP, Cnames.lngFrame);
             setProgressMFXBar((int)(14));
         }
 
@@ -1486,7 +1490,8 @@ namespace CANguruX
             switch (elapsedsec)
             {
                 case 1:
-                    // Neuanmeldezähler erhöhen
+                    // Neuanmeldezähler abfragen, setzen und erhöhen
+                    ConfigStream.setCounter((byte)(numCounter.Value));
                     ConfigStream.incCounter();
                     this.numCounter.Invoke(new MethodInvoker(() => this.numCounter.Value = ConfigStream.getCounter()));
                     for (byte uid = 0; uid < 4; uid++)
@@ -1560,6 +1565,7 @@ namespace CANguruX
         private void numLocID_ValueChanged(object sender, EventArgs e)
         {
             ConfigStream.setnextLocid((byte)(numLocID.Value));
+            SendCurrAdr();
         }
 
         private void proc_beenden()
@@ -1737,6 +1743,8 @@ namespace CANguruX
                     // Status watchdog an Bridge
                     CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
                     CANClient.Send(WATCHDOG, Cnames.lngFrame);
+                    // Schienenadresse an die Bridge melden
+                    SendCurrAdr();
                     a1milliTimer.Enabled = false;
                     receivePINGInfos = false;
                     getConfigData(CANguruDecoderNbr, CANguruDescriptionNbr);
