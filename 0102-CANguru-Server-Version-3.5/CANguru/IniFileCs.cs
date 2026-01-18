@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 // IniFile class used to read and write ini files by loading the file into memory
@@ -109,7 +110,9 @@ public class IniFile
         {
             Trace.WriteLine(string.Format("Writing Section: [{0}]", s.Name));
             oWriter.WriteLine(string.Format("[{0}]", s.Name));
-            foreach (IniSection.IniKey k in s.Keys)
+            var sortedKeys = s.Keys.Cast<IniSection.IniKey>().OrderBy(k => k.Name).ToList();
+            foreach (var k in sortedKeys)
+ //           foreach (IniSection.IniKey k in s.Keys)
             {
                 if (k.Value != string.Empty)
                 {

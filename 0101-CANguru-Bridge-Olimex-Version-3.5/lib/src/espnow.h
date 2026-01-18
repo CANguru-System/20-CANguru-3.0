@@ -42,7 +42,8 @@ struct macAddressesstruct
 // Befehle, die benutzt werden
 enum patterns
 {
-  M_GLEISBOX_MAGIC_START_SEQUENCE,
+  M_GLEISBOX_MAGIC_START_SEQUENCE0,
+  M_GLEISBOX_MAGIC_START_SEQUENCE1,
   M_GLEISBOX_ALL_PROTO_ENABLE,
   M_STOP,
   M_GO,

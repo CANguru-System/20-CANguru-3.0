@@ -21,6 +21,8 @@
 #include "soc/rtc_cntl_reg.h"
 #include "Adafruit_INA3221.h"
 #include <Wire.h>
+#include <cmath>
+#include <cstdint>
 
 Preferences preferences;
 // Create an INA3221 object
@@ -36,6 +38,7 @@ void turnPowerOn();
 void turnPowerOff();
 
 gpio_num_t enableBoosters = GPIO_NUM_20;
+const float SHUNT_OHMS = 0.1f; // typischer Shunt-Widerstandswert in Ohm
 
 // config-Daten
 // Parameter-Kanäle
@@ -65,19 +68,17 @@ boolean bridgeIsConnected2Server;
 #define VERS_HIGH 0x00 // Versionsnummer vor dem Punkt
 #define VERS_LOW 0x01  // Versionsnummer nach dem Punkt
 
-const uint16_t minAmpLimit_mA = 10;
+const uint16_t minAmpLimit_mA = 100;
 const uint16_t maxAmpLimit_mA = 1600;
-uint16_t currRawMaxAmp_mA;
-float currMaxAmp_mA;
-float Current_value0_mA = 0.0;
-float Current_value1_mA = 0.0;
+uint16_t maxAmp_mA;
+uint16_t Current_value0_mA = 0;
+uint16_t Current_value1_mA = 0;
 
 // Protokollkonstanten
-#define PROT_MM MM_ACC
+#define PROT_MM MM_mACC
 #define PROT_DCC DCC_TRACK
 
 IPAddress IP;
-
 #include "espnow.h"
 
 void turnPowerOn()
@@ -106,16 +107,6 @@ void turnPowerOff()
   opFrame[data7] = 0x00;
   sendTheData();
   log_i("Current STOPP - Booster");
-}
-
-uint8_t beforePoint(float c)
-{
-  return (uint8_t)c / 100;
-}
-
-uint8_t afterPoint(float c)
-{
-  return (uint8_t)c - beforePoint(c);
 }
 
 void setup()
@@ -153,6 +144,7 @@ void setup()
 
   pinMode(enableBoosters, OUTPUT);
   turnPowerOff();
+  maxAmp_mA = maxAmpLimit_mA;
 
   // die preferences-Library wird gestartet
   if (preferences.begin(prefName, false))
@@ -172,9 +164,7 @@ void setup()
     // dann wird dieser Anteil übersprungen
     // 47, weil das EEPROM (hoffentlich) nie ursprünglich diesen Inhalt hatte
     // entspricht 1600 mA
-    currRawMaxAmp_mA = maxAmpLimit_mA;
-    preferences.putUChar("maxAmpBefore", beforePoint(currRawMaxAmp_mA));
-    preferences.putUChar("maxAmpAfter", afterPoint(currRawMaxAmp_mA));
+    preferences.putUInt("maxAmp", maxAmpLimit_mA);
     // ota auf "FALSE" setzen
     preferences.putUChar("ota", startWithoutOTA);
     // setup_done auf "TRUE" setzen
@@ -187,12 +177,7 @@ void setup()
     {
       // nach dem ersten Mal Einlesen der gespeicherten Werte
       // Adresse
-      uint8_t before = 0;
-      uint8_t after = 0;
-      before = readValfromPreferences(preferences, "maxAmpBefore", before, 0, 1);
-      after = readValfromPreferences(preferences, "maxAmpAfter", after, 0, 9);
-      currRawMaxAmp_mA = before * 1000 + after * 100;
-      currMaxAmp_mA = (float) currRawMaxAmp_mA;
+      maxAmp_mA = preferences.getUInt("maxAmp", maxAmpLimit_mA);
     }
     else
     {
@@ -221,18 +206,18 @@ void setup()
       delay(10);
   }
   Serial.println("INA3221 Found!");
-
+/*
   ina3221.setAveragingMode(INA3221_AVG_512_SAMPLES);
-
   // Set shunt resistances for all channels to 0.05 ohms
-  for (uint8_t i = 0; i < 3; i++)
+  for (uint8_t i = 0; i < 2; i++)
   {
     ina3221.setShuntResistance(i, 0.1);
   }
 
   // Set a power valid alert to tell us if ALL channels are between the two
   // limits:
-  ina3221.setPowerValidLimits(3.0, 15.0); // lower limit - upper limit
+  ina3221.setPowerValidLimits(0.01, 3.2); // lower limit - upper limit
+*/
   // Variablen werden gemäß der eingelesenen Werte gesetzt
   // enable-Eingänge der Booster einschalten
   // ADC capture width is 12Bit.
@@ -244,28 +229,25 @@ void setup()
 // es erhält die evtuelle auf dem Server geänderten Werte zurück
 void receiveKanalData()
 {
+  SYS_CMD_Request = false;
   uint16_t oldval;
   switch (opFrame[10])
   {
   // Kanalnummer #1 - Aktueller Maximalstrom
   case 1:
   {
-    oldval = currRawMaxAmp_mA;
-    currRawMaxAmp_mA = (opFrame[11] << 8) + opFrame[12];
-    if (testMinMax(oldval, currRawMaxAmp_mA, minAmpLimit_mA, maxAmpLimit_mA))
-    {
-      preferences.putUChar("maxAmp", currRawMaxAmp_mA);
-    }
+    oldval = maxAmp_mA;
+    maxAmp_mA = ((opFrame[data6] << 8) + opFrame[data7]);
+    if (testMinMax(oldval, maxAmp_mA, minAmpLimit_mA, maxAmpLimit_mA) && preferences.getUChar("receiveTheData", true))
+      preferences.putUInt("maxAmp", maxAmp_mA);
     else
-    {
-      currRawMaxAmp_mA = oldval;
-    }
+      maxAmp_mA = oldval;
   }
   break;
   }
   //
-  opFrame[11] = 0x01;
-  opFrame[4] = 0x07;
+  opFrame[data6] = 0x01;
+  opFrame[Framelng] = 0x07;
   sendCanFrame();
 }
 
@@ -276,7 +258,19 @@ void sendConfig()
   const uint8_t slider = 2;
   const uint8_t Kanalwidth = 8;
   const uint8_t numberofKanals = endofKanals - 1;
-
+  /*
+  Format Gerätebeschreibung
+    Unter Index 0 sind die Gerätebeschreibung abrufbar. Primär ist dies die Anzahl der zur Verfügung
+    gestellten Messkanäle. Weiterhin enthalten sind Angaben zur Identifikation des Gerätes.
+    Format Gerätebeschreibung:
+    Typ     Bedeutung
+    Char    Anzahl der Messwerte im Gerät.
+    Char    Anzahl der Konfigurationskanäle
+    2 Byte  frei.
+    U32     Seriennummer CS2.
+    String  8 Byte Artikelnummer.
+    String  Gerätebezeichnung, \0 Terminiert
+*/
   const uint8_t NumLinesKanal00 = 4 * Kanalwidth;
   uint8_t arrKanal00[NumLinesKanal00] = {
       /*1*/ Kanal00, numberofKanals, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0, (uint8_t)0, decoderadr,
@@ -286,26 +280,60 @@ void sendConfig()
       /*2.4*/ (uint8_t)highbyte2char(hex2dec(uid_device[3])), (uint8_t)lowbyte2char(hex2dec(uid_device[3])),
       /*3*/ 'C', 'A', 'N', 'g', 'u', 'r', 'u', ' ',
       /*4*/ 'B', 'o', 'o', 's', 't', 'e', 'r', (uint8_t)0};
+  /*
+  Format eines Datenblocks mit der Möglichkeit einen Wert einzustellen:
+    Typ     Bedeutung                   Beispiel
+    Char    Konfigirationskanalnummer   0x05: Setzen unter Kanal 5
+    Char    Kenner Slider               Wert 2
+    Word    Unterer Wert                0
+    Word    Oberer Wert                 660
+    Word    Aktuelle Einstellung        500
+    String  Auswahlbezeichnung          Variable Strombegrenzung\0
+    String  Bezeichnung Start           0.000\0
+    String  Bezeichnung Ende            2.500\0
+    String  Einheit                     Achsen\0 oder A\0
+
+    Bezeichnung Start:
+Format einer Gleitkommazahl. Liefert sowohl die Information, für den Startwert der Darstellung als auch
+eine Information, wie der Messwert dargestellt werden soll. Die Anzahl der Nachkommastellen sind auch
+die Anzahl der Nachkommastellen des Messwerts (mA also 3 Nachkommastellen). Abgefragter
+Messwert muss bei der Darstellung durch 1000 geteilt werden. Die Anzahl der Nachkommastellen und
+die Potenz des Messwerts müssen identisch sein.
+Bezeichnung Ende:
+Format und Funktion wie Bezeichnung Start. Für das Ende der Darstellung
+*/
 
   const uint8_t NumLinesKanal01 = 4 * Kanalwidth;
   uint8_t arrKanal01[NumLinesKanal01] = {
-      /*    Konfigirationskanalnummer / Kenner Slider / Unterer Wert (Word) / Oberer Wert (Word) / Aktuelle Einstellung (Word) */
-      /*1*/ Kanal01, slider, beforePoint(minAmpLimit_mA), afterPoint(minAmpLimit_mA), beforePoint(maxAmpLimit_mA), afterPoint(maxAmpLimit_mA), beforePoint(currRawMaxAmp_mA), afterPoint(currRawMaxAmp_mA),
-      /*     Auswahlbezeichnung */
+      // Char Konfigirationskanalnummer
+      /*1*/ Kanal01,
+      // Char Kenner Slider
+      slider,
+      // Word Unterer Wert
+      highByte(minAmpLimit_mA), lowByte(minAmpLimit_mA),
+      // Word Oberer Wert
+      highByte(maxAmpLimit_mA), lowByte(maxAmpLimit_mA),
+      // Word Aktuelle Einstellung
+      highByte(maxAmp_mA), lowByte(maxAmp_mA),
+      // String Auswahlbezeichnung
       /*2*/ 'M', 'a', 'x', ' ', 'S', 't', 'r', 'o',
-      /*3*/ 'm', (uint8_t)0,
-      /* Bezeichnung Start */
-      /*3*/ minAmpLimit_mA / 10 + (uint8_t)'0', '.', minAmpLimit_mA % 10 + (uint8_t)'0', (uint8_t)0,
-      /* Bezeichnung Ende */
-      /*3*/ maxAmpLimit_mA / 10 + (uint8_t)'0', '.', maxAmpLimit_mA % 10 + (uint8_t)'0', (uint8_t)0,
+      /*3*/ 'm', 0x00,
+      /* String Bezeichnung Start */
+      '1', 0x00,
+      /* String Bezeichnung Ende */
+      '1', 0x00,
       /* Einheit */
-      /*4*/ 'm', 'A', 'm', 'p', (uint8_t)0, (uint8_t)0};
+      'm', 'A',
+      /*4*/ 'm', 'p', 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
   uint8_t NumKanalLines[numberofKanals + 1] = {NumLinesKanal00, NumLinesKanal01};
 
+  preferences.putUChar("receiveTheData", true);
   uint8_t paket = 0;
   uint8_t outzeichen = 0;
   CONFIG_Status_Request = false;
+  //
+//  memset(opFrame, 0, sizeof(opFrame));
   for (uint8_t inzeichen = 0; inzeichen < NumKanalLines[CONFIGURATION_Status_Index]; inzeichen++)
   {
     opFrame[1] = CONFIG_Status + 1;
@@ -330,29 +358,40 @@ void sendConfig()
     outzeichen++;
     if (outzeichen == 8)
     {
-      opFrame[4] = 8;
+      opFrame[Framelng] = 8;
       outzeichen = 0;
       paket++;
-      opFrame[2] = 0x00;
-      opFrame[3] = paket;
+      opFrame[hash0] = 0x00;
+      opFrame[hash1] = paket;
       sendTheData();
       delay(wait_time_small);
     }
   }
   //
   memset(opFrame, 0, sizeof(opFrame));
-  opFrame[1] = CONFIG_Status + 1;
-  opFrame[2] = hasharr[0];
-  opFrame[3] = hasharr[1];
-  opFrame[4] = 0x06;
+  opFrame[CANcmd] = CONFIG_Status + 1;
+  opFrame[hash0] = hasharr[0];
+  opFrame[hash1] = hasharr[1];
+  opFrame[Framelng] = 0x06;
   for (uint8_t i = 0; i < 4; i++)
   {
     opFrame[i + 5] = uid_device[i];
   }
-  opFrame[9] = CONFIGURATION_Status_Index;
-  opFrame[10] = paket;
+  opFrame[data4] = CONFIGURATION_Status_Index;
+  opFrame[data5] = paket;
   sendTheData();
   delay(wait_time_small);
+}
+
+uint8_t beforePoint(uint16_t c)
+{
+  return static_cast<uint8_t>(c / 1000);
+}
+
+uint8_t afterPoint(uint16_t c)
+{
+  // 1600 -1000 = 600
+  return static_cast<uint8_t>(std::round((c - beforePoint(c)*1000) / 100));
 }
 
 void onPrint()
@@ -366,7 +405,6 @@ void onPrint()
   opFrame[data7] = afterPoint(Current_value1_mA);
   opFrame[CANcmd] = sendCurrAmp - 1;
   opFrame[Framelng] = 0x08;
-  log_i("B0:%X.%X - B1:%X.%X", opFrame[data4], opFrame[data5], opFrame[data6], opFrame[data7]);
   sendCanFrame();
 }
 
@@ -383,9 +421,21 @@ void loop()
 
     if ((millis() - lastUpdate) > updateInterval)
     {
-      Current_value0_mA = ina3221.getCurrentAmps(0) * 1000; // Convert to mA
-      Current_value1_mA = ina3221.getCurrentAmps(1) * 1000; // Convert to mA
-      if ((Current_value0_mA > currMaxAmp_mA) || (Current_value1_mA > currMaxAmp_mA))
+      // Kanal 0 = physisch Channel 1
+      // Shunt-Spannung in Volt
+      float shuntVoltage0 = ina3221.getShuntVoltage(0); // / 1000.0f; // mV → V
+      // Strom berechnen
+      Current_value0_mA = shuntVoltage0 / SHUNT_OHMS * 1000;
+      log_d("Spannung / Strom Kanal 0: %f V %d mA", shuntVoltage0, Current_value0_mA);
+      // Kanal 1 = physisch Channel 2
+      // Shunt-Spannung in Volt
+//      log_d("Messung der Ströme Kanal 1");
+      float shuntVoltage1 = ina3221.getShuntVoltage(1); // / 1000.0f; // mV → V
+      // Strom berechnen
+      Current_value1_mA = shuntVoltage1 / SHUNT_OHMS * 1000;
+//      log_d("Spannung / Strom Kanal 1: %f V %d mA", shuntVoltage1, Current_value1_mA);
+      //      Current_value1_mA = ina3221.getCurrentAmps(1) * 1000; // Convert to mA
+      if ((Current_value0_mA > maxAmp_mA) || (Current_value1_mA > maxAmp_mA))
       {
         turnPowerOff();
         delay(1000);

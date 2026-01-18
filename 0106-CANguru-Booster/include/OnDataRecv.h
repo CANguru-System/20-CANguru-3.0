@@ -66,10 +66,10 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
   {
     switch (opFrame[data4])
     {
-    case SYS_STOPP:
+    case SYS_STOPP+0x50:
       turnPowerOff();
       break;
-    case SYS_GO:
+    case SYS_GO+0x50:
       turnPowerOn();
       break;
     case SYS_STAT:
@@ -86,16 +86,6 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     // Modul wird neu gestartet und wartet anschließend auf neue Software (OTA)
       preferences.putUChar("ota", startWithOTA);
       ESP.restart();
-      break;
-    case switchBooster:
-    if (opFrame[data0] == 0x01)
-      {
-        turnPowerOn();
-      }
-      else
-      {
-        turnPowerOff();
-      }
       break;
     }
   }

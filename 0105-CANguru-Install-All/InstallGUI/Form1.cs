@@ -123,7 +123,7 @@ namespace InstallGUI
             // bridge 
             decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0101-CANguru-Bridge-Olimex-Version-3.5\.pio\build\esp32-evb", firmware_source_binFile = @"..\0101-CANguru-Bridge-Olimex-Version-3.5\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = false });
             // booster
-            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0106-CANguru-Booster\.pio\build\nodemcu-32s", firmware_source_binFile = @"..\0106-CANguru-Booster\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
+            decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0106-CANguru-Booster\.pio\build\seeed_xiao_esp32c3", firmware_source_binFile = @"..\0106-CANguru-Booster\binfiles", scanner_files = @"ScanPorts\.pio\build\esp32c3_supermini", strprocessor = "esp32c3", credentials = true });
             // maxi
             decoderliste.Add(new decoderStruct { directory = "", firmware_source_pio = @"..\0107-MaxiSignal-PCA9685\.pio\build\nodemcu-32s", firmware_source_binFile = @"..\0107-MaxiSignal-PCA9685\binfiles", scanner_files = @"ScanPorts\.pio\build\nodemcu-32s", strprocessor = "esp32", credentials = true });
             // formsignalstepper

@@ -211,6 +211,7 @@ void Scan4Slaves()
           slaveInfo[slaveCnt].intValue = (slaveInfo[slaveCnt].intValue << shift) + mac.m[j];
         slaveInfo[slaveCnt].decoderIsAlive = isAlive;
         slaveCnt++;
+    log_d("Scan4Slaves received %d", slaveCnt);
       }
     }
   }
@@ -410,23 +411,24 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     return;
   }
   memcpy(Clntbuffer, data, data_len);
-  switch (data[0x01])
+  switch (data[CANcmd])
   {
   case SYS_CMD:
-    sendToServer(Clntbuffer, fromClnt);
-    Serial.println(data[data4]);
+//    log_d("");
+//    log_buf_d(Clntbuffer, CAN_FRAME_SIZE);
+    log_d("SYS_CMD received %X", data[data4]);
     if (data[data4] == SYS_GO)
     {
       displayLCD("System GO!");
-      sendToServer(Clntbuffer, fromClnt);
     }
     if (data[data4] == SYS_STOPP)
     {
       displayLCD("System STOPP!");
-      sendToServer(Clntbuffer, fromClnt);
     }
+    sendToServer(Clntbuffer, fromClnt);
     break;
   case PING_R:
+    log_d("PING_R form Clients received");
     if (Clntbuffer[data7] == DEVTYPE_CANBOOSTER)
     {
       setBoosterFound(true);
@@ -437,13 +439,17 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
     break;
   case CONFIG_Status_R:
     sendToServer(Clntbuffer, fromClnt);
+//    log_d("CONFIG_Status_R received %d of %d", cntConfig, slaveCnt);
+//    log_buf_d(Clntbuffer, CAN_FRAME_SIZE);
     break;
   case SEND_IP_R:
     sendToServer(Clntbuffer, fromClnt);
     if (!SYSseen)
     {
       cntConfig++;
-      if (cntConfig == slaveCnt)
+    log_d("SEND_IP_R received %d of %d - IP: %3d.%03d.%03d.%03d", cntConfig, slaveCnt, Clntbuffer[0x05], Clntbuffer[0x06], Clntbuffer[0x07], Clntbuffer[0x08]);
+
+      if (cntConfig == (slaveCnt - 1))
         goSYS();
     }
     break;

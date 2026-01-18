@@ -8,7 +8,6 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0101-CANguru-Bridge-Olimex-Version-3.5/include",
                 "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0101-CANguru-Bridge-Olimex-Version-3.5/src",
                 "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/LittleFS/src",
                 "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0101-CANguru-Bridge-Olimex-Version-3.5/lib/src",
@@ -255,7 +254,6 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0101-CANguru-Bridge-Olimex-Version-3.5/include",
                     "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0101-CANguru-Bridge-Olimex-Version-3.5/src",
                     "C:/Users/gusta/.platformio/packages/framework-arduinoespressif32/libraries/LittleFS/src",
                     "C:/CANguru-Drive/OneDrive/09 CARguru-Github/20-CANguru-3.0/0101-CANguru-Bridge-Olimex-Version-3.5/lib/src",

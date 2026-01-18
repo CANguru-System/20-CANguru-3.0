@@ -26,30 +26,32 @@ enum enum_canguruStatus
   systemIsRunning
 };
 enum_canguruStatus canguruStatus;
+uint8_t hasharr[] = {0x00, 0x00};
 
 // buffer for receiving and sending data
 uint8_t M_PATTERN_ALL[lastPattern][CAN_FRAME_SIZE] = {
-/*M_GLEISBOX_MAGIC_START_SEQUENCE*/ {0x00, 0x36, 0x03, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00},
-/*M_GLEISBOX_ALL_PROTO_ENABLE*/     {0x00, 0x00, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x08, 0x07, 0x00, 0x00},
-/*M_STOP*/                          {0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_GO*/                            {0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00},
-/*M_BIND*/                          {0x00, 0x04, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_VERIFY*/                        {0x00, 0x06, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_FUNCTION*/                      {0x00, 0x0C, 0x03, 0x01, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_CAN_PING*/                      {0x00, 0x30, 0x47, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_PING_RESPONSE*/                 {0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_CAN_PING_CS2*/                  {0x00, 0x31, 0x47, 0x11, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x08, 0xFF, 0xFF},
-/*M_CAN_PING_CS2_1*/                {0x00, 0x31, 0x63, 0x4A, 0x08, 0x00, 0x00, 0x00, 0x00, 0x04, 0x02, 0xFF, 0xF0},
-/*M_CAN_PING_CS2_2*/                {0x00, 0x31, 0x63, 0x4B, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x44, 0x00, 0x00},
-/*M_READCONFIG*/                    {0x00, ReadConfig, 0x03, 0x00, 0x07, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_STARTCONFIG*/                   {0x00, MfxProc_R, 0x03, 0x01, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_FINISHCONFIG*/                  {0x00, MfxProc_R, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_GETCONFIG*/                     {0x00, LoadCS2Data, 0x03, 0x01, 0x08, 0x0C, 0x6F, 0x6B, 0x73, 0x00, 0x00, 0x00, 0x00},
-/*M_GETCONFIG_R*/                   {0x00, LoadCS2Data_R, 0x03, 0x01, 0x08, 0x00, 0x6C, 0x68, 0x73, 0x00, 0x00, 0x00, 0x00},
-/*M_SIGNAL*/                        {0x00, 0x50, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_CNTLOKBUFFER*/                  {0x00, sendCntLokBuffer, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_SENDLOKBUFFER*/                 {0x00, sendLokBuffer, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-/*M_CALL4CONNECTISDONE*/            {0x00, CALL4CONNECT + 1, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+    /*M_GLEISBOX_MAGIC_START_SEQUENCE0*/ {0x00, 0x36, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_GLEISBOX_MAGIC_START_SEQUENCE1*/ {0x00, 0x36, 0x03, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00},
+    /*M_GLEISBOX_ALL_PROTO_ENABLE*/ {0x00, 0x00, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x08, 0x07, 0x00, 0x00},
+    /*M_STOP*/ {0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_GO*/ {0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00},
+    /*M_BIND*/ {0x00, 0x04, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_VERIFY*/ {0x00, 0x06, 0x03, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_FUNCTION*/ {0x00, 0x0C, 0x03, 0x01, 0x06, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_CAN_PING*/ {0x00, 0x30, 0x47, 0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_PING_RESPONSE*/ {0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_CAN_PING_CS2*/ {0x00, 0x31, 0x47, 0x11, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x08, 0xFF, 0xFF},
+    /*M_CAN_PING_CS2_1*/ {0x00, 0x31, 0x63, 0x4A, 0x08, 0x00, 0x00, 0x00, 0x00, 0x04, 0x02, 0xFF, 0xF0},
+    /*M_CAN_PING_CS2_2*/ {0x00, 0x31, 0x63, 0x4B, 0x08, 0x00, 0x00, 0x00, 0x00, 0x03, 0x44, 0x00, 0x00},
+    /*M_READCONFIG*/ {0x00, ReadConfig, 0x03, 0x00, 0x07, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_STARTCONFIG*/ {0x00, MfxProc_R, 0x03, 0x01, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_FINISHCONFIG*/ {0x00, MfxProc_R, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_GETCONFIG*/ {0x00, LoadCS2Data, 0x03, 0x01, 0x08, 0x0C, 0x6F, 0x6B, 0x73, 0x00, 0x00, 0x00, 0x00},
+    /*M_GETCONFIG_R*/ {0x00, LoadCS2Data_R, 0x03, 0x01, 0x08, 0x00, 0x6C, 0x68, 0x73, 0x00, 0x00, 0x00, 0x00},
+    /*M_SIGNAL*/ {0x00, 0x50, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_CNTLOKBUFFER*/ {0x00, sendCntLokBuffer, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_SENDLOKBUFFER*/ {0x00, sendLokBuffer, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    /*M_CALL4CONNECTISDONE*/ {0x00, CALL4CONNECT + 1, 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 uint8_t M_PATTERN[] = {0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 uint8_t lastmfxUID[] = {0x00, 0x00, 0x00, 0x00};
 
@@ -69,11 +71,11 @@ struct LokBufferType
 };
 LokBufferType *LokBuffer = NULL;
 
-const uint8_t maxPackets = 30;
 bool bLokDiscovery;
 
 //% bool initialDataAlreadySent;
 byte locid;
+uint8_t numCounter;
 bool scanningFinished;
 bool allLoksAreReported;
 byte cvIndex;
@@ -109,6 +111,9 @@ void proc2CAN(uint8_t *buffer, CMD dir)
   //   byte 4      DLC
   //   byte 5 - 12 CAN data
   //
+  buffer[hash0] = hasharr[0];
+  buffer[hash1] = hasharr[1];
+
   memset(&Message2Send, 0, CAN_FRAME_SIZE);
   Message2Send.rtr = CAN_MSG_FLAG_RTR_;
   Message2Send.ss = CAN_MSG_FLAG_SS_;
@@ -135,11 +140,15 @@ void setup_can_driver()
 
   // Install CAN driver
   if (twai_driver_install(&g_config, &t_config, &f_config) == ESP_FAIL)
-    log_e("Failed to install driver\n");
+    log_d("Failed to install driver\n");
+  else
+    log_d("CAN driver installed\n");
 
   // Start CAN driver
   if (twai_start() == ESP_FAIL)
-    log_e("Failed to start driver\n");
+    log_d("Failed to start driver\n");
+  else
+    log_d("CAN driver started\n");
 }
 
 void printMSG(uint8_t no)
@@ -164,6 +173,7 @@ void send2AllClients(uint8_t *buffer)
   uint8_t slaveCnt = get_slaveCnt();
   for (uint8_t s = 0; s < slaveCnt; s++)
   {
+    delay(50);
     sendTheData(s, buffer, CAN_FRAME_SIZE);
   }
 }
@@ -234,23 +244,25 @@ void sendToServer(uint8_t *buffer, CMD dest)
     buffer[Framelng] -= 0x0F;
   //  log_buf_d(buffer, CAN_FRAME_SIZE) ;
   // auf Quittung warten
-  if (dest == toServer)
-  {
-    while (packetSize == 0)
+  /*  if (dest == toServer)
     {
-      yield();
-      packetSize = UDPFromServer.parsePacket();
-    }
-    if (packetSize)
-    {
-      // read the packet into packetBuffer
-      UDPFromServer.read(RCVDbuffer, CAN_FRAME_SIZE);
-      if (RCVDbuffer[CANcmd] != 0xFF || RCVDbuffer[data0] != cmd)
+      while (packetSize == 0)
       {
-        log_e("ERROR! Incorrect Msg RCPT: %X NEW: %X OLD: %X", RCVDbuffer[CANcmd], RCVDbuffer[data0], cmd);
+        yield();
+        packetSize = UDPFromServer.parsePacket();
       }
-    }
-  }
+      if (packetSize)
+      {
+        // read the packet into packetBuffer
+        UDPFromServer.read(RCVDbuffer, CAN_FRAME_SIZE);
+        if (RCVDbuffer[CANcmd] != 0xFF || RCVDbuffer[data0] != cmd)
+        {
+          log_e("ERROR! Incorrect Msg RCPT: %X NEW: %X OLD: %X", RCVDbuffer[CANcmd], RCVDbuffer[data0], cmd);
+          log_buf_d(buffer, CAN_FRAME_SIZE);
+          log_buf_d(RCVDbuffer, CAN_FRAME_SIZE);
+        }
+      }
+    }*/
 }
 
 void msgStartScanning()
@@ -328,13 +340,6 @@ bool loadCS2LocFile()
   {
     return false;
   }
-  /*  if (LittleFS.exists(fName))
-    {
-      log_i("LittleFS exists: %s", charArray);
-      return true;
-      if (!LittleFS.remove(fName))
-        log_d("Did NOT remove %s", charArray);
-    }*/
   locofile = LittleFS.open(fName, FILE_WRITE);
   // Configdaten abrufen
   uint16_t packetSize = 0;
@@ -367,6 +372,8 @@ bool loadCS2LocFile()
       httpBuffer[packetSize] = 0x00;
       lineNo++;
       // write the packet to local file
+      //      log_d("LittleFS write:");
+      //      log_buf_d(httpBuffer, pOUT);
       if (!locofile.write(httpBuffer, pOUT))
       {
         log_d("%s write failed", charArray);
@@ -388,8 +395,8 @@ uint8_t getLocID()
   bool found = false;
   produceFrame(M_CNTLOKBUFFER);
   // noch keine Lok registriert ?
-    log_d("getLocID0 received");
-//  if (cntLoks == 0)
+  log_d("getLocID0 received");
+  if (cntLoks == 0)
     return locid;
   // vergleiche die erkannte mit allen bekannten Loks
   for (uint8_t lok = 0; lok < cntLoks; lok++)
@@ -401,7 +408,7 @@ uint8_t getLocID()
     // wenn schon bekannt, nimmt deren Adresse
     if (found)
     {
-    log_d("getLocID1 received");
+      log_d("getLocID1 received");
       return LokBuffer[lok].adr;
     }
   }
@@ -409,26 +416,35 @@ uint8_t getLocID()
 }
 
 // wird für die Erkennung von mfx-Loks gebraucht
-void bindANDverify(uint8_t *buffer)
+void bindANDverify(uint8_t *buffer, byte lid)
 {
-    log_d("bindANDverify received");
-  locid = getLocID();
-    log_d("getLocID received %X", locid);
-  // BIND
+  if (lid == 0)
+  {
+    locid = getLocID();
+  }
+  else
+    locid = lid;
+  // MFX Bind MFX-UID: 0xf9, 0xfa, 0xcd, 0x69 MFX-SID 00 05
   produceFrame(M_BIND);
   M_PATTERN[10] = locid;
   // MFX-UID
   memcpy(lastmfxUID, &buffer[5], 4);
   memcpy(&M_PATTERN[5], lastmfxUID, 4);
+  log_d("bind received");
+  log_buf_d(M_PATTERN, CAN_FRAME_SIZE);
   proc2CAN(M_PATTERN, toCAN);
   delay(10);
-  // VERIFY
-  produceFrame(M_VERIFY);
-  M_PATTERN[10] = locid;
+  // MFX Verify MFX-UID: 0xf9, 0xfa, 0xcd, 0x69 MFX-SID 00 05
+  //  produceFrame(M_VERIFY);
+  //  M_PATTERN[10] = locid;
   // MFX-UID
-  memcpy(&M_PATTERN[5], lastmfxUID, 4);
+  //  memcpy(&M_PATTERN[5], lastmfxUID, 4);
+  M_PATTERN[0x01] = 0x06;
+  log_d("verify received");
+  log_buf_d(M_PATTERN, CAN_FRAME_SIZE);
   proc2CAN(M_PATTERN, toCAN);
   delay(10);
+  /*
   // FUNCTION
   produceFrame(M_FUNCTION);
   M_PATTERN[8] = locid;
@@ -439,6 +455,7 @@ void bindANDverify(uint8_t *buffer)
   M_PATTERN[10] = 0x00;
   delay(10);
   proc2CAN(M_PATTERN, toCAN);
+  */
 }
 
 // Auswertung der config-Datei
@@ -468,16 +485,18 @@ void proc_fromCAN2WDPandServer()
     memcpy(UDPbuffer, &MessageReceived.identifier, 4);
     UDPbuffer[4] = MessageReceived.data_length_code;
     memcpy(&UDPbuffer[5], MessageReceived.data, MessageReceived.data_length_code);
+    //    log_d("from CAN");
+    //    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
     // now dispatch
     switch (UDPbuffer[0x01])
     {
     case PING: // PING
-    log_d("PING received");
+               //      log_d("PING received");
       sendToServer(UDPbuffer, fromCAN);
       break;
     case PING_R: // PING
                  // wenn alle slaves zu Beginn des Programmes gezählt werden, ist damit die Gleisbox auch dabei
-    log_d("PING_R received");
+                 //      log_d("PING_R received");
       incSlavesAreReadyToZero();
       sendToServer(UDPbuffer, fromCAN);
       sendToWDPfromCAN(UDPbuffer);
@@ -491,16 +510,16 @@ void proc_fromCAN2WDPandServer()
       }
       break;
     case LokDiscovery_R:
-    log_d("LokDiscovery_R received");
+      //      log_d("LokDiscovery_R received");
       // mfxdiscovery war erfolgreich
       if (UDPbuffer[4] == 0x05)
       {
-        bindANDverify(UDPbuffer);
+        bindANDverify(UDPbuffer, 0);
         // an gateway den anfang melden
       }
       break;
     case MFXVerify:
-    log_d("MFXVerify received");
+      //      log_d("MFXVerify received");
       bLokDiscovery = true;
       produceFrame(M_STARTCONFIG);
       // LocID
@@ -512,7 +531,7 @@ void proc_fromCAN2WDPandServer()
       cvIndex = readConfig(0);
       break;
     case ReadConfig_R:
-    log_d("ReadConfig_R received");
+      //      log_d("ReadConfig_R received");
       // Rückmeldungen von config
       sendToServer(UDPbuffer, fromCAN);
       sendToWDPfromCAN(UDPbuffer);
@@ -560,9 +579,9 @@ void proc_fromCAN2WDPandServer()
       //      sendOutTCPfromCAN(UDPbuffer);
       break;
     case SYS_CMD_R:
-      if ((UDPbuffer[4] == 0x06) &&
-          (UDPbuffer[9] = 0x08) &&
-          (UDPbuffer[10] = 0x07))
+      if ((UDPbuffer[Framelng] == 0x06) &&
+          (UDPbuffer[data4] = 0x08) &&
+          (UDPbuffer[data5] = 0x07))
       {
         log_i("Gleisbox found!");
         GleisboxFound = true;
@@ -570,6 +589,8 @@ void proc_fromCAN2WDPandServer()
       sendToWDPfromCAN(UDPbuffer);
       break;
     default:
+      //        log_i("to WDP");
+      //    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
       sendToWDPfromCAN(UDPbuffer);
       //      sendOutTCPfromCAN(UDPbuffer);
       break;
@@ -601,33 +622,70 @@ void proc_fromServer2CANandClnt()
 {
   uint8_t Lokno;
   uint8_t UDPbuffer[CAN_FRAME_SIZE]; // buffer to hold incoming packet,
+
   int packetSize = UDPFromServer.parsePacket();
   // if there's data available, read a packet
   if (packetSize)
   {
     // read the packet into packetBufffer
     UDPFromServer.read(UDPbuffer, CAN_FRAME_SIZE);
-    log_d("");
-    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
+    //    log_d("");
+    //    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
     // send received data via ESPNOW and CAN
-    switch (UDPbuffer[0x1])
+    switch (UDPbuffer[CANcmd])
     {
     case SYS_CMD:
+      if (UDPbuffer[data4] == 0x00) // System Stopp für Gleisbox
+      {
+        proc2CAN(UDPbuffer, fromGW2CAN);
+        break;
+      }
+      if (UDPbuffer[data4] == 0x01) // System GO für Gleisbox
+      {
+        proc2CAN(UDPbuffer, fromGW2CAN);
+        break;
+      }
+      if (UDPbuffer[data4] == 0x50) // System Stopp für Booster
+      {
+        log_d("Booster OFF command received");
+        copyBoosterUID(UDPbuffer);
+        send2OneClient(UDPbuffer);
+        break;
+      }
+      if (UDPbuffer[data4] == 0x51) // System GO für Booster
+      {
+        log_d("Booster OFF command received");
+        copyBoosterUID(UDPbuffer);
+        send2OneClient(UDPbuffer);
+        break;
+      }
+      if (UDPbuffer[data4] == 0x09) // Neuanmeldezaehler setzen
+      {
+        proc2CAN(UDPbuffer, fromGW2CAN);
+        numCounter = UDPbuffer[data3];
+        break;
+      }
     case 0x36:
-      if (UDPbuffer[0x09] != START_OTA)
+      if (UDPbuffer[data4] != START_OTA)
         proc2CAN(UDPbuffer, fromGW2CAN);
       proc2Clnts(UDPbuffer, fromGW2Clnt);
       break;
     case 0x02:
     case 0x04:
     case 0x06:
-    case SEND_IP:
-    case CONFIG_Status:
-      if (UDPbuffer[0x01] == SEND_IP)
-      {
-        log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
-      }
       proc2Clnts(UDPbuffer, fromGW2Clnt);
+      break;
+    case SEND_IP:
+      //      log_d("SEND_IP received");
+      //    log_d("");
+      //    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
+      proc2Clnts(UDPbuffer, fromGW2Clnt);
+      break;
+    case CONFIG_Status:
+      //      log_d("CONFIG_Status received");
+      //    log_d("");
+      //    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
+      send2OneClient(UDPbuffer);
       break;
     case Watchdog:
       if (UDPbuffer[0x05] == 0x01)
@@ -648,7 +706,7 @@ void proc_fromServer2CANandClnt()
     case MfxProc:
       // received next locid
       locid = UDPbuffer[0x05];
-    log_d("MfxProc %X received", locid );
+      //      log_d("MfxProc %X received", locid);
       produceFrame(M_SIGNAL);
       sendToServer(M_PATTERN, fromCAN);
       break;
@@ -688,13 +746,17 @@ void proc_fromServer2CANandClnt()
       }
       break;
     case sendLokBuffer_R:
-    log_d("sendLokBuffer_R received");
+      // Zeilennummer der aktuellen Lok beim Server
+      // LokBuffer
+      // Byte 06: MFX-SID
+      // Byte 07 - 10: MFX-UID
+      // LokBind
+      // Byte 09: MFX-SID
+      // Byte 05 - 08: MFX-UID
       Lokno = UDPbuffer[0x05];
       if (LokBuffer != NULL)
       {
-        //        saveFrame(UDPbuffer);
         LokBuffer[Lokno].adr = UDPbuffer[0x06];
-log_d("Lok %d Adr %X", Lokno, LokBuffer[Lokno].adr);
         for (uint8_t b = 0; b < 4; b++)
         {
           LokBuffer[Lokno].lastmfxUID[b] = UDPbuffer[0x07 + b];
@@ -712,18 +774,6 @@ log_d("Lok %d Adr %X", Lokno, LokBuffer[Lokno].adr);
         }
       }
       break;
-    case switchBooster:
-  if (getBoosterFound())
-  {
-    // Switch booster logic here
-    if (UDPbuffer[5] == 0x01)
-      log_d("Booster ON command received");
-    else
-      log_d("Booster OFF command received");
-      copyBoosterUID(UDPbuffer);
-      send2OneClient(UDPbuffer);
-  }
-    break;
     case restartBridge:
       proc2Clnts(UDPbuffer, fromGW2Clnt);
       ESP.restart();
@@ -732,7 +782,39 @@ log_d("Lok %d Adr %X", Lokno, LokBuffer[Lokno].adr);
   }
 }
 
-// sendet CAN-Frames vom SYS zum CAN (Gleisbox)
+void startRegisterLoks()
+{
+  uint8_t LOKBind[CAN_FRAME_SIZE]; // buffer to hold incoming packet,
+  uint8_t LOKFunction[] = {0x00, 0x0c, 0x37, 0x5b, 0x06, 0x00, 0x00, 0x40, 0x00, 0x00, 0x01, 0x00, 0x00};
+  uint16_t sumMFXUID;
+  for (uint8_t Lokno = 0; Lokno < cntLoks; Lokno++)
+  {
+    memset(LOKBind, 0x00, CAN_FRAME_SIZE);
+    for (uint8_t b = 0; b < 4; b++)
+      LOKBind[0x05 + b] = LokBuffer[Lokno].lastmfxUID[b];
+    // Test auf MFX-UID ungleich 0
+    sumMFXUID = LOKBind[0x06] + LOKBind[0x07] + LOKBind[0x0];
+    if (sumMFXUID > 0)
+    {
+      LOKBind[0x09] = LokBuffer[Lokno].adr;
+      LOKFunction[0x08] = LokBuffer[Lokno].adr;
+      proc2CAN(LOKFunction, toCAN);
+      log_d("Lok %d mfx-UID %02X %02X %02X %02X", LokBuffer[Lokno].adr,
+            LOKBind[0x05],
+            LOKBind[0x06],
+            LOKBind[0x07],
+            LOKBind[0x08]);
+      bindANDverify(LOKBind, LokBuffer[Lokno].adr);
+    }
+    else
+    {
+      log_d("Lok %d mfx-UID is 0, skipped", LokBuffer[Lokno].adr);
+    }
+    delay(100);
+  }
+}
+
+// sendet CAN-Frames vom SYS zum CAN(Gleisbox)
 void proc_fromWDP2CAN()
 {
   uint8_t UDPbuffer[CAN_FRAME_SIZE]; // buffer to hold incoming packet
@@ -747,8 +829,8 @@ void proc_fromWDP2CAN()
     // send received data to CAN
     memcpy(&CANbuffer, &UDPbuffer, CAN_FRAME_SIZE);
     proc2CAN(CANbuffer, fromWDP2CAN);
-    log_d("from WDP");
-    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
+    //    log_d("from WDP");
+    //    log_buf_d(UDPbuffer, CAN_FRAME_SIZE);
     switch (UDPbuffer[CANcmd])
     {
     case SYS_CMD:
@@ -757,8 +839,8 @@ void proc_fromWDP2CAN()
         log_i("WDP has been started");
         telnetClient.printTelnet(true, "WDP wurde gestartet");
         // Schienenspannung einschalten
-        produceFrame(M_GO);
-        proc2Clnts(M_PATTERN, fromGW2Clnt);
+        //%        produceFrame(M_GO);
+        //%        proc2Clnts(M_PATTERN, fromGW2Clnt);
         sendToServer(UDPbuffer, toServer);
         // Meldung an die Clients, dass WDP gestartet wurde
         set_SYSseen(true);
@@ -772,6 +854,7 @@ void proc_fromWDP2CAN()
       //      sendToWDP(M_PATTERN);
       break;
     case PING_R:
+      //    log_d("PING_R from WDP received");
       if ((UDPbuffer[data6] == 0xEE) && (UDPbuffer[data7] == 0xEE))
       {
         delay(wait_time_small);
@@ -815,6 +898,20 @@ void proc_fromWDP2CAN()
   }
 }
 
+void generateHash()
+{
+  uint32_t uid = 0x45009195ULL; // CAN-UID
+  uid--;
+  uint16_t highbyte = uid >> 16;
+  uint16_t lowbyte = uid;
+  uint16_t hash = highbyte ^ lowbyte;
+  bitWrite(hash, 7, 0);
+  bitWrite(hash, 8, 1);
+  bitWrite(hash, 9, 1);
+  hasharr[0] = hash >> 8;
+  hasharr[1] = hash;
+}
+
 void setup()
 {
 #if defined ARDUINO_ESP32_EVB
@@ -836,6 +933,8 @@ void setup()
   stillAliveBlinkSetup();
   // start the CAN bus at 250 kbps
   setup_can_driver();
+  // Hash für die CAN-UID wird generiert
+  generateHash();
   // ESPNow wird initialisiert
   // Variablen werden auf Anfangswerte gesetzt und die Routinen für das Senden
   // die Routine für die Statusmeldungen des WiFi wird registriert
@@ -940,7 +1039,7 @@ bool proc_wait4Server()
 
 void proc_start_lokBuffer()
 {
-  log_d("proc_start_lokBuffer");
+  //  log_d("proc_start_lokBuffer");
   produceFrame(M_CNTLOKBUFFER);
   sendToServer(M_PATTERN, toServer);
 }
@@ -948,8 +1047,12 @@ void proc_start_lokBuffer()
 // damit wird die Gleisbox zum Leben erweckt
 void send_start_60113_frames()
 {
-  produceFrame(M_GLEISBOX_MAGIC_START_SEQUENCE);
+  produceFrame(M_GLEISBOX_MAGIC_START_SEQUENCE0);
   proc2CAN(M_PATTERN, toCAN);
+  delay(wait_time_small);
+  produceFrame(M_GLEISBOX_MAGIC_START_SEQUENCE1);
+  proc2CAN(M_PATTERN, toCAN);
+  delay(wait_time_small);
   produceFrame(M_GLEISBOX_ALL_PROTO_ENABLE);
   proc2CAN(M_PATTERN, toCAN);
 }
@@ -1021,7 +1124,8 @@ void loop()
       telnetClient.printTelnet(true, "Rufe die Decoder auf:");
       produceFrame(M_CAN_PING);
       proc2CAN(M_PATTERN, toCAN);
-      proc2Clnts(M_PATTERN, toClnt);
+      send2AllClients(M_PATTERN);
+      //      proc2Clnts(M_PATTERN, toClnt);
       delay(500);
       canguruStatus = wait4slaves;
     }
@@ -1033,6 +1137,7 @@ void loop()
       canguruStatus = systemIsRunning;
       log_d("systemIsRunning");
     }
+    startRegisterLoks();
     break;
   case systemIsRunning:
     stillAliveBlinking();

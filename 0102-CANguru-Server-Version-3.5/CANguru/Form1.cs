@@ -18,6 +18,7 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Menu;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 // Phase 0: der Server startet und initialisiert sich; noch kein Kontakt zur Bridge
 // Phase 1: der Knopf Connect wird gedrückt und der Server ruft die Bridge auf, sich zu melden.
@@ -277,7 +278,7 @@ namespace CANguruX
                         watchdog = false;
                         WATCHDOG[0x05] = 0x00;
                     }
-                    switchVoltage(Voltage);
+//                    switchGleisboxAndBooster(Voltage);
                     //
                     int cnt;
                     // liest die Liste der Decoder aus der letzten Sitzung ein: IP-Adresse
@@ -1020,12 +1021,12 @@ namespace CANguruX
                                                 byte value = content[11];
                                                 this.oldCV.Invoke(new MethodInvoker(() => oldCV.Text = value.ToString("D")));
                                                 this.CVresult.Invoke(new MethodInvoker(() => CVresult.Text = "OK"));
-                                                this.btnVolt.Invoke(new MethodInvoker(() => switchVoltage(oldVoltage)));
+                                                this.btnVolt.Invoke(new MethodInvoker(() => switchGleisboxAndBooster(oldVoltage)));
                                             }
                                             else
                                             {
                                                 this.CVresult.Invoke(new MethodInvoker(() => CVresult.Text = "Fehler"));
-                                                this.btnVolt.Invoke(new MethodInvoker(() => switchVoltage(oldVoltage)));
+                                                this.btnVolt.Invoke(new MethodInvoker(() => switchGleisboxAndBooster(oldVoltage)));
                                             }
                                         }
                                         else
@@ -1038,7 +1039,7 @@ namespace CANguruX
                                                 {
                                                     Lokname_change = false;
                                                     this.CVresult.Invoke(new MethodInvoker(() => CVresult.Text = "OK"));
-                                                    this.btnVolt.Invoke(new MethodInvoker(() => switchVoltage(oldVoltage)));
+                                                    this.btnVolt.Invoke(new MethodInvoker(() => switchGleisboxAndBooster(oldVoltage)));
                                                     for (byte i = 0; i < 0x10; i++)
                                                     {
                                                         if (arrLokName[i] != 0x00)
@@ -1070,12 +1071,12 @@ namespace CANguruX
                                                 byte value = content[11];
                                                 this.oldCV.Invoke(new MethodInvoker(() => oldCV.Text = value.ToString("D")));
                                                 this.CVresult.Invoke(new MethodInvoker(() => CVresult.Text = "OK"));
-                                                this.btnVolt.Invoke(new MethodInvoker(() => switchVoltage(oldVoltage)));
+                                                this.btnVolt.Invoke(new MethodInvoker(() => switchGleisboxAndBooster(oldVoltage)));
                                             }
                                             else
                                             {
                                                 this.CVresult.Invoke(new MethodInvoker(() => CVresult.Text = "Fehler"));
-                                                this.btnVolt.Invoke(new MethodInvoker(() => switchVoltage(oldVoltage)));
+                                                this.btnVolt.Invoke(new MethodInvoker(() => switchGleisboxAndBooster(oldVoltage)));
                                             }
                                         }
                                         if (Lokname_change == true)
@@ -1087,7 +1088,7 @@ namespace CANguruX
                                             {
                                                 Lokname_change = false;
                                                 this.CVresult.Invoke(new MethodInvoker(() => CVresult.Text = "OK"));
-                                                this.btnVolt.Invoke(new MethodInvoker(() => switchVoltage(oldVoltage)));
+                                                this.btnVolt.Invoke(new MethodInvoker(() => switchGleisboxAndBooster(oldVoltage)));
                                             }
                                             else
                                             {
@@ -1229,6 +1230,8 @@ namespace CANguruX
                                             }
                                             if (CANguruDescriptionNbr > 0)
                                                 read1ConfigChannel_ValueBlock(ref CANguruDescriptionNbr);
+                                            // die Liste der Decoder wird wieder aktiviert
+                                            CANElemente.Enabled = true;
                                         }
                                     }
                                     break;
@@ -1266,10 +1269,10 @@ namespace CANguruX
                                             getANDsendLokCNT();
                                         }
                                         // Meldung ausgeben
+                                        // schaltet Strom ein
                                         this.mfxProgress.Invoke(new MethodInvoker(() => this.mfxProgress.Text = "Fertig!"));
-                                        byte[] BOOSTER_STOP = { 0x00, 0x96, 0x03, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-                                        CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-                                        CANClient.Send(BOOSTER_STOP, Cnames.lngFrame);
+//                                        CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+//                                        CANClient.Send(BOOSTER_SWITCH, Cnames.lngFrame);
                                     }
                                     break;
                                 //#define LoadCS2Data 0x56
@@ -1371,6 +1374,7 @@ namespace CANguruX
                                                         allDecoders[index].lost = false;
                                                 }
                                             }
+                                            break;
                                         }
                                     }
                                     break;
@@ -1453,7 +1457,7 @@ namespace CANguruX
         {
             SendCurrAdr();
             byte[] MFX_STOP = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-            byte[] BOOSTER_STOP = { 0x00, 0x96, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] BOOSTER_SWITCH = { 0x00, 0x96, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             // Gleisstrom abschalten
             this.mfxProgress.Invoke(new MethodInvoker(() => this.mfxProgress.Text = "MFX-Lok wird gesucht"));
             ChangeMyText(this.TelnetComm, doMsg4TctWindow(CMD.fromGW, MFX_STOP));
@@ -1461,8 +1465,9 @@ namespace CANguruX
             CANClient.Send(MFX_STOP, Cnames.lngFrame);
             elapsedsec = 0;
             Seta1secTimer();
-            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-            CANClient.Send(BOOSTER_STOP, Cnames.lngFrame);
+            // schaltet Strom aus
+//            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+//            CANClient.Send(BOOSTER_SWITCH, Cnames.lngFrame);
             setProgressMFXBar((int)(14));
         }
 
@@ -1484,12 +1489,14 @@ namespace CANguruX
         private void After1sec(Object source, ElapsedEventArgs e)
         {
             byte[] MFX_COUNTER = { 0x00, 0x00, 0x03, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00 };
-            byte[] MFX_GO = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 };
+            byte[] MFX_Protocol = { 0x00, 0x00, 0x03, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x08, 0x07, 0x00, 0x00 };
             elapsedsec++;
             UpdateProgressMFXBar();
             switch (elapsedsec)
             {
-                case 1:
+                case 10:
+                    // Gleisstrom einschalten
+                    switchGleisboxAndBooster(true);
                     // Neuanmeldezähler abfragen, setzen und erhöhen
                     ConfigStream.setCounter((byte)(numCounter.Value));
                     ConfigStream.incCounter();
@@ -1503,11 +1510,11 @@ namespace CANguruX
                     CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
                     CANClient.Send(MFX_COUNTER, Cnames.lngFrame);
                     break;
-                case 10:
-                    // Gleisstrom anschalten
-                    ChangeMyText(this.TelnetComm, doMsg4TctWindow(CMD.fromGW, MFX_GO));
+                case 11:
+                    // Gleisprotokoll Frei Schalten: 7 Bits 0 1 2: MM2 MFX, DCC
+                    ChangeMyText(this.TelnetComm, doMsg4TctWindow(CMD.fromGW, MFX_Protocol));
                     CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
-                    CANClient.Send(MFX_GO, Cnames.lngFrame);
+                    CANClient.Send(MFX_Protocol, Cnames.lngFrame);
                     break;
                 case 15:
                     a1secTimer.Enabled = false;
@@ -1542,8 +1549,15 @@ namespace CANguruX
             string name = txtBoxLokName.Text;
             byte adr = (byte)numLokAdress.Value;
             byte type = (byte)lstBoxDecoderType.SelectedIndex;
-            ConfigStream.fillConfigStruct(name, adr, type);
-            ConfigStream.finishConfigStruct(true);
+            if (name.Length > 0)
+            {
+                ConfigStream.fillConfigStruct(name, adr, type);
+                ConfigStream.finishConfigStruct(true);
+            }
+            else
+            {
+                MessageBox.Show("Bitte zunächst Loknamen eingeben!");
+            }
         }
 
         void findLoks_Click(object sender, EventArgs e)
@@ -1573,26 +1587,33 @@ namespace CANguruX
             // Aufräumen
             timeTimer.Stop();
             ini.RemoveAllSections();
+            ini.AddSection("IP-address");
             ini.AddSection("IP-address").AddKey("IPCAN").Value = Cnames.IP_CAN;
             ConfigStream.setCounter((byte)(numCounter.Value));
             byte c = ConfigStream.getCounter();
+            ini.AddSection("Neuanmeldezaehler");
             ini.AddSection("Neuanmeldezaehler").AddKey("Counter").Value = c.ToString();
             ConfigStream.setnextLocid((byte)(numLocID.Value));
             byte n = ConfigStream.getnextLocid();
+            ini.AddSection("Lok-Adresse");
             ini.AddSection("Lok-Adresse").AddKey("LocID").Value = n.ToString();
             string v = "0";
             if (verbose)
                 v = "1";
+            ini.AddSection("Verbose");
             ini.AddSection("Verbose").AddKey("verbose").Value = v;
             string w = "0";
             if (watchdog)
                 w = "1";
+            ini.AddSection("Watchdog");
             ini.AddSection("Watchdog").AddKey("watchdog").Value = w;
             //
             tabControl1.SelectTab(2);
             int decs = CANElemente.Items.Count;
-            ini.AddSection("Decoder").AddKey("DecoderCnt").Value = decs.ToString();
-            ini.AddSection("Decoder").AddKey("expectedDecoders").Value = cntDecoders.Value.ToString();
+            ini.AddSection("DecoderCnt");
+            ini.AddSection("DecoderCnt").AddKey("DecoderCnt").Value = decs.ToString();
+            ini.AddSection("DecoderCnt").AddKey("expectedDecoders").Value = cntDecoders.Value.ToString();
+            ini.AddSection("Decoder");
             int cnt = allDecoders.Count;
             int index = 0;
             for (byte d = 0; d < cnt; d++)
@@ -1601,12 +1622,13 @@ namespace CANguruX
                     break;
                 // teile[0]: ip
                 // teile[1]: name
-                if (allDecoders[d].UID != "")
+                if ((allDecoders[d].UID != "") && (allDecoders[d].ipAdr != "") && (allDecoders[d].name != ""))
                 {
                     CANElemente.SetSelected(index, true);
-                    ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", index))).Value = allDecoders[d].ipAdr + Cnames.delimiter + allDecoders[d].name;
+                    String DecoderName = String.Concat("Decoder", String.Format("{0:D03}", index));
+                    String DecoderValue = allDecoders[d].ipAdr + Cnames.delimiter + allDecoders[d].name;
+                    ini.AddSection("Decoder").AddKey(DecoderName).Value = DecoderValue;
                     index++;
-                    //                ini.AddSection("Decoder").AddKey(String.Concat("Decoder", String.Format("{0:D03}", d))).Value = makeIPAddress(d, false);
                 }
             }
             //Save the INI
@@ -1706,12 +1728,14 @@ namespace CANguruX
                 CANClient.Send(GET_IP, Cnames.lngFrame);
                 return;
             }
+            // Paketnummer
+            GETCONFIG[9] = index;
             // UID eintragen
             for (byte i = 5; i < 9; i++)
                 GETCONFIG[i] = CANguruPINGArr[canguru, i];
-            // Paketnummer
-            GETCONFIG[9] = index;
             ChangeMyText(this.TelnetComm, doMsg4TctWindow(CMD.fromGW, GETCONFIG));
+            // die Liste der Decoder wird vorübergehend deaktiviert
+            CANElemente.Enabled = false;
             CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
             CANClient.Send(GETCONFIG, Cnames.lngFrame);
         }
@@ -1738,6 +1762,7 @@ namespace CANguruX
                     CANguruDecoderNbr = 0;
                     CANguruArrLine = 0;
                     CANguruDescriptionNbr = 0;
+                    switchGleisboxAndBooster(true);
                     break;
                 case 1000:
                     // Status watchdog an Bridge
@@ -1919,6 +1944,32 @@ namespace CANguruX
             Console.Read();
         }
 
+        private void BoosterGo(Button btn)
+        {
+            byte[] BOOSTER_SWITCH = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x51, 0x00, 0x00, 0x00 };
+            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+            CANClient.Send(BOOSTER_SWITCH, Cnames.lngFrame);
+        }
+        private void BoosterStop(Button btn)
+        {
+            byte[] BOOSTER_SWITCH = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x50, 0x00, 0x00, 0x00 };
+            CANClient.Connect(Cnames.IP_CAN, Cnames.portoutCAN);
+            CANClient.Send(BOOSTER_SWITCH, Cnames.lngFrame);
+        }
+
+        private void switchBooster(bool onOff)
+        {
+            // Gleisspannung ggf. einschalten
+            if (onOff == true)
+            {
+                BoosterGo(btnVolt);
+            }
+            else
+            {
+                BoosterStop(btnVolt);
+            }
+        }
+
         private void voltGo(Button btn)
         {
             byte[] VOLT_GO = { 0x00, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 };
@@ -1939,10 +1990,11 @@ namespace CANguruX
             Voltage = false;
         }
 
-        private void switchVoltage(bool onOff)
+        private void switchGleisboxAndBooster(bool onOff)
         {
             // Gleisspannung ggf. einschalten
             oldVoltage = Voltage;
+            switchBooster(onOff);
             if (onOff == true)
             {
                 voltGo(btnVolt);
@@ -2196,7 +2248,7 @@ namespace CANguruX
             byte[] mfxAddress = { 0x00, 0x01 };
             byte mfxAdr = 0x00;
             int cnt = 0;
-            switchVoltage(true);
+            switchGleisboxAndBooster(true);
             //
             this.lokBox.Invoke(new MethodInvoker(() => cnt = lokBox.Items.Count));
             if (cnt == 0)
@@ -2232,7 +2284,7 @@ namespace CANguruX
             //                    D0 D1 D2 D3 D4 D5 D6 D7
             //                    05 06 07 08 09 10 11 12
             // 0x00(0F)0300 R [7] 00 00 C0 03 XX XX XX(00)
-            switchVoltage(true);
+            switchGleisboxAndBooster(true);
             CV_READ[0x07] = 0xC0;
             CV_READ[0x08] = 0x00;
             // lies CV-Adresse
@@ -2279,7 +2331,7 @@ namespace CANguruX
         private void CVwrite_Click(object sender, EventArgs e)
         {
             byte[] CV_WRITE = { 0x00, 0x10, 0x03, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-            switchVoltage(true);
+            switchGleisboxAndBooster(true);
             //                    D0 D1 D2 D3 D4 D5 D6 D7
             //                    05 06 07 08 09 10 11 12
             // 0x00(10)0300 R [8] 00 00 C0 00 00 1F 10 00
