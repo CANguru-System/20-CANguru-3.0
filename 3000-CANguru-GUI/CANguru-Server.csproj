@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <RootNamespace>CANguru</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Assets\CANguru.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <!-- Ressourcen -->
+  <ItemGroup>
+    <Content Include="Assets\CANguru.ico" />
+    <EmbeddedResource Include="Assets\Stepper.jpg" />
+  </ItemGroup>
+
+  <!-- einzig notwendiger Eintrag für Designer-Unterstützung -->
+  <ItemGroup>
+
+
+    <Compile Update="GUI\Panels\PowerDecoderSettingsPanel.Designer.cs">
+      <DependentUpon>PowerDecoderSettingsPanel.cs</DependentUpon>
+    </Compile>
+
+    <Compile Update="GUI\Panels\ServoDecoderSettingsPanel.Designer.cs">
+      <DependentUpon>ServoDecoderSettingsPanel.cs</DependentUpon>
+    </Compile>
+  
+  </ItemGroup>
+<ItemGroup>
+
+  <Compile Update="GUI\Panels\SwitchDecoderSettingsPanel.Designer.cs">
+    <DependentUpon>SwitchDecoderSettingsPanel.cs</DependentUpon>
+  </Compile>
+
+  <EmbeddedResource Update="GUI\Panels\SwitchDecoderSettingsPanel.resx">
+    <DependentUpon>SwitchDecoderSettingsPanel.cs</DependentUpon>
+  </EmbeddedResource>
+</ItemGroup>
+
+  <!-- Automatisch generierte Dateien -->
+  <ItemGroup>
+    <Compile Update="AppResources.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppResources.rc</DependentUpon>
+    </Compile>
+
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

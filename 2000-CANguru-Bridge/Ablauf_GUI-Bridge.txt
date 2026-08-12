@@ -1,0 +1,12 @@
+Ablauf GUI - Bridge
+
+1. GUI sendet DISCOVERY_REQUEST
+2. Bridge antwortet mit DISCOVERY_RESPONSE
+Zwischenzeitlich wird die Datei lokomotive.cs2 von der GUI zur Bridge geladen
+3. GUI sendet MSG_START_BRIDGE
+4. Bridge sendet MSG_START_DECODERS per broadcast an Decoder
+5. Decoder antworten mit FRAME_DECODER_HELLO
+6. Bridge sendet die Decoderdaten an die GUI
+7. Bridge sendet per FRAME_DECODER_ID_ASSIGN die ID an die Decoder
+8. Die Decoder antworten mit FRAME_DECODER_ID_ACK
+9. Bridge stellt den Statud des Decoders als ready fest und speichert die lastseen-Zeit

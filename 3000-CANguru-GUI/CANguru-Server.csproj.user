@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Compile Update="Controllers\DecoderController.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\VerticalDualProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="GUI\Forms\DecoderListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GUI\Forms\FeedbackDecoderSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GUI\Forms\LokListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GUI\Forms\PowerDecoderSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GUI\DecoderSettings\DecoderSettingsPanelBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="GUI\Forms\SignalDecoderSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GUI\Panels\FeedbackDecoderSettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="GUI\Panels\PowerDecoderSettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="GUI\Forms\SwitchDecoderSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="GUI\Panels\SignalDecoderSettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="GUI\Panels\SwitchDecoderSettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Views\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\ManualLokDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Controls\ToggleStopGoButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="GUI\Panels\SwitchDecoderSettingsPanel.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Form1.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

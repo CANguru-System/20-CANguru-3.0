@@ -1,0 +1,10 @@
+4. Was dieses Skript jetzt kann
+Feature	Status
+Hexwerte automatisch erkennen			✔
+Hexwerte ohne Anführungszeichen erkennen	✔
+Kommentare aus YAML übernehmen			✔
+Inline-Kommentare übernehmen			✔
+Dezimalwerte unverändert lassen			✔
+Ausgabe für GUI, Bridge, Decoder		✔
+Beliebig viele Decoder-Ordner			✔
+YAML und Skript im selben Ordner		✔

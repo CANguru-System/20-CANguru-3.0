@@ -1,0 +1,32 @@
+{
+  "1": {
+    "AssignedId": 1,
+    "Mac": "5LMjxFss",
+    "Type": 2,
+    "value0": 0,
+    "value1": 0,
+    "Name": "",
+    "IsUpdating": false,
+    "OtaProgress": 0,
+    "OtaExpectedAck": -1,
+    "ProtocolVersion": 1,
+    "ChannelStates": {},
+    "LastSeen": "0001-01-01T00:00:00",
+    "IsReady": false
+  },
+  "2": {
+    "AssignedId": 2,
+    "Mac": "5LMjxZWY",
+    "Type": 2,
+    "value0": 0,
+    "value1": 0,
+    "Name": "",
+    "IsUpdating": false,
+    "OtaProgress": 0,
+    "OtaExpectedAck": -1,
+    "ProtocolVersion": 1,
+    "ChannelStates": {},
+    "LastSeen": "0001-01-01T00:00:00",
+    "IsReady": false
+  }
+}

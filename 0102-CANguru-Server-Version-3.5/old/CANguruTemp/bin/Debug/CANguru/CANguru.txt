@@ -1,6 +1,0 @@
-Liste der installierten CANguru-Decoder:
-1 CANguru-Decoder gefunden.
-
-Decoder #1: CANguru Booster-D715
-	IP-Adresse: 192.168.178.180
-	Max Strom: 1 Amp

@@ -1,0 +1,27 @@
+{
+  "4278321175": {
+    "Name": "Koef",
+    "UID": 4278321175,
+    "MfxUID": "Fw==",
+    "MfxSID": 23,
+    "IsManual": true,
+    "DecoderType": "MM2",
+    "NameFragments": {},
+    "NameFramesReceived": 0,
+    "Icon": "",
+    "Av": 60,
+    "Bv": 40,
+    "Volume": 100,
+    "ProgMask": 3,
+    "Vmin": 13,
+    "Vmax": 100,
+    "XProt": 2,
+    "Funktionen": [],
+    "AssignedId": 0,
+    "Mac": "AAAAAAAA",
+    "LastSeen": "0001-01-01T00:00:00",
+    "IsReady": false,
+    "ProtocolVersion": 1,
+    "ChannelStates": {}
+  }
+}

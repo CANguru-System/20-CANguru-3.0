@@ -1,0 +1,111 @@
+﻿using System;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+
+public class VerticalDualProgressBar : Control
+{
+    [DefaultValue(0)]
+    public int CurrentValue { get; set; } = 0;
+
+    [DefaultValue(100)]
+    public int CurrentMaximum { get; set; } = 100;
+
+    [DefaultValue(0)]
+    public int TotalValue { get; set; } = 0;
+    
+    [DefaultValue(100)]
+    public int TotalMaximum { get; set; } = 100;
+
+    [DefaultValue(typeof(Color), "LimeGreen")]
+    public Color CurrentColor { get; set; } = Color.LimeGreen;
+
+    [DefaultValue(typeof(Color), "DodgerBlue")]
+    public Color TotalColor { get; set; } = Color.DodgerBlue;
+
+    [DefaultValue(typeof(Color), "Black")]
+    public Color DividerColor { get; set; } = Color.Black;
+
+    [DefaultValue(typeof(Color), "Black")]
+    public Color TextColor { get; set; } = Color.Black;
+
+    public VerticalDualProgressBar()
+    {
+        DoubleBuffered = true;
+        ResizeRedraw = true;
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        base.OnPaint(e);
+
+        int barWidth = this.Width / 2;
+        int height = this.Height;
+
+        // -------------------------
+        // Balken 1 (Current)
+        // -------------------------
+        float p1 = (float)CurrentValue / Math.Max(1, CurrentMaximum);
+        int h1 = (int)(p1 * height);
+
+        Rectangle rect1 = new Rectangle(
+            0,
+            height - h1,
+            barWidth - 2,
+            h1
+        );
+
+        using (Brush b = new SolidBrush(CurrentColor))
+            e.Graphics.FillRectangle(b, rect1);
+
+        e.Graphics.DrawRectangle(Pens.Black, 0, 0, barWidth - 2, height - 1);
+
+        // Text für Balken 1
+        string text1 = $"{(int)(p1 * 100)}%";
+        TextRenderer.DrawText(
+            e.Graphics,
+            text1,
+            this.Font,
+            new Rectangle(0, 0, barWidth - 2, height),
+            TextColor,
+            TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter
+        );
+
+        // -------------------------
+        // Trennlinie
+        // -------------------------
+        int dividerX = barWidth;
+        using (Pen p = new Pen(DividerColor, 2))
+            e.Graphics.DrawLine(p, dividerX, 0, dividerX, height);
+
+        // -------------------------
+        // Balken 2 (Total)
+        // -------------------------
+        float p2 = (float)TotalValue / Math.Max(1, TotalMaximum);
+        int h2 = (int)(p2 * height);
+
+        Rectangle rect2 = new Rectangle(
+            barWidth + 2,
+            height - h2,
+            barWidth - 2,
+            h2
+        );
+
+        using (Brush b = new SolidBrush(TotalColor))
+            e.Graphics.FillRectangle(b, rect2);
+
+        e.Graphics.DrawRectangle(Pens.Black, barWidth + 2, 0, barWidth - 2, height - 1);
+
+        // Text für Balken 2
+        string text2 = $"{(int)(p2 * 100)}%";
+        TextRenderer.DrawText(
+            e.Graphics,
+            text2,
+            this.Font,
+            new Rectangle(barWidth + 2, 0, barWidth - 2, height),
+            TextColor,
+            TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter
+        );
+    }
+}
+

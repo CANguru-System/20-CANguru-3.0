@@ -1,0 +1,49 @@
+﻿using System;
+using System.Windows.Forms;
+
+namespace CANguru.GUI.DecoderSettings
+{
+    public partial class frmDecoderSettings : Form
+    {
+        private readonly Control settingsPanel;
+
+        public frmDecoderSettings(Control settingsPanel)
+        {
+            InitializeComponent();
+
+            this.settingsPanel = settingsPanel;
+
+            // Panel einfügen
+            settingsPanel.Dock = DockStyle.Top;
+            settingsPanel.AutoSize = false;                   // WICHTIG
+
+            panelContainer.Controls.Add(settingsPanel);
+
+            Console.WriteLine("Panel PreferredSize: " + settingsPanel.PreferredSize);
+            Console.WriteLine("Panel Size: " + settingsPanel.Size);
+            Console.WriteLine("Panel MinimumSize: " + settingsPanel.MinimumSize);
+            Console.WriteLine("Container PreferredSize: " + panelContainer.PreferredSize);
+            Console.WriteLine("Container Size: " + panelContainer.Size);
+
+            // Buttons
+            btnSave.Click += (s, e) =>
+            {
+                if (settingsPanel is DecoderSettingsPanelBase basePanel)
+                    basePanel.SaveToDecoder();
+
+                this.DialogResult = DialogResult.OK;
+                Close();
+            };
+
+            btnCancel.Click += (s, e) =>
+            {
+                this.DialogResult = DialogResult.Cancel;
+                Close();
+            };
+
+            // Daten laden
+            if (settingsPanel is DecoderSettingsPanelBase basePanel2)
+                basePanel2.LoadFromDecoder();
+        }
+    }
+}

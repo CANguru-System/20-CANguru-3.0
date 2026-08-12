@@ -1,0 +1,155 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\views\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:views\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\controllers\\mfxlokscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:controllers\\mfxlokscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\gui\\forms\\decoderlistform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:gui\\forms\\decoderlistform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\models\\cangurudevice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:models\\cangurudevice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\gui\\forms\\feedbackdecodersettingsform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:gui\\forms\\feedbackdecodersettingsform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\gui\\panels\\feedbackdecodersettingspanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:gui\\panels\\feedbackdecodersettingspanel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\gui\\forms\\feedbackdecodersettingsform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:gui\\forms\\feedbackdecodersettingsform.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|c:\\canguru-drive\\onedrive\\09 carguru-github\\20-canguru-3.0\\3000-canguru-gui\\models\\protocolconstants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E87737C6-E63B-532F-A878-2C7704814C7D}|CANguru-Server.csproj|solutionrelative:models\\protocolconstants.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MfxLoksController.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Controllers\\MfxLoksController.cs",
+              "RelativeDocumentMoniker": "Controllers\\MfxLoksController.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Controllers\\MfxLoksController.cs",
+              "RelativeToolTip": "Controllers\\MfxLoksController.cs",
+              "ViewState": "AgIAAKQAAAAAAAAAAAAUwLkAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T15:13:11.118Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DecoderListForm.Designer.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Forms\\DecoderListForm.Designer.cs",
+              "RelativeDocumentMoniker": "GUI\\Forms\\DecoderListForm.Designer.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Forms\\DecoderListForm.Designer.cs",
+              "RelativeToolTip": "GUI\\Forms\\DecoderListForm.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-07T09:11:02.301Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CANguruDevice.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Models\\CANguruDevice.cs",
+              "RelativeDocumentMoniker": "Models\\CANguruDevice.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Models\\CANguruDevice.cs",
+              "RelativeToolTip": "Models\\CANguruDevice.cs",
+              "ViewState": "AgIAALQAAACQAAAAAKA6wMoAAABkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T15:44:12.621Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FeedbackDecoderSettingsPanel.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Panels\\FeedbackDecoderSettingsPanel.cs",
+              "RelativeDocumentMoniker": "GUI\\Panels\\FeedbackDecoderSettingsPanel.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Panels\\FeedbackDecoderSettingsPanel.cs",
+              "RelativeToolTip": "GUI\\Panels\\FeedbackDecoderSettingsPanel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-06T10:53:15.115Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FeedbackDecoderSettingsForm.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Forms\\FeedbackDecoderSettingsForm.cs",
+              "RelativeDocumentMoniker": "GUI\\Forms\\FeedbackDecoderSettingsForm.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Forms\\FeedbackDecoderSettingsForm.cs",
+              "RelativeToolTip": "GUI\\Forms\\FeedbackDecoderSettingsForm.cs",
+              "ViewState": "AgIAABMAAAAAa2ZmZmYMwBkAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-05T15:02:44.7Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ProtocolConstants.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Models\\ProtocolConstants.cs",
+              "RelativeDocumentMoniker": "Models\\ProtocolConstants.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Models\\ProtocolConstants.cs",
+              "RelativeToolTip": "Models\\ProtocolConstants.cs",
+              "ViewState": "AgIAAJoAAAAAAAAAAAAAALQAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-05T14:50:31.879Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Views\\Form1.cs",
+              "RelativeDocumentMoniker": "Views\\Form1.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\Views\\Form1.cs",
+              "RelativeToolTip": "Views\\Form1.cs",
+              "ViewState": "AgIAAHYCAAAAAAAAAADwv4sCAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-05T12:18:20.271Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "FeedbackDecoderSettingsForm.Designer.cs",
+              "DocumentMoniker": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Forms\\FeedbackDecoderSettingsForm.Designer.cs",
+              "RelativeDocumentMoniker": "GUI\\Forms\\FeedbackDecoderSettingsForm.Designer.cs",
+              "ToolTip": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\3000-CANguru-GUI\\GUI\\Forms\\FeedbackDecoderSettingsForm.Designer.cs",
+              "RelativeToolTip": "GUI\\Forms\\FeedbackDecoderSettingsForm.Designer.cs",
+              "ViewState": "AgIAABwAAACImZmZmVkswCsAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-05T12:15:22.181Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

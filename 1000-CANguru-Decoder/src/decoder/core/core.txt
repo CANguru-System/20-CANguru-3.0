@@ -1,0 +1,51 @@
+🌳 Was der Basisdecoder garantiert
+Der Basisdecoder übernimmt ALLES, was jeder Decoder braucht:
+
+✔ ESPNOW‑Initialisierung
+✔ Alive‑Handling
+✔ OTA‑Start + OTA‑Download
+✔ Konfigurationsverwaltung
+✔ Logging
+✔ Gemeinsame Loop‑Verarbeitung
+✔ Gemeinsame Frame‑Verarbeitung
+✔ Saubere Übergabe an spezialisierte Decoder
+Damit ist der Basisdecoder komplett generisch und niemals abhängig von einem bestimmten Decoder‑Typ.
+
+🌳 Wie spezialisierte Decoder darauf aufsetzen
+Ein spezialisierter Decoder implementiert nur:
+
+featureSetup()
+
+featureLoop()
+
+featureOnData()
+
+Beispiel Signaldecoder:
+
+class SignalDecoder : public DecoderBase {
+public:
+    void featureSetup() override;
+    void featureLoop() override;
+    void featureOnData(const uint8_t* data, int len) override;
+
+private:
+    SignalPins pins;
+    SignalAspect aspect;
+    SignalStateMachine sm;
+};
+
+🌳 Warum diese Architektur perfekt ist
+✔ Keine Code‑Duplikation
+OTA, ESPNOW, Alive, Config → nur einmal implementiert.
+
+✔ Jeder Decoder‑Typ bleibt isoliert
+Signaldecoder kann wachsen, ohne andere zu beeinflussen.
+
+✔ Neue Decoder‑Typen in Minuten
+Einfach neue Klasse + Ordner in /features.
+
+✔ Saubere Trennung von Core und Feature
+Professionelle Embedded‑Architektur.
+
+✔ Zukunftssicher
+Du kannst 10, 20 oder 50 Decoder‑Typen bauen.

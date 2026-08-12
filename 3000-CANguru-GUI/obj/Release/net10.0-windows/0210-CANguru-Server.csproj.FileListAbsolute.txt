@@ -1,0 +1,39 @@
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\bin\Release\net10.0-windows\0210-CANguru-Server.exe
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\bin\Release\net10.0-windows\0210-CANguru-Server.deps.json
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\bin\Release\net10.0-windows\0210-CANguru-Server.runtimeconfig.json
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\bin\Release\net10.0-windows\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\bin\Release\net10.0-windows\0210-CANguru-Server.pdb
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\CANguru.Views.Form1.resources
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\CANguru.Views.ManualLokDialog.resources
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.csproj.GenerateResource.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.GeneratedMSBuildEditorConfig.editorconfig
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.AssemblyInfoInputs.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.AssemblyInfo.cs
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.csproj.CoreCompileInputs.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.sourcelink.json
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\refint\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.pdb
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\0210-CANguru-Server.genruntimeconfig.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\0210 CANguru-Server\0210-CANguru-Server\obj\Release\net10.0-windows\ref\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\bin\Release\net10.0-windows\0210-CANguru-Server.exe
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\bin\Release\net10.0-windows\0210-CANguru-Server.deps.json
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\bin\Release\net10.0-windows\0210-CANguru-Server.runtimeconfig.json
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\bin\Release\net10.0-windows\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\bin\Release\net10.0-windows\0210-CANguru-Server.pdb
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\CANguru.Views.Form1.resources
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\CANguru.Views.ManualLokDialog.resources
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.csproj.GenerateResource.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.GeneratedMSBuildEditorConfig.editorconfig
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.AssemblyInfoInputs.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.AssemblyInfo.cs
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.csproj.CoreCompileInputs.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.sourcelink.json
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\refint\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.pdb
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\0210-CANguru-Server.genruntimeconfig.cache
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\ref\0210-CANguru-Server.dll
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\CANguru.Controllers.DecoderController.resources
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\obj\Release\net10.0-windows\CANguru.Views.frmPowerDecoderSettings.resources
+C:\CANguru-Drive\OneDrive\09 CARguru-Github\20-CANguru-3.0\3000-CANguru-GUI\bin\Release\net10.0-windows\0210-CANguru-Server.dll.config

@@ -1,0 +1,18 @@
+﻿Decoder 1:
+Name: Koef
+Adresse: 23
+UID: MM2
+Typ: FF020017
+
+Decoder 2:
+Name: BR 260
+Adresse: 10
+UID: mfx
+Typ: 69CDFAF9
+
+Decoder 3:
+Name: DB 640 017-9
+Adresse: 9
+UID: mfx
+Typ: 41C9FD7C
+

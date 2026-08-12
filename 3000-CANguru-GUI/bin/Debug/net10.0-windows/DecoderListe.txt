@@ -1,0 +1,17 @@
+﻿Liste der installierten CANguru-Decoder:
+2 Decoder gefunden
+
+Decoder #1:
+	Type: Power
+	MAC-Adresse: E4:B3:23:C4:5B:2C
+	ID: 1
+	UID: D716
+	Details: Max: 1350 mA
+
+Decoder #2:
+	Type: Feedback
+	MAC-Adresse: 24:6F:28:15:E5:98
+	ID: 2
+	UID: D717
+	Details: K1–K8:  02 03 04 15 05 06 07 08 | K9–K16: 09 10 11 12 13 14 15 16
+

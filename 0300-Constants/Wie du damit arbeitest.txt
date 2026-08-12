@@ -1,0 +1,21 @@
+Wie du damit arbeitest
+Neue Konstante?  
+→ Nur einen neuen dict(...)‑Eintrag in CONSTANTS hinzufügen.
+
+Architektur ändern?  
+→ arch="core" → arch="bridge" etc.
+
+Header neu erzeugen:
+
+bash
+cd 0300-Constants
+python constants_manager.py
+Danach sind aktualisiert:
+
+generated_constants/*.h
+
+protocol_constants.yaml
+
+ProtocolConstants.cs
+
+Keine Angst mehr vor YAML‑Whitespace, keine Duplikate, eine Quelle der Wahrheit.

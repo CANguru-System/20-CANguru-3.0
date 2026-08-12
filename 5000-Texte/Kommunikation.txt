@@ -1,0 +1,12 @@
+
+                           Eingang                                Ausgang
+
+GUI/Bridge            ProcessIncomingPacket           UdpClientSingleton.Instance.Send
+
+BRIDGE/GUI                 ReadGUI                               udpSendToGui
+
+BRIDGE/Decoder          onBridgeDataRecv                          esp_now_send
+
+BRIDGE/WDP                sendToWDP                               readWDP()
+
+Decoder/Bridge           onDecDataRecv            coreEspNowSendCAN2Bridge/coreEspNowSendFeaturePacket

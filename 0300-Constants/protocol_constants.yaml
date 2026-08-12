@@ -1,0 +1,532 @@
+constants:
+  INVALID_ASSIGNED_ID:
+    value: '0x00'
+    architecture: core
+  EXP_LNG_SWITCH_SETTINGS:
+    value: '8'
+    architecture: core
+  EXP_LNG_SIGNAL_SETTINGS:
+    value: '8'
+    architecture: core
+  EXP_LNG_POWER_SETTINGS:
+    value: '2'
+    architecture: core
+  EXP_LNG_FEEDBACK_SETTINGS:
+    value: '16'
+    architecture: core
+  EXP_LNG_ALIVE:
+    value: '3'
+    architecture: core
+  EXP_LNG_CAN_FRAME:
+    value: '13'
+    architecture: core
+  canID:
+    value: '0x00'
+    architecture: core
+  startByte:
+    value: '0x00'
+    architecture: core
+  featureByte:
+    value: '0x01'
+    architecture: core
+  commandByte:
+    value: '0x02'
+    architecture: core
+  FEATURE_BRIDGE:
+    value: '0x10'
+    architecture: core
+  BRIDGE_START:
+    value: '0x11'
+    architecture: core
+  FEATURE_POWER:
+    value: '0x20'
+    architecture: core
+  POWER_CMD_SET_THRESHOLD:
+    value: '0x21'
+    architecture: core
+  POWER_CMD_GET_THRESHOLD:
+    value: '0x22'
+    architecture: core
+  POWER_CMD_SHUTDOWN:
+    value: '0x23'
+    architecture: core
+  POWER_CHG_TRACK_CURRENT:
+    value: '0x24'
+    architecture: core
+  POWER_CMD_GET_VERSION:
+    value: '0x25'
+    architecture: core
+  FEATURE_SWITCH:
+    value: '0x30'
+    architecture: core
+  SWITCH_CMD_GET_SETTINGS:
+    value: '0x31'
+    architecture: core
+  SWITCH_CMD_SET_SETTINGS:
+    value: '0x32'
+    architecture: core
+  SWITCH_CMD_MOVE2START:
+    value: '0x33'
+    architecture: core
+  SWITCH_CMD_SET_ZERO:
+    value: '0x34'
+    architecture: core
+  SWITCH_CMD_MOVE2END:
+    value: '0x35'
+    architecture: core
+  SWITCH_CMD_SET_END:
+    value: '0x36'
+    architecture: core
+  SWITCH_CMD_SET_END_ACK:
+    value: '0x37'
+    architecture: core
+  SWITCH_CMD_TEST_RUN:
+    value: '0x38'
+    architecture: core
+  SWITCH_CMD_STOP_ALL:
+    value: '0x39'
+    architecture: core
+  SWITCH_CMD_SET_DIR:
+    value: '0x3A'
+    architecture: core
+  SWITCH_CMD_GET_VERSION:
+    value: '0x3B'
+    architecture: core
+  step_delay_min:
+    value: '100'
+    architecture: core
+  step_delay_std:
+    value: '300'
+    architecture: core
+  step_delay_max:
+    value: '1000'
+    architecture: core
+  step_delay_step:
+    value: '50'
+    architecture: core
+  stepsToEnd_min:
+    value: '100'
+    architecture: core
+  stepsToEnd_std:
+    value: '1140'
+    architecture: core
+  stepsToEnd_max:
+    value: '1300'
+    architecture: core
+  stepsToEnd_step:
+    value: '10'
+    architecture: core
+  FEATURE_SIGNAL:
+    value: '0x40'
+    architecture: core
+  SIGNAL_CMD_GET_SETTINGS:
+    value: '0x41'
+    architecture: core
+  SIGNAL_CMD_SET_SETTINGS:
+    value: '0x42'
+    architecture: core
+  SIGNAL_CMD_MOVE2START:
+    value: '0x43'
+    architecture: core
+  SIGNAL_CMD_SET_ZERO:
+    value: '0x44'
+    architecture: core
+  SIGNAL_CMD_MOVE2END:
+    value: '0x45'
+    architecture: core
+  SIGNAL_CMD_SET_END:
+    value: '0x46'
+    architecture: core
+  SIGNAL_CMD_SET_END_ACK:
+    value: '0x47'
+    architecture: core
+  SIGNAL_CMD_TEST_RUN:
+    value: '0x48'
+    architecture: core
+  SIGNAL_CMD_STOP_ALL:
+    value: '0x49'
+    architecture: core
+  SIGNAL_CMD_SET_DIR:
+    value: '0x4A'
+    architecture: core
+  SIGNAL_CMD_GET_VERSION:
+    value: '0x4B'
+    architecture: core
+  FEATURE_FEEDBACK:
+    value: '0x50'
+    architecture: core
+  FEEDBACK_CMD_GET_SETTINGS:
+    value: '0x51'
+    architecture: core
+  FEEDBACK_CMD_SET_SETTINGS:
+    value: '0x52'
+    architecture: core
+  FEEDBACK_CMD_SET_SETTINGS_ACK:
+    value: '0x53'
+    architecture: core
+  FEEDBACK_CMD_GET_VERSION:
+    value: '0x54'
+    architecture: core
+  FEATURE_FIRMWARE:
+    value: '0x60'
+    architecture: core
+  FRAME_GUI_OTA_RESULT:
+    value: '0x61'
+    architecture: core
+  FRAME_GUI_OTA_CURRENT_FINISHED:
+    value: '0x62'
+    architecture: core
+  FEATURE_ALIVE:
+    value: '0x70'
+    architecture: core
+  HANDLE_ALIVE:
+    value: '0x71'
+    architecture: core
+  FRAME_DECODER_ALIVE:
+    value: '0x72'
+    architecture: core
+  FRAME_DECODER_ALIVE_ACK:
+    value: '0x73'
+    architecture: core
+  FRAME_DECODER_HELLO:
+    value: '0x74'
+    architecture: core
+  FRAME_DECODER_ID_ASSIGN:
+    value: '0x75'
+    architecture: core
+  FRAME_DECODER_ID_ACK:
+    value: '0x76'
+    architecture: core
+  FEATURE_CS2:
+    value: '0x80'
+    architecture: core
+  CMD_FILE_ACK_CS2:
+    value: '0x81'
+    architecture: core
+  CMD_FILE_BLOCK_CS2:
+    value: '0x82'
+    architecture: core
+  FRAME_CAN_2DEC:
+    value: '0x83'
+    architecture: core
+  FRAME_CAN_2BRIDGE:
+    value: '0x84'
+    architecture: core
+  FEATURE_SHOW_BAR:
+    value: '0x90'
+    architecture: core
+  FRAME_GUI_OTA_CURRENT_DECODER:
+    value: '0x91'
+    architecture: core
+  FRAME_GUI_OTA_OVERALL:
+    value: '0x92'
+    architecture: core
+  FEATURE_DECODER_UPLOAD:
+    value: '0xA0'
+    architecture: core
+  DECODER_UPLOAD_START:
+    value: '0xA1'
+    architecture: core
+  DECODER_UPLOAD_BLOCK:
+    value: '0xA2'
+    architecture: core
+  DECODER_UPLOAD_END:
+    value: '0xA3'
+    architecture: core
+  DECODER_UPLOAD_ERROR:
+    value: '0xA4'
+    architecture: core
+  FEATURE_SETTING:
+    value: '0xB0'
+    architecture: core
+  SETTING_CMD_RESET_TO_DEFAULTS:
+    value: '0xB1'
+    architecture: core
+  SETTING_CMD_RESET_ACK:
+    value: '0xB2'
+    architecture: core
+  FEATURE_OTA:
+    value: '0xC0'
+    architecture: core
+  OTA_START_WIFI:
+    value: '0xC1'
+    architecture: core
+  OTA_SUCCESS:
+    value: '0xC2'
+    architecture: core
+  OTA_ERROR:
+    value: '0xC3'
+    architecture: core
+  OTA_CURRENT_ERROR:
+    value: '0xC4'
+    architecture: core
+  OTA_FW_ACK:
+    value: '0xC5'
+    architecture: core
+  OTA_FW_DONE:
+    value: '0xC6'
+    architecture: core
+  OTA_UPLOAD_BLOCK:
+    value: '0xC7'
+    architecture: core
+  OTA_SINGLE_DECODER:
+    value: '0xC8'
+    architecture: core
+  OTA_GROUP_DECODERS:
+    value: '0xC9'
+    architecture: core
+  CMD_OTA_ACK:
+    value: '0xCA'
+    architecture: core
+  FEATURE_DECODER:
+    value: '0xD0'
+    architecture: core
+  MSG_START_DECODERS:
+    value: '0xD1'
+    architecture: core
+  CMD_DECODER_RESET:
+    value: '0xD2'
+    architecture: core
+  FRAME_DECODER_REJOIN:
+    value: '0xD3'
+    architecture: core
+  FRAME_DECODER_ADDED:
+    value: '0xD4'
+    architecture: core
+  CMD_ACK:
+    value: '0xF0'
+    architecture: core
+  BlockSizeGUI:
+    value: '1024'
+    architecture: core
+  BlockSizeBridge:
+    value: BlockSizeGUI+100
+    architecture: core
+  BlockSizeDecoder:
+    value: BlockSizeGUI
+    architecture: core
+  BRIDGE_AP_CHANNEL:
+    value: '1'
+    architecture: core
+  BRIDGE_PORT:
+    value: '5000'
+    architecture: core
+  GUI_PORT:
+    value: '5001'
+    architecture: core
+  WDP_PORT_OUT:
+    value: '15730'
+    architecture: core
+  WDP_PORT_IN:
+    value: '15731'
+    architecture: core
+  HTTPPORT:
+    value: '80'
+    architecture: core
+  bdrMonitor:
+    value: '115200'
+    architecture: core
+  wait_time_small:
+    value: '100'
+    architecture: core
+  CAN_FRAME_SIZE:
+    value: '13'
+    architecture: core
+  CANcmd:
+    value: '0x01'
+    architecture: core
+  hash0:
+    value: '0x02'
+    architecture: core
+  hash1:
+    value: '0x03'
+    architecture: core
+  Framelng:
+    value: '0x04'
+    architecture: core
+  data0:
+    value: '0x05'
+    architecture: core
+  data1:
+    value: '0x06'
+    architecture: core
+  data2:
+    value: '0x07'
+    architecture: core
+  data3:
+    value: '0x08'
+    architecture: core
+  data4:
+    value: '0x09'
+    architecture: core
+  data5:
+    value: '0x0A'
+    architecture: core
+  data6:
+    value: '0x0B'
+    architecture: core
+  data7:
+    value: '0x0C'
+    architecture: core
+  FEATURE_BRIDGE2DECODER:
+    value: '0xFF'
+    architecture: core
+  Sys_CMD:
+    value: '0x00'
+    architecture: core
+  LokDiscovery:
+    value: '0x02'
+    architecture: core
+  LokDiscovery_R:
+    value: '0x03'
+    architecture: core
+  Lok_Zyklus_Stopp:
+    value: '0x04'
+    architecture: core
+  MFXBind:
+    value: '0x04'
+    architecture: core
+  MFXBind_R:
+    value: '0x05'
+    architecture: core
+  MFXVerify:
+    value: '0x06'
+    architecture: core
+  MFXVerify_R:
+    value: '0x07'
+    architecture: core
+  Lok_Speed:
+    value: '0x08'
+    architecture: core
+  Lok_Direction:
+    value: '0x0A'
+    architecture: core
+  Lok_Function:
+    value: '0x0C'
+    architecture: core
+  ReadConfig:
+    value: '0x0E'
+    architecture: core
+  ReadConfig_R:
+    value: '0x0F'
+    architecture: core
+  WriteConfig:
+    value: '0x10'
+    architecture: core
+  WriteConfig_R:
+    value: '0x11'
+    architecture: core
+  SWITCH_ACC:
+    value: '0x16'
+    architecture: core
+  SWITCH_ACC_R:
+    value: '0x17'
+    architecture: core
+  S88_Polling:
+    value: '0x20'
+    architecture: core
+  S88_EVENT:
+    value: '0x22'
+    architecture: core
+  S88_EVENT_R:
+    value: '0x23'
+    architecture: core
+  PING:
+    value: '0x30'
+    architecture: core
+  PING_R:
+    value: '0x31'
+    architecture: core
+  CONFIG_Status:
+    value: '0x3A'
+    architecture: core
+  CONFIG_Status_R:
+    value: '0x3B'
+    architecture: core
+  DataQuery:
+    value: '0x40'
+    architecture: core
+  ConfigDataStream:
+    value: '0x42'
+    architecture: core
+  MM_ACC:
+    value: '0x3000'
+    architecture: core
+  DCC_ACC:
+    value: '0x3800'
+    architecture: core
+  MM_TRACK:
+    value: '0x0000'
+    architecture: core
+  DCC_TRACK:
+    value: '0xC000'
+    architecture: core
+  DEVTYPE_GFP:
+    value: '0x00'
+    architecture: core
+  DEVTYPE_GB:
+    value: '0x10'
+    architecture: core
+  DEVTYPE_CONNECT:
+    value: '0x20'
+    architecture: core
+  DEVTYPE_MS2:
+    value: '0x30'
+    architecture: core
+  DEVTYPE_WDEV:
+    value: '0xE0'
+    architecture: core
+  DEVTYPE_CS2:
+    value: '0xFF'
+    architecture: core
+  DEVTYPE_FirstCANguru:
+    value: '0x4F'
+    architecture: core
+  DEVTYPE_BASE:
+    value: '0x50'
+    architecture: core
+  DEVTYPE_SIGNAL:
+    value: '0x51'
+    architecture: core
+  DEVTYPE_SWITCH:
+    value: '0x52'
+    architecture: core
+  DEVTYPE_POWER:
+    value: '0x53'
+    architecture: core
+  DEVTYPE_RM:
+    value: '0x54'
+    architecture: core
+  DEVTYPE_MAXISIGNAL:
+    value: '0x55'
+    architecture: core
+  DEVTYPE_SERVO:
+    value: '0x56'
+    architecture: core
+  DEVTYPE_LIGHT:
+    value: '0x57'
+    architecture: core
+  DEVTYPE_LEDSIGNAL:
+    value: '0x58'
+    architecture: core
+  DEVTYPE_CAR_CAR:
+    value: '0x59'
+    architecture: core
+  DEVTYPE_CAR_RM:
+    value: '0x5A'
+    architecture: core
+  DEVTYPE_CAR_SERVO:
+    value: '0x5B'
+    architecture: core
+  DEVTYPE_TRAFFICLIGHT:
+    value: '0x5C'
+    architecture: core
+  DEVTYPE_BRIDGE:
+    value: '0x5D'
+    architecture: core
+  DEVTYPE_FREE:
+    value: '0x5E'
+    architecture: core
+  DEVTYPE_LastCANguru:
+    value: '0x5F'
+    architecture: core

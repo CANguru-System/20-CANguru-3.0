@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "dgSpecHash": "dsx4XK846Iw=",
+  "success": true,
+  "projectFilePath": "C:\\CANguru-Drive\\OneDrive\\09 CARguru-Github\\20-CANguru-3.0\\4000-Flasher\\Flasher\\Flasher.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.android-arm.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.android-arm.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.android-arm64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.android-arm64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.android-x64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.android-x64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.android-x86.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.android-x86.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-arm.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-arm.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-arm64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-arm64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-bionic-arm64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-bionic-arm64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-bionic-x64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-bionic-x64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-musl-arm.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-musl-arm.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-musl-arm64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-musl-arm64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-musl-x64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-musl-x64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.linux-x64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.linux-x64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.maccatalyst-arm64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.maccatalyst-arm64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.maccatalyst-x64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.maccatalyst-x64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.osx-arm64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.osx-arm64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\runtime.osx-x64.runtime.native.system.io.ports\\11.0.0-preview.2.26159.112\\runtime.osx-x64.runtime.native.system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512",
+    "C:\\Users\\gusta\\.nuget\\packages\\system.io.ports\\11.0.0-preview.2.26159.112\\system.io.ports.11.0.0-preview.2.26159.112.nupkg.sha512"
+  ],
+  "logs": []
+}

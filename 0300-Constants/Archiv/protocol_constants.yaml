@@ -1,0 +1,136 @@
+constants:
+  TYPE_RM: { value: 0x01, architecture: core }
+  TYPE_WEICHE: { value: 0x02, architecture: core }
+  TYPE_SIGNAL: { value: 0x03, architecture: core }
+  TYPE_SCHALT: { value: 0x04, architecture: core }
+
+  DECODERTYPE_Switch: { value: 0, architecture: core }
+  DECODERTYPE_Signal: { value: 1, architecture: core }
+  DECODERTYPE_Power: { value: 2, architecture: core }
+  DECODERTYPE_Feedback: { value: 3, architecture: core }
+
+  Single_decoder: { value: 0xA0, architecture: bridge }
+  Group_decoders: { value: 0xA1, architecture: bridge }
+  Decoder_Upload_Start: { value: 0xB0, architecture: bridge }
+  Decoder_Upload_Block: { value: 0xB1, architecture: bridge }
+  Decoder_Upload_End: { value: 0xB2, architecture: bridge }
+  Decoder_Upload_Error: { value: 0xB3, architecture: bridge }
+
+  FRAME_SEQ: { value: 0x01, architecture: can }
+  FRAME_ACK: { value: 0x02, architecture: can }
+  FRAME_LOGIN: { value: 0x03, architecture: can }
+  FRAME_PING: { value: 0x04, architecture: can }
+  FRAME_PONG: { value: 0x05, architecture: can }
+  FRAME_HEARTBEAT: { value: 0x06, architecture: can }
+  FRAME_CAPABILITIES: { value: 0x07, architecture: can }
+  FRAME_STATUS: { value: 0x08, architecture: can }
+  FRAME_COMMAND: { value: 0x09, architecture: can }
+  FRAME_DECODER_ADDED: { value: 0x0A, architecture: can }
+
+  BlockSizeGUI: { value: 1024, architecture: bridge }
+  BlockSizeBridge: { value: 1500, architecture: bridge }
+
+  BRIDGE_AP_CHANNEL: { value: 1, architecture: core }
+
+  FRAME_DECODER_OTA_START_WIFI: { value: 0x40, architecture: core }
+  FRAME_DECODER_OTA_STATUS: { value: 0x41, architecture: bridge }
+  FRAME_DECODER_OTA_SUCCESS: { value: 0x42, architecture: core }
+  FRAME_DECODER_OTA_ERROR: { value: 0x43, architecture: core }
+
+  FRAME_GUI_OTA_START_WIFI: { value: 0x50, architecture: bridge }
+  FRAME_GUI_OTA_START_WIFI_ACK: { value: 0x51, architecture: bridge }
+  FRAME_GUI_OTA_RESULT: { value: 0x52, architecture: bridge }
+  FRAME_GUI_SEND_FIRMWARE: { value: 0x53, architecture: bridge }
+
+  FRAME_DECODER_OTA_PROGRESS: { value: 0x60, architecture: bridge }
+  FRAME_GUI_OTA_PROGRESS: { value: 0x61, architecture: bridge }
+  FRAME_GUI_OTA_OVERALL: { value: 0x62, architecture: bridge }
+  FRAME_GUI_OTA_CURRENT_DECODER: { value: 0x63, architecture: bridge }
+  FRAME_GUI_OTA_CURRENT_FINISHED: { value: 0x64, architecture: bridge }
+  FRAME_GUI_OTA_CURRENT_ERROR: { value: 0x65, architecture: bridge }
+
+  CMD_DECODER_FW_ACK: { value: 0x71, architecture: core }
+  CMD_DECODER_FW_DONE: { value: 0x72, architecture: core }
+  CMD_DECODER_FW_START: { value: 0x73, architecture: core }
+  CMD_DECODER_FW_ERROR: { value: 0x74, architecture: core }
+  FRAME_DECODER_REJOIN: { value: 0x75, architecture: core }
+
+  CMD_UPLOAD_BLOCK: { value: 0xF1, architecture: bridge }
+  CMD_ACK: { value: 0xF2, architecture: bridge }
+
+  BRIDGE_ALIVE: { value: 0xAA, architecture: bridge }
+  GUI_ALIVE: { value: 0xAB, architecture: bridge }
+  RESET_ACK: { value: 0xBB, architecture: bridge }
+
+  MSG_HELLO: { value: 0xC1, architecture: bridge }
+  MSG_READY: { value: 0xC2, architecture: bridge }
+  MSG_ALIVE: { value: 0xC3, architecture: bridge }
+  MSG_START_BRIDGE: { value: 0xC5, architecture: bridge }
+  MSG_START_DECODERS: { value: 0xC6, architecture: core }
+  DISCOVERY_REQUEST: { value: 0xCC, architecture: bridge }
+  DISCOVERY_RESPONSE: { value: 0xCD, architecture: bridge }
+
+  FRAME_DECODER_HELLO: { value: 0xD0, architecture: core }
+  FRAME_DECODER_ID_ASSIGN: { value: 0xD1, architecture: core }
+  FRAME_DECODER_ID_ACK: { value: 0xD2, architecture: core }
+  FRAME_DECODER_ALIVE: { value: 0xD3, architecture: core }
+  FRAME_DECODER_ALIVE_ACK: { value: 0xD4, architecture: core }
+
+  cmdReset: { value: 0xE0, architecture: core }
+
+  BRIDGE_PORT: { value: 5000, architecture: bridge }
+  GUI_PORT: { value: 5001, architecture: bridge }
+  WDP_PORT_OUT: { value: 15730, architecture: bridge }
+  WDP_PORT_IN: { value: 15731, architecture: bridge }
+  HTTPPORT: { value: 80, architecture: bridge }
+
+  GUI_ALIVE_INTERVAL_MS: { value: 1000, architecture: bridge }
+  BRIDGE_ALIVE_INTERVAL_MS: { value: 1000, architecture: bridge }
+  ALIVE_INTERVAL_MS: { value: 1000, architecture: core }
+  GUI_ALIVE_TIMEOUT_MS: { value: 3000, architecture: bridge }
+
+  wait_time_small: { value: 50, architecture: can }
+  bdrMonitor: { value: 115200, architecture: can }
+  CAN_FRAME_SIZE: { value: 13, architecture: can }
+
+  CANcmd: { value: 0x01, architecture: can }
+  hash0: { value: 0x02, architecture: can }
+  hash1: { value: 0x03, architecture: can }
+  Framelng: { value: 0x04, architecture: can }
+  data0: { value: 0x05, architecture: can }
+  data1: { value: 0x06, architecture: can }
+  data2: { value: 0x07, architecture: can }
+  data3: { value: 0x08, architecture: can }
+  data4: { value: 0x09, architecture: can }
+  data5: { value: 0x0A, architecture: can }
+  data6: { value: 0x0B, architecture: can }
+  data7: { value: 0x0C, architecture: can }
+
+  LokDiscovery: { value: 0x02, architecture: maerklin }
+  LokDiscovery_R: { value: 0x03, architecture: maerklin }
+  PING: { value: 0x30, architecture: maerklin }
+  PING_R: { value: 0x31, architecture: maerklin }
+
+  DEVTYPE_GFP: { value: 0x0000, architecture: maerklin }
+  DEVTYPE_GB: { value: 0x0010, architecture: maerklin }
+  DEVTYPE_CONNECT: { value: 0x0020, architecture: maerklin }
+  DEVTYPE_MS2: { value: 0x0030, architecture: maerklin }
+  DEVTYPE_WDEV: { value: 0x00E0, architecture: maerklin }
+  DEVTYPE_CS2: { value: 0x00FF, architecture: maerklin }
+  DEVTYPE_FirstCANguru: { value: 0x004F, architecture: maerklin }
+  DEVTYPE_BASE: { value: 0x0050, architecture: maerklin }
+  DEVTYPE_RM: { value: 0x0051, architecture: maerklin }
+  DEVTYPE_MAXISIGNAL: { value: 0x0052, architecture: maerklin }
+  DEVTYPE_STEPPER: { value: 0x0053, architecture: maerklin }
+  DEVTYPE_CANBOOSTER: { value: 0x0054, architecture: maerklin }
+  DEVTYPE_SERVO: { value: 0x0055, architecture: maerklin }
+  DEVTYPE_LIGHT: { value: 0x0056, architecture: maerklin }
+  DEVTYPE_SIGNAL: { value: 0x0057, architecture: maerklin }
+  DEVTYPE_LEDSIGNAL: { value: 0x0058, architecture: maerklin }
+  DEVTYPE_CAR_CAR: { value: 0x0059, architecture: maerklin }
+  DEVTYPE_CAR_RM: { value: 0x005A, architecture: maerklin }
+  DEVTYPE_CAR_SERVO: { value: 0x005B, architecture: maerklin }
+  DEVTYPE_TRAFFICLIGHT: { value: 0x005C, architecture: maerklin }
+  DEVTYPE_FREE1: { value: 0x005D, architecture: maerklin }
+  DEVTYPE_FREE2: { value: 0x005E, architecture: maerklin }
+  DEVTYPE_LastCANguru: { value: 0x005F, architecture: maerklin }
